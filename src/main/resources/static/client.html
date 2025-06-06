@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>간단 챗봇 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        #chatContainer {
+            border: 1px solid #ccc;
+            height: 350px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #fafafa;
+        }
+        .message {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+        .message.user .bubble {
+            background: #dcf8c6;
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 12px 12px 0 12px;
+            text-align: right;
+        }
+        .message.bot .bubble {
+            background: #fff;
+            border: 1px solid #ddd;
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 12px 12px 12px 0;
+            text-align: left;
+        }
+        #inputContainer {
+            margin-top: 10px;
+            display: flex;
+        }
+        #msgInput {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+        }
+        #sendBtn {
+            padding: 8px 16px;
+            margin-left: 5px;
+            font-size: 14px;
+        }
+        .system {
+            text-align: center;
+            color: #888;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+<h2>간단 챗봇 테스트</h2>
+<div id="chatContainer"></div>
+
+<div id="inputContainer">
+    <input type="text" id="msgInput" placeholder="메시지를 입력하세요" />
+    <button id="sendBtn">전송</button>
+</div>
+
+<!-- SockJS, Stomp.js 라이브러리 로딩 -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script>
+    let stompClient = null;
+    let username = "";  // 최초엔 빈 문자열
+
+    const chatContainer = document.getElementById('chatContainer');
+    const msgInput = document.getElementById('msgInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    // 페이지 로드 시: 먼저 사용자에게 username 입력을 요청하고, 입력이 완료되면 connect() 호출
+    window.addEventListener('load', function() {
+        askUsernameAndConnect();
+    });
+
+    function askUsernameAndConnect() {
+        username = prompt("채팅에 사용할 사용자 이름을 입력하세요:");
+
+        // 취소하거나 빈 문자열이면 다시 요청하거나 메시지 출력
+        if (username === null || username.trim() === "") {
+            // 사용자가 ‘취소’를 눌렀거나 빈칸만 입력한 경우
+            appendSystemMessage("사용자 이름이 필요합니다. 페이지를 새로고침하고 다시 시도해주세요.");
+            // 더 이상 연결 시도하지 않음
+            return;
+        }
+
+        // trim 처리 후 연결
+        username = username.trim();
+        connect();
+    }
+
+    // WebSocket 연결 및 Subscribe 수행
+    function connect() {
+        // SockJS 엔드포인트: username을 쿼리 파라미터로 전달
+        const socket = new SockJS('/ws?username=' + encodeURIComponent(username));
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            appendSystemMessage("연결됨. 사용자: " + username);
+
+            stompClient.subscribe('/user/queue/public', function(messageOutput) {
+                const botMsg = JSON.parse(messageOutput.body);
+                showBotMessage(botMsg);
+            });
+
+            // 연결 직후 환영 메시지 보내기
+            const welcome = "안녕 챗봇!";
+            sendMessage(welcome);
+        }, function(error) {
+            appendSystemMessage("연결 오류: " + error);
+        });
+    }
+
+    // 메시지 보내기
+    function sendMessage(content) {
+        if (!stompClient || !stompClient.connected) {
+            appendSystemMessage("연결 중이 아닙니다.");
+            return;
+        }
+        const chatMessage = {
+            sender: username,
+            content: content,
+            timestamp: Date.now()
+        };
+        showUserMessage(chatMessage);
+        stompClient.send("/pub/chat/message", {}, JSON.stringify(chatMessage));
+        msgInput.value = '';
+    }
+
+    // 사용자 메시지 렌더링
+    function showUserMessage(message) {
+        const el = document.createElement('div');
+        el.classList.add('message', 'user');
+        el.innerHTML = `<div class="bubble"><strong>나:</strong> ${escapeHtml(message.content)}</div>`;
+        chatContainer.appendChild(el);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // 챗봇 메시지 렌더링
+    function showBotMessage(botMessage) {
+        const el = document.createElement('div');
+        el.classList.add('message', 'bot');
+        el.innerHTML = `<div class="bubble"><strong>챗봇:</strong> ${escapeHtml(botMessage.content)}</div>`;
+        chatContainer.appendChild(el);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // 시스템 메시지 출력
+    function appendSystemMessage(text) {
+        const el = document.createElement('div');
+        el.classList.add('system');
+        el.textContent = text;
+        chatContainer.appendChild(el);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    sendBtn.addEventListener('click', function() {
+        const input = msgInput.value.trim();
+        if (input) sendMessage(input);
+    });
+    msgInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendBtn.click();
+        }
+    });
+
+    // XSS 방지를 위한 이스케이프
+    function escapeHtml(str) {
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+</script>
+</body>
+</html>
