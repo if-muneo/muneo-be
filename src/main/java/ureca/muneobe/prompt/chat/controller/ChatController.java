@@ -1,6 +1,8 @@
 package ureca.muneobe.prompt.chat.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import ureca.muneobe.prompt.chat.dto.ChatRequest;
 import java.security.Principal;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
@@ -19,18 +22,27 @@ public class ChatController {
     private final ChatService chatService;
 
     @MessageMapping("/chat/message") // 클라이언트가 /chat/sendMessage로 메시지 보내
-    public void sendMessage(ChatRequest message, Principal principal) {
+    public void sendMessage(ChatRequest message, Principal principal){
         String username = principal.getName();
         String userMessage = message.getContent();
-        // 금칙어 필터링
-        // Redis에서 이전 채팅 내역 가져오기(없으면 빈 리스트)
-        List<String> preChat = chatService.getChatForMultiTurn(username);
-        // Redis에 채팅 내역 저장
-        chatService.saveChatToRedis(username, userMessage);
-        // 1차 프롬프트로 메시지 넘기고 응답(JSON) 받음
-        // RDB or VectorDB에 요청 넘기고 결과 받음
-        // 2차 프롬프트에 결과 넘겨서 챗봇 메시지 만들기
-        String chatBotMessage = "안녕하세요!"; // 챗봇의 최종 메시지
-        simpMessagingTemplate.convertAndSendToUser(username, "/queue/public", new ChatResponse(chatBotMessage));
+
+        log.info("message : {}", message.getContent());
+
+        chatService.createChatResponse(username, userMessage)
+                .subscribe(chatBotMessage -> {
+                    // Mono 완료 후 사용자에게 WebSocket 응답 전송
+                    simpMessagingTemplate.convertAndSendToUser(
+                            username,
+                            "/queue/public",
+                            new ChatResponse(chatBotMessage)
+                    );
+                }, error -> {
+                    log.error("챗봇 응답 생성 실패", error);
+                    simpMessagingTemplate.convertAndSendToUser(
+                            username,
+                            "/queue/public",
+                            new ChatResponse("⚠️ 챗봇 응답 중 문제가 발생했어요!")
+                    );
+                });
     }
 }
