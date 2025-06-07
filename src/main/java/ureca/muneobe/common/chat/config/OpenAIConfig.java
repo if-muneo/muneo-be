@@ -1,4 +1,4 @@
-package ureca.muneobe.config;
+package ureca.muneobe.common.chat.config;
 
 import com.theokanning.openai.service.OpenAiService;
 import org.springframework.beans.factory.annotation.Value;
