@@ -55,17 +55,15 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-// 컴파일 전에 기존에 생성된 Q-타입 파일 삭제
 tasks.named('compileJava') {
     doFirst {
-        // src/main/java 아래 Q-타입(.java)만 골라서 삭제
-        def qFiles = fileTree(
+        // src/main/java 아래에서 com/ureca/muneobe 패키지 밑 Q*.java만 삭제
+        delete fileTree(
                 dir: 'src/main/java',
-                includes: ['ureca/muneobe/**/Q*.java']
+                include: ['com/ureca/muneobe/**/Q*.java']
         )
-        delete qFiles
 
-        // 빌드 디렉터리 내 generated querydsl 폴더 전체 삭제
-        delete file('build/generated')
+        // 빌드 디렉터리 내 generated 전체 삭제
+        delete file("$buildDir/generated")
     }
 }
