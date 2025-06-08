@@ -1,4 +1,4 @@
-package ureca.muneobe.common.chat.service.rdb.condition;
+package ureca.muneobe.common.chat.service.rdb.input;
 
 import lombok.Getter;
 import ureca.muneobe.common.chat.entity.DataType;
