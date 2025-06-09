@@ -26,12 +26,11 @@ public class OpenAiClient {
 
     /**
      * 1차 프롬프트 호출
-     * 빌더 패턴으로 바꾸기
      */
     public Mono<IntentJson> callFirstPrompt(String userMassage, List<String> chatLog) {
         List<Message> messages = List.of(
-                new Message("system", firstPrompt.getPrompt()),
-                new Message("user", userMassage)
+                Message.from("system", firstPrompt.getPrompt()),
+                Message.from("user", userMassage)
         );
 
         OpenAiRequest request = OpenAiRequest.of(firstPrompt.getModel(), messages, firstPrompt.getTemperature(), firstPrompt.getMaxTokens());
@@ -60,9 +59,9 @@ public class OpenAiClient {
 
     public Mono<String> callSecondPrompt(String userMessage, String dbData) {
         List<Message> messages = List.of(
-                new Message("system", secondPrompt.getPrompt()),
-                new Message("user", "사용자 질문: " + userMessage),
-                new Message("user", "참고 데이터: " + dbData)
+                Message.from("system", secondPrompt.getPrompt()),
+                Message.from("user", "사용자 질문: " + userMessage),
+                Message.from("user", "참고 데이터: " + dbData)
         );
 
         OpenAiRequest request = OpenAiRequest.of(secondPrompt.getModel(), messages, secondPrompt.getTemperature(), secondPrompt.getMaxTokens());
