@@ -19,7 +19,7 @@ public class MemberService {
     private PasswordEncoder passwordEncoder;
 
     public Member authenticate(String username, String password) {
-        Optional<Member> memberOpt = memberRepository.findByMembername(username);
+        Optional<Member> memberOpt = memberRepository.findByName(username);
 
         if (memberOpt.isPresent()) {
             Member member = memberOpt.get();
@@ -31,7 +31,7 @@ public class MemberService {
     }
 
     public Member signup(SignupRequest request) {
-        if (memberRepository.existsByMembername(request.getMemberName())) {
+        if (memberRepository.existsByName(request.getMemberName())) {
             throw new RuntimeException("이미 존재하는 사용자입니다.");
         }
 
@@ -51,6 +51,6 @@ public class MemberService {
     }
 
     public Member findByMemberName(String name) {
-        return memberRepository.findByMembername(name).orElse(null);
+        return memberRepository.findByName(name).orElse(null);
     }
 }
