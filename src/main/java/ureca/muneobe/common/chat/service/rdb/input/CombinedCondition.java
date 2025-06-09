@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class CombinedCondition {
-    private Number combinedCount;
-    private Number discountPerPerson;
+    private Range combinedCount;
+    private Range discountPerPerson;
 }
