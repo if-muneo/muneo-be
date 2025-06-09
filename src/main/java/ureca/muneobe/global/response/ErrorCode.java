@@ -1,0 +1,35 @@
+package ureca.muneobe.global.response;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+
+@Getter
+@RequiredArgsConstructor
+public enum ErrorCode {
+    //글로벌 에러 1000번 때
+    INVALID_INPUT(HttpStatus.BAD_REQUEST, 1000, "잘못된 입력값입니다."),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, 1004, "인증이 필요합니다."),
+    FORBIDDEN(HttpStatus.FORBIDDEN, 1005, "권한이 없는 사용자입니다."),
+    DB_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 1006, "DB 문제가 발생했습니다."),
+    UNSUPPORTED_REQUEST(HttpStatus.NOT_FOUND, 1007, "존재하지 않는 요청입니다."),
+    INVALID_FILE(HttpStatus.BAD_REQUEST, 1008, "지원하는 파일 형식이 아닙니다."),
+    SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 1009, "서버 시스템 문제가 발생했습니다."),
+    NOT_FOUND_FILE(HttpStatus.NOT_FOUND, 1010, "파일을 찾을 수 없습니다."),
+
+    //인증 에러 2000번 때
+
+    //벡터 팀 에러 3000번 때
+
+    //RDB 팀 에러 4000번 때
+
+    //프롬프트 팀 에러 5000번 때
+
+    //demo 에러
+    DEMO_ERROR(HttpStatus.BAD_REQUEST, 9999, "데모 에러입니다.");
+    ;
+
+    private final HttpStatus status;
+    private final int code;
+    private final String message;
+}
