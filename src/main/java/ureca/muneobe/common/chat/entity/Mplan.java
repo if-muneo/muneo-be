@@ -40,9 +40,9 @@ public class Mplan {
     @JoinColumn(name = "mplan_detail_id")
     private MplanDetail mplanDetail;
 
-    @OneToMany(mappedBy = "mplan")
+    @OneToMany(mappedBy = "")
     List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mplan")
+    @OneToMany(mappedBy = "")
     List<Subscription> subscriptions = new ArrayList<>();
 }
