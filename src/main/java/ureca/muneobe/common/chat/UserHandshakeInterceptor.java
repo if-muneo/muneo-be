@@ -1,10 +1,14 @@
 package ureca.muneobe.common.chat;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.util.UriComponentsBuilder;
+import ureca.muneobe.common.auth.entity.Member;
+import ureca.muneobe.common.auth.utils.SessionUtil;
 
 import java.util.Map;
 
@@ -17,18 +21,24 @@ public class UserHandshakeInterceptor implements HandshakeInterceptor {
                                    Map<String, Object> attributes) {
         String uri = request.getURI().toString();
 
-        // 요청 uri에서 사용자 식별자(username) 뽑기 -> security를 사용하지 않기 때문에 직접 해줘야 함
-        String username = UriComponentsBuilder.fromUriString(uri)
-                .build()
-                .getQueryParams()
-                .getFirst("username");
+        if (request instanceof ServletServerHttpRequest) {
+            ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
+            HttpSession session = servletRequest.getServletRequest().getSession(false);
 
-        if (username == null) {
-            return false;
+            // SessionUtil로 로그인 확인
+            if (SessionUtil.isLoggedIn(session)) {
+                Member member = SessionUtil.getLoginMember(session);
+
+                // 웹소켓 세션에 사용자 정보 저장
+                attributes.put("member", member);
+                attributes.put("memberName", member.getName());
+                attributes.put("memberId", member.getId());
+
+                return true; // 연결 허용
+            }
         }
 
-        attributes.put("username", username);
-        return true;
+        return false; // 로그인하지 않은 사용자는 연결 거부
     }
 
     @Override

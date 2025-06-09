@@ -35,6 +35,6 @@ public class Combined {
     @Column(name = "combined_type")
     private CombinedType combinedType;
 
-    @OneToMany(mappedBy = "combine")
+    @OneToMany(mappedBy = "combined")
     private List<CombinedGroup> combinedGroups = new ArrayList<>();
 }
