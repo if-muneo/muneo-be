@@ -7,11 +7,11 @@ import ureca.muneobe.common.chat.entity.Qualification;
 
 @Getter
 public class MplanCondition {
-    private Number price;
-    private Number basicDataAmount;
-    private Number sharingData;
-    private Number monthlyPrice;
-    private Number voiceCallVolume;
+    private String name;
+    private Range basicDataAmount;
+    private Range sharingData;
+    private Range monthlyPrice;
+    private Range voiceCallVolume;
     private Boolean textMessage;
     private Qualification qualification;
     private MplanType mplanType;
