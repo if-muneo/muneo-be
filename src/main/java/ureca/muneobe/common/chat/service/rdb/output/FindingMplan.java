@@ -7,11 +7,10 @@ import ureca.muneobe.common.chat.entity.Qualification;
 
 public class FindingMplan {
     private String name;
-    private Integer price;
     private Integer basicDataAmount;
     private Integer dailyData;
     private Integer sharingData;
-    private Integer monthlyData;
+    private Integer monthlyPrice;
     private Integer voiceCallVolume;
     private Boolean textMessage;
     private Integer subDataSpeed;
