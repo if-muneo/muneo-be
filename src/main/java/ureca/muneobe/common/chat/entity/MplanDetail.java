@@ -33,7 +33,7 @@ public class MplanDetail extends BaseEntity {
     private int dailyData;
 
     @Column(name = "sharing_data")
-    private String sharingData;
+    private int sharingData;
 
     @Column(name = "monthly_price")
     private int monthlyPrice;
@@ -42,7 +42,7 @@ public class MplanDetail extends BaseEntity {
     private int voiceCallVolume;
 
     @Column(name = "text_message")
-    private String textMessage;
+    private boolean textMessage;
 
     @Column(name = "sub_data_speed")
     private int subDataSpeed;
