@@ -1,17 +1,15 @@
-package ureca.muneobe.prompt.chat.controller;
+package ureca.muneobe.temp.prompt.chat.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import ureca.muneobe.prompt.chat.service.ChatService;
-import ureca.muneobe.prompt.chat.dto.ChatResponse;
-import ureca.muneobe.prompt.chat.dto.ChatRequest;
+import ureca.muneobe.temp.prompt.chat.service.ChatService;
+import ureca.muneobe.temp.prompt.chat.dto.ChatResponse;
+import ureca.muneobe.temp.prompt.chat.dto.ChatRequest;
 
 import java.security.Principal;
-import java.util.List;
 
 @Slf4j
 @Controller

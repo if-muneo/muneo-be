@@ -1,6 +1,5 @@
-package ureca.muneobe.config.openai;
+package ureca.muneobe.temp.config.openai;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,8 +8,8 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "openai.first")
-public class OpenAiFirstPrompt {
+@ConfigurationProperties(prefix = "openai.second")
+public class OpenAiSecondPrompt {
     private String model;
     private double temperature;
     private int maxTokens;

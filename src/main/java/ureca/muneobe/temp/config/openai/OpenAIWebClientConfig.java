@@ -1,4 +1,4 @@
-package ureca.muneobe.config.openai;
+package ureca.muneobe.temp.config.openai;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

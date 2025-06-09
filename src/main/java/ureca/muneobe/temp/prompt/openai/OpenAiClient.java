@@ -1,4 +1,4 @@
-package ureca.muneobe.prompt.openai;
+package ureca.muneobe.temp.prompt.openai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -6,9 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import ureca.muneobe.config.openai.OpenAiFirstPrompt;
-import ureca.muneobe.config.openai.OpenAiSecondPrompt;
-import ureca.muneobe.prompt.openai.dto.*;
+import ureca.muneobe.temp.config.openai.OpenAiFirstPrompt;
+import ureca.muneobe.temp.config.openai.OpenAiSecondPrompt;
+import ureca.muneobe.temp.prompt.openai.dto.IntentJson;
+import ureca.muneobe.temp.prompt.openai.dto.Message;
+import ureca.muneobe.temp.prompt.openai.dto.OpenAiRequest;
+import ureca.muneobe.temp.prompt.openai.dto.OpenAiResponse;
 
 import java.util.List;
 
@@ -23,7 +26,7 @@ public class OpenAiClient {
 
     /**
      * 1차 프롬프트 호출
-     * Builer 패턴으로 바꾸기
+     * 빌더 패턴으로 바꾸기
      */
     public Mono<IntentJson> callFirstPrompt(String userMassage, List<String> chatLog) {
         List<Message> messages = List.of(

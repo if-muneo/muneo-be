@@ -1,4 +1,4 @@
-package ureca.muneobe.prompt.openai.dto;
+package ureca.muneobe.temp.prompt.openai.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

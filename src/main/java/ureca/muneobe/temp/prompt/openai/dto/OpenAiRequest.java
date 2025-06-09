@@ -1,4 +1,4 @@
-package ureca.muneobe.prompt.openai.dto;
+package ureca.muneobe.temp.prompt.openai.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
