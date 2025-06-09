@@ -27,5 +27,5 @@ public class AddonGroup {
     private String addonGroupName;
 
     @OneToMany(mappedBy = "addonGroup")
-    private List<AddonAddonGroup> addonAddonGroups = new ArrayList<>();
+    private List<Addon> addon = new ArrayList<>();
 }
