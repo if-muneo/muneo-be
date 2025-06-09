@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class Number {
+public class Range {
     private Integer baseNumber;
     private Integer subNumber;
     private String operator;
