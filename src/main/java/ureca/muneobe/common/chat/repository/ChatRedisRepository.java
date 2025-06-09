@@ -1,4 +1,4 @@
-package ureca.muneobe.temp.prompt.chat.repository;
+package ureca.muneobe.common.chat.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;

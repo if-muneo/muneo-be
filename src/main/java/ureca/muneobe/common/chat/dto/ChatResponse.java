@@ -1,4 +1,4 @@
-package ureca.muneobe.temp.prompt.chat.dto;
+package ureca.muneobe.common.chat.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

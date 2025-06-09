@@ -1,13 +1,13 @@
-package ureca.muneobe.temp.prompt.chat.controller;
+package ureca.muneobe.common.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import ureca.muneobe.temp.prompt.chat.service.ChatService;
-import ureca.muneobe.temp.prompt.chat.dto.ChatResponse;
-import ureca.muneobe.temp.prompt.chat.dto.ChatRequest;
+import ureca.muneobe.common.chat.dto.ChatRequest;
+import ureca.muneobe.common.chat.dto.ChatResponse;
+import ureca.muneobe.common.chat.service.ChatService;
 
 import java.security.Principal;
 
@@ -39,7 +39,7 @@ public class ChatController {
                     simpMessagingTemplate.convertAndSendToUser(
                             username,
                             "/queue/public",
-                            new ChatResponse("⚠️ 챗봇 응답 중 문제가 발생했어요!")
+                            new ChatResponse("챗봇 응답 중 문제가 발생했어요!")
                     );
                 });
     }

@@ -1,4 +1,4 @@
-package ureca.muneobe.temp.prompt.chat;
+package ureca.muneobe.common.chat;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;

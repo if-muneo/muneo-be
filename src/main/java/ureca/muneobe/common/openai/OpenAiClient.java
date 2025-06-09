@@ -1,4 +1,4 @@
-package ureca.muneobe.temp.prompt.openai;
+package ureca.muneobe.common.openai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -6,12 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import ureca.muneobe.temp.config.openai.OpenAiFirstPrompt;
-import ureca.muneobe.temp.config.openai.OpenAiSecondPrompt;
-import ureca.muneobe.temp.prompt.openai.dto.IntentJson;
-import ureca.muneobe.temp.prompt.openai.dto.Message;
-import ureca.muneobe.temp.prompt.openai.dto.OpenAiRequest;
-import ureca.muneobe.temp.prompt.openai.dto.OpenAiResponse;
+import ureca.muneobe.common.chat.config.openai.OpenAiFirstPrompt;
+import ureca.muneobe.common.chat.config.openai.OpenAiSecondPrompt;
+import ureca.muneobe.common.openai.dto.IntentJson;
+import ureca.muneobe.common.openai.dto.Message;
+import ureca.muneobe.common.openai.dto.OpenAiRequest;
+import ureca.muneobe.common.openai.dto.OpenAiResponse;
 
 import java.util.List;
 

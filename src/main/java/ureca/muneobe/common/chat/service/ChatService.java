@@ -1,11 +1,11 @@
-package ureca.muneobe.temp.prompt.chat.service;
+package ureca.muneobe.common.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import ureca.muneobe.temp.prompt.chat.repository.ChatRedisRepository;
-import ureca.muneobe.temp.prompt.openai.OpenAiClient;
+import ureca.muneobe.common.chat.repository.ChatRedisRepository;
+import ureca.muneobe.common.openai.OpenAiClient;
 
 import java.util.List;
 

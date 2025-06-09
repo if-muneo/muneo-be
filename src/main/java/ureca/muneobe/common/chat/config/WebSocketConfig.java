@@ -1,12 +1,12 @@
-package ureca.muneobe.temp.config;
+package ureca.muneobe.common.chat.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import ureca.muneobe.temp.prompt.chat.CustomHandshakeHandler;
-import ureca.muneobe.temp.prompt.chat.UserHandshakeInterceptor;
+import ureca.muneobe.common.chat.CustomHandshakeHandler;
+import ureca.muneobe.common.chat.UserHandshakeInterceptor;
 
 @Configuration
 @EnableWebSocketMessageBroker
