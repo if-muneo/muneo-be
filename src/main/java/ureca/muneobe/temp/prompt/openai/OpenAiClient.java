@@ -34,12 +34,7 @@ public class OpenAiClient {
                 new Message("user", userMassage)
         );
 
-        OpenAiRequest request = new OpenAiRequest(
-                firstPrompt.getModel(),
-                messages,
-                firstPrompt.getTemperature(),
-                firstPrompt.getMaxTokens()
-        );
+        OpenAiRequest request = OpenAiRequest.of(firstPrompt.getModel(), messages, firstPrompt.getTemperature(), firstPrompt.getMaxTokens());
 
         log.info(userMassage);
 
@@ -59,7 +54,7 @@ public class OpenAiClient {
                 .doOnNext(resp -> log.info("1차 응답 IntentJson: {}", resp))
                 .onErrorResume(e -> {
                     log.error("1차 프롬프트 에러", e);
-                    return Mono.error(e); // 에러
+                    return Mono.error(e);
                 });
     }
 
@@ -70,12 +65,7 @@ public class OpenAiClient {
                 new Message("user", "참고 데이터: " + dbData)
         );
 
-        OpenAiRequest request = new OpenAiRequest(
-                secondPrompt.getModel(),
-                messages,
-                secondPrompt.getTemperature(),
-                secondPrompt.getMaxTokens()
-        );
+        OpenAiRequest request = OpenAiRequest.of(secondPrompt.getModel(), messages, secondPrompt.getTemperature(), secondPrompt.getMaxTokens());
 
         return openAiWebClient.post()
                 .bodyValue(request)
@@ -85,7 +75,7 @@ public class OpenAiClient {
                 .doOnNext(resp -> log.info("2차 응답: {}", resp))
                 .onErrorResume(e -> {
                     log.error("2차 프롬프트 에러", e);
-                    return Mono.just("{\"router\": \"NONE\"}");
+                    return Mono.error(e);
                 });
     }
 }
