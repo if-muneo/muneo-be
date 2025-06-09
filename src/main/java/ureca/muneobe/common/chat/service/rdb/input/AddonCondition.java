@@ -6,7 +6,7 @@ import ureca.muneobe.common.chat.entity.AddonType;
 
 @Getter
 public class AddonCondition {
-    private Number price;
+    private Range price;
     private List<String> names;
     private AddonType addonType;
 }
