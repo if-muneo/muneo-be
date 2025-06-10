@@ -4,6 +4,13 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+
   jpa:
     hibernate:
       ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  # 이 부분이 빠져있어서 에러가 발생합니다!
+  ai:
+    openai:
+      api-key: test-api-key
