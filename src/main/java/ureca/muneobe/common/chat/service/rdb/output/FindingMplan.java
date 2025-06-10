@@ -1,6 +1,7 @@
 package ureca.muneobe.common.chat.service.rdb.output;
 
 import java.util.List;
+
 import ureca.muneobe.common.chat.entity.DataType;
 import ureca.muneobe.common.chat.entity.MplanType;
 import ureca.muneobe.common.chat.entity.Qualification;
@@ -15,7 +16,7 @@ public class FindingMplan {
     private Boolean textMessage;
     private Integer subDataSpeed;
     private Qualification qualification;
-    private MplanType mplanType;
     private DataType dataType;
+    private MplanType mplanType;
     private List<FindingAddon> findingAddons;
 }

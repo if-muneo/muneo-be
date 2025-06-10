@@ -14,6 +14,6 @@ public class MplanCondition {
     private Range voiceCallVolume;
     private Boolean textMessage;
     private Qualification qualification;
-    private MplanType mplanType;
     private DataType dataType;
+    private MplanType mplanType;
 }
