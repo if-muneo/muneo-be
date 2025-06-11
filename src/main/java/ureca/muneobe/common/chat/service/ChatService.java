@@ -4,15 +4,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import ureca.muneobe.common.chat.repository.ChatRedisRepository;
+import ureca.muneobe.common.chat.repository.search.CombinedSearchRepository;
+import ureca.muneobe.common.chat.service.rdb.input.Condition;
 import ureca.muneobe.common.openai.OpenAiClient;
+import ureca.muneobe.common.openai.dto.router.RdbResponse;
+import ureca.muneobe.common.openai.dto.router.VectorResponse;
+import ureca.muneobe.common.vector.entity.Fat;
+import ureca.muneobe.common.vector.service.FatService;
 import ureca.muneobe.global.exception.GlobalException;
-import ureca.muneobe.global.response.ErrorCode;
 
 import java.util.List;
 
 import static ureca.muneobe.global.response.ErrorCode.CHAT_RESPONSE_ERROR;
-import static ureca.muneobe.global.response.ErrorCode.FIRST_PROMPT_ERROR;
 
 @Slf4j
 @Service
@@ -22,6 +27,8 @@ public class ChatService {
     private final OpenAiClient openAiClient;
     private final ChatRedisRepository chatRedisRepository;
 
+    private final CombinedSearchRepository combinedSearchRepository;
+    private final FatService fatService;
 
     /**
      * 채팅 응답 생성
@@ -49,29 +56,59 @@ public class ChatService {
                     if ("RDB".equalsIgnoreCase(firstPromptResponse.getRouter())) {
 
                         // 데이터 조회
+                        RdbResponse response = (RdbResponse) firstPromptResponse;
+                        final Condition condition = Condition.builder()
+                                .mplanCondition(response.getMplanCondition())
+                                .addonCondition(response.getAddonCondition())
+                                .combinedCondition(response.getCombinedCondition())
+                                .build();
 
-                        // 2차 프롬프트 요청
-                        // return rdbQueryService.findMatchingPlan(intentJson)
-                        //        .flatMap(plan -> openAiClient.callSecondPrompt(userMessage, plan, intentJson));
+                        // 2차 프롬프트
+                        return Mono.fromCallable(() -> combinedSearchRepository.search(condition))
+                                .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행
+                                .flatMap(plans -> {
+                                    if (plans == null || plans.isEmpty()) {
+                                        // 검색 결과가 없을 때의 처리: Mono.empty()로 두거나, 다른 기본 메시지 반환
+                                        return Mono.just("조건에 맞는 요금제가 없습니다.");
+                                    }
+
+                                    return openAiClient.callSecondPrompt(userMessage, plans);
+                                })
+                                .onErrorResume(e -> {
+                                    // 에러 처리
+                                    return Mono.just("요금제 검색 또는 2차 프롬프트 호출 중 오류가 발생했습니다.");
+                                });
                     }
 
                     // 5-2. VECTOR
                     if ("VECTOR".equalsIgnoreCase(firstPromptResponse.getRouter())) {
 
                         // 데이터 조회
+                        VectorResponse response = (VectorResponse) firstPromptResponse;
 
-                        // 2차 프롬프트 요청
-                        //  return vectorSearchService.queryRelevantDocs(intentJson)
-                        //         .flatMap(docs -> openAiClient.callSecondPrompt(userMessage, docs, intentJson));
+                        List<Fat> result = fatService.search(response.getReformInput());
+                        System.out.println(result);
+                        return Mono.fromCallable(() -> fatService.search(response.getReformInput()))
+                                .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행
+                                .flatMap(plans -> {
+                                    if (plans == null || plans.isEmpty()) {
+                                        // 검색 결과가 없을 때의 처리: Mono.empty()로 두거나, 다른 기본 메시지 반환
+                                        return Mono.just("조건에 맞는 요금제가 없습니다.");
+                                    }
+
+                                    return openAiClient.callSecondPrompt(userMessage, plans);
+                                })
+                                .onErrorResume(e -> {
+                                    // 에러 처리
+                                    return Mono.just("요금제 검색 또는 2차 프롬프트 호출 중 오류가 발생했습니다.");
+                                });
                     }
 
                     // 예외 상황 (응답이 비어있거나 등등)
                     return Mono.just("죄송합니다. 다시 질문해주세요.");
 
                 })
-                .onErrorResume(e -> {
-                    return Mono.error(new GlobalException(CHAT_RESPONSE_ERROR));
-                });
+                .onErrorResume(e -> Mono.error(new GlobalException(CHAT_RESPONSE_ERROR)));
     }
 
 

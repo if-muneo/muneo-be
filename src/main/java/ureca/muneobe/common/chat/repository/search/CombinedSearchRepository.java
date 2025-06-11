@@ -39,7 +39,10 @@ public class CombinedSearchRepository implements SearchRepository {
         }
 
         final AddonCondition acond = condition.getAddonCondition();
-        if (acond != null) {
+
+        if (!(acond.getPrice().getBaseNumber() == null && acond.getPrice().getSubNumber() == null && acond.getPrice().getOperator() == null
+                && acond.getNames().size() == 0 && acond.getAddonTypes().size() == 0)
+        ) {
 
             final List<Long> addonGroupIds = fetchAddonGroupIdsByCondition(acond);
 

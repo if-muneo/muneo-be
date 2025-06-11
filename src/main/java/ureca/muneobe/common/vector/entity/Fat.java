@@ -3,6 +3,7 @@ package ureca.muneobe.common.vector.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +12,11 @@ import java.util.List;
 @Table(name = "fat")
 @Getter
 @Setter
+@ToString
 public class Fat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "id")
     private Long id;
 
@@ -126,25 +128,25 @@ public class Fat {
      * OO을 위한 요금제
      */
     private String makeSentencesToQualification(StringBuilder sentence) {
-        String qulification = null;
-        switch (qulification) {
-            case "ALL" : qulification = "모든 사람";
+        String newQulification = qualification;
+        switch (newQulification) {
+            case "ALL" : newQulification = "모든 사람";
             break;
-            case "YOUTH" : qulification = "청년";
+            case "YOUTH" : newQulification = "청년";
             break;
-            case "OLD" : qulification ="노인";
+            case "OLD" : newQulification ="노인";
             break;
-            case "WELFARE" : qulification ="복지";
+            case "WELFARE" : newQulification ="복지";
             break;
-            case "BOY" : qulification = "청소년";
+            case "BOY" : newQulification = "청소년";
             break;
-            case "SOLDIER" : qulification = "군인";
+            case "SOLDIER" : newQulification = "군인";
             break;
-            case "KID" : qulification = "아이";
+            case "KID" : newQulification = "아이";
             break;
         }
 
-        sentence.append(qulification).append("을(를) 위한 요금제");
+        sentence.append(newQulification).append("을(를) 위한 요금제");
         return sentence.toString();
     }
 

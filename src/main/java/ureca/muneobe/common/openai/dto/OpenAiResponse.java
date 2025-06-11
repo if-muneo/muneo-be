@@ -12,7 +12,7 @@ public class OpenAiResponse {
     // 응답의 가장 첫번째 choice의 message.content
     public String getIntentJson() {
         if (choices != null && !choices.isEmpty()) {
-            return choices.get(0).getMessage().getContent();
+            return choices.get(0).getMessage().getContent().replaceAll("```","").replace("json","");
         }
         return "{\"router\": \"NONE\"}";
     }

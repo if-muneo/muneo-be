@@ -15,12 +15,7 @@ SQL_DIR="$SCRIPT_DIR"
 
 # 실행할 파일 목록 (순서가 중요하면 적절히 정렬)
 FILES=(
-  "addon_group.sql"
-  "addon.sql"
-  "mplan_detail.sql"
-  "mplan.sql"
-  "combined.sql"
-  "member.sql"
+  "init.sql"
 )
 
 # 디렉터리 확인

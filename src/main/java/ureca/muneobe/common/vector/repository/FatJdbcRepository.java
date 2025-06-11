@@ -30,7 +30,7 @@ public class FatJdbcRepository {
             stmt.setLong(2, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("❌ 벡터 업데이트 실패", e);
+            throw new RuntimeException("벡터 업데이트 실패", e);
         }
     }
 

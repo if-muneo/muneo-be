@@ -48,8 +48,6 @@ public class SearchUtils {
             case "동등":
                 if (base != null) {
                     builder.and(path.eq(base));
-                } else if (sub != null) {
-                    builder.and(path.eq(sub));
                 }
                 break;
             case "초과":
