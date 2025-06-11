@@ -1,12 +1,17 @@
 package ureca.muneobe.common.chat.service.rdb.input;
 
 import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import ureca.muneobe.common.chat.entity.AddonType;
 
 @Getter
+@AllArgsConstructor
+@Builder
 public class AddonCondition {
     private Range price;
     private List<String> names;
-    private AddonType addonType;
+    private List<AddonType> addonTypes;
 }
