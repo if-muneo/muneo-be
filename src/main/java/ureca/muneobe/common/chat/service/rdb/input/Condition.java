@@ -1,11 +1,14 @@
 package ureca.muneobe.common.chat.service.rdb.input;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
+@Builder
 public class Condition {
     private MplanCondition mplanCondition;
-    private List<AddonCondition> addonCondition;
+    private AddonCondition addonCondition;
     private CombinedCondition combinedCondition;
 }
