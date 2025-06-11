@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import ureca.muneobe.common.chat.repository.ChatRedisRepository;
 import ureca.muneobe.common.openai.OpenAiClient;
+import ureca.muneobe.slang.service.SlangFilter;
 
 import java.util.List;
 
@@ -16,15 +17,17 @@ public class ChatService {
 
     private final OpenAiClient openAiClient;
     private final ChatRedisRepository chatRedisRepository;
-
+    private final SlangFilter slangFilter;
 
     /**
      * 채팅 응답 생성
      */
     public Mono<String> createChatResponse(String username, String userMessage) {
 
-        // 0. 금칙어 필터링 (일단 보류)
-
+        // 0. 금칙어 필터링 (추후 리팩토링 - 서비스가 서비스 참조 구조)
+        if (slangFilter.isSafe(userMessage)) {
+            return Mono.just("부적절한 입력입니다.");
+        }
         // 1. 채팅 저장
         saveChatToRedis(username, userMessage);
 
