@@ -1,7 +1,15 @@
 package ureca.muneobe.common.chat.service.rdb.output;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 import ureca.muneobe.common.chat.entity.AddonType;
 
+@AllArgsConstructor
+@Builder
+@ToString
+@Getter
 public class FindingAddon {
     private String name;
     private String description;
