@@ -163,8 +163,7 @@ spring:
           
           {
             "router": "RDB",
-            "rdb": {
-              "userInput": 사용자 입력
+              "userInput": 사용자 입력,
               "mplanCondition":{ // 모바일 요금제 정보
                 "basicDataAmount":{ // 기본 데이터량
                   "baseNumber":{데이터량(Integer)},
