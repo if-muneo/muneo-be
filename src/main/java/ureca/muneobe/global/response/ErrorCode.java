@@ -24,6 +24,10 @@ public enum ErrorCode {
     //RDB 팀 에러 4000번 때
 
     //프롬프트 팀 에러 5000번 때
+    JSON_PARSING_ERROR(HttpStatus.NOT_FOUND, 5001, "JSON 파싱을 실패했습니다."),
+    FIRST_PROMPT_ERROR(HttpStatus.NOT_FOUND, 5002, "1차 프롬프트 에러입니다."),
+    SECOND_PROMPT_ERROR(HttpStatus.NOT_FOUND, 5002, "2차 프롬프트 에러입니다."),
+    CHAT_RESPONSE_ERROR(HttpStatus.NOT_FOUND, 5003, "채팅 응답 생성 중 오류가 발생했습니다."),
 
     //demo 에러
     DEMO_ERROR(HttpStatus.BAD_REQUEST, 9999, "데모 에러입니다.");
