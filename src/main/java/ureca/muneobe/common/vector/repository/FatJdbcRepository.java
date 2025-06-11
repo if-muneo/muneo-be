@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import ureca.muneobe.common.vector.entity.MobilePlan;
+import ureca.muneobe.common.vector.entity.Fat;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class MobilePlanJdbcRepository {
+public class FatJdbcRepository {
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
 
@@ -49,25 +49,7 @@ public class MobilePlanJdbcRepository {
         }
     }
 
-    private final RowMapper<MobilePlan> mobilePlanRowMapper = (rs, rowNum) -> {
-        MobilePlan plan = new MobilePlan();
-        plan.setId(rs.getLong("id"));
-        plan.setTextMessages(rs.getBoolean("text_messages"));
-        plan.setBasicDataAmount(rs.getLong("basic_data_amount"));
-        plan.setDailyData(rs.getLong("daily_data"));
-        plan.setMonthlyPrice(rs.getLong("monthly_price"));
-        plan.setPrice(rs.getLong("price"));
-        plan.setSharingData(rs.getLong("sharing_data"));
-        plan.setSubDataSpeed(rs.getLong("sub_data_speed"));
-        plan.setVoiceCallVolume(rs.getLong("voice_call_volume"));
-        plan.setAddon(rs.getString("addon"));
-        plan.setDataType(MobilePlan.DataType.valueOf(rs.getString("data_type")));
-        plan.setDescription(rs.getString("description"));
-        plan.setMplanType(MobilePlan.MPlanType.valueOf(rs.getString("mplan_type")));
-        plan.setName(rs.getString("name"));
-        plan.setQualification(MobilePlan.Qualification.valueOf(rs.getString("qualification")));
-        return plan;
-    };
+
 
     /**
      * 유사한 요금제를 벡터 기반으로 검색
@@ -77,7 +59,29 @@ public class MobilePlanJdbcRepository {
      * @return 유사 요금제 리스트
      */
 
-    public List<MobilePlan> findSimilarPlans(float[] queryVector, int limit) {
+    private final RowMapper<Fat> fatRowMapper = (rs, rowNum) -> {
+        Fat plan = new Fat();
+        plan.setId(rs.getLong("id"));
+        plan.setTextMessages(rs.getObject("text_messages") != null ? rs.getBoolean("text_messages") : null);
+        plan.setBasicDataAmount(rs.getObject("basic_data_amount") != null ? rs.getLong("basic_data_amount") : null);
+        plan.setDailyData(rs.getObject("daily_data") != null ? rs.getLong("daily_data") : null);
+        plan.setMonthlyPrice(rs.getObject("monthly_price") != null ? rs.getLong("monthly_price") : null);
+        plan.setPrice(rs.getObject("price") != null ? rs.getLong("price") : null);
+        plan.setSharingData(rs.getObject("sharing_data") != null ? rs.getLong("sharing_data") : null);
+        plan.setSubDataSpeed(rs.getObject("sub_data_speed") != null ? rs.getLong("sub_data_speed") : null);
+        plan.setVoiceCallVolume(rs.getObject("voice_call_volume") != null ? rs.getLong("voice_call_volume") : null);
+        plan.setAddon(rs.getString("addon"));
+        plan.setDescription(rs.getString("description"));
+        plan.setName(rs.getString("name"));
+        plan.setDataType(rs.getString("data_type"));
+        plan.setMplanType(rs.getString("mplan_type"));
+        plan.setQualification(rs.getString("qualification"));
+        plan.setEmbedding(rs.getObject("is_embedding") != null ? rs.getBoolean("is_embedding") : false);
+        return plan;
+    };
+
+
+    public List<Fat> findSimilarPlans(float[] queryVector, int limit) {
         try (Connection conn = dataSource.getConnection()) {
             PGvector.registerTypes(conn); // 벡터 타입 등록
 
@@ -95,12 +99,10 @@ public class MobilePlanJdbcRepository {
                         ps.setObject(1, new PGvector(queryVector));
                         ps.setInt(2, limit);
                     },
-                    mobilePlanRowMapper
+                    fatRowMapper
             );
-
         } catch (SQLException e) {
             throw new RuntimeException("유사 요금제 검색 실패", e);
-
         }
     }
 }

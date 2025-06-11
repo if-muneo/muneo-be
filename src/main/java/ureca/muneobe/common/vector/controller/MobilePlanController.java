@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ureca.muneobe.common.vector.dto.RecommendationRequest;
-import ureca.muneobe.common.vector.entity.MobilePlan;
-import ureca.muneobe.common.vector.service.MobilePlanService;
+import ureca.muneobe.common.vector.entity.Fat;
+import ureca.muneobe.common.vector.service.FatService;
 
 import java.util.List;
 
@@ -17,12 +17,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MobilePlanController {
 
-    private final MobilePlanService mobilePlanService;
+    private final FatService fatService;
 
     @PostMapping("/search")
-    public ResponseEntity<List<MobilePlan>> searchByText(@RequestBody RecommendationRequest request) {
+    public ResponseEntity<List<Fat>> searchByText(@RequestBody RecommendationRequest request) {
         String userQuery = request.getQuery();
-        List<MobilePlan> similarPlans = mobilePlanService.search(userQuery);
+        List<Fat> similarPlans = fatService.search(userQuery);
         return ResponseEntity.ok(similarPlans);
     }
 
@@ -34,7 +34,7 @@ public class MobilePlanController {
     @PostMapping("/generate")
     public ResponseEntity<String> generateEmbeddings() {
         try {
-            mobilePlanService.generateAndSaveAllNullEmbeddings();
+            fatService.generateAndSaveAllNullEmbeddings();
             return ResponseEntity.ok("embedding 생성 완료");
         } catch (Exception e) {
             return ResponseEntity
