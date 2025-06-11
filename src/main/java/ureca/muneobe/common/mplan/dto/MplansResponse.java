@@ -11,11 +11,11 @@ import org.springframework.data.domain.Page;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class SimpMplansResponse {
-    private Page<SimpMplanResponse> mplanResponses;
+public class MplansResponse {
+    private Page<MplanResponse> mplanResponses;
 
-    public static SimpMplansResponse from(Page<SimpMplanResponse> simpMplansResponse){
-        return SimpMplansResponse.builder()
+    public static MplansResponse from(Page<MplanResponse> simpMplansResponse){
+        return MplansResponse.builder()
                 .mplanResponses(simpMplansResponse)
                 .build();
     }
