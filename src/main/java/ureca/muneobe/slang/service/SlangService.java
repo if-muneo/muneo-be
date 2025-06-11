@@ -7,15 +7,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class SlangFilter {
+public class SlangService {
 
     private final SlangHolder slangHolder;
 
-    public int countSlang(String text) {
-        return slangHolder.countSlang(text);
-    }
-
-    public boolean isSafe(String text) {
-        return slangHolder.countSlang(text) == 0;
+    public void resetSlang() {
+        slangHolder.rebuild();
     }
 }
