@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "openai.second")
+@ConfigurationProperties(prefix = "spring.ai.openai.second")
 public class OpenAiSecondPrompt {
     private String model;
     private double temperature;

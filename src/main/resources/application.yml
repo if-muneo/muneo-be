@@ -163,8 +163,8 @@ spring:
           
           {
             "router": "RDB",
-            "reformInput": 재구성한 입력
             "rdb": {
+              "userInput": 사용자 입력
               "mplanCondition":{ // 모바일 요금제 정보
                 "basicDataAmount":{ // 기본 데이터량
                   "baseNumber":{데이터량(Integer)},
@@ -252,6 +252,16 @@ spring:
               "message": "유도 응답"
             }
           }
+      second:
+        model: gpt-4o
+        temperature: 0.3
+        maxTokens: 500
+        prompt: |
+          너는 LG U+ 통신 요금제 상담사야.
+          사용자는 요금제를 추천 혹은 비교하기 위해서 너에게 도움을 요청하고 있어.
+          사용자 입력 값, 사용자가 현재 가입한 상품, 제공 데이터 이렇게
+          세가지 정보를 바탕으로 요금제를 추천 혹은 비교해서 알려줘.
+          말투는 친절하게 부탁해!
 
 server:
   servlet:
