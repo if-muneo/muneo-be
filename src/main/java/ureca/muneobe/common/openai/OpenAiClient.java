@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ureca.muneobe.common.chat.config.openai.OpenAiFirstPrompt;
 import ureca.muneobe.common.chat.config.openai.OpenAiSecondPrompt;
+import ureca.muneobe.common.chat.service.rdb.output.FindingMplan;
 import ureca.muneobe.common.openai.dto.Message;
 import ureca.muneobe.common.openai.dto.OpenAiRequest;
 import ureca.muneobe.common.openai.dto.OpenAiResponse;
@@ -53,7 +54,7 @@ public class OpenAiClient {
     /**
      * 2차 프롬프트 호출
      */
-    public Mono<String> callSecondPrompt(String userMessage, String dbData) {
+    public <T> Mono<String> callSecondPrompt(String userMessage, List<T> dbData) {
         List<Message> messages = List.of(
                 Message.from("system", secondPrompt.getPrompt() + " 활용 데이터 " + dbData),
                 Message.from("user", "사용자 질문: " + userMessage)
