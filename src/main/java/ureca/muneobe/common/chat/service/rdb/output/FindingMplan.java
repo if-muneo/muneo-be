@@ -2,10 +2,16 @@ package ureca.muneobe.common.chat.service.rdb.output;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import ureca.muneobe.common.chat.entity.DataType;
 import ureca.muneobe.common.chat.entity.MplanType;
 import ureca.muneobe.common.chat.entity.Qualification;
 
+@AllArgsConstructor
+@Getter
+@ToString
 public class FindingMplan {
     private String name;
     private Integer basicDataAmount;
