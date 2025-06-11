@@ -28,10 +28,8 @@ public class DefaultAddonService {
     }
 
     private DefaultAddonsResponse getAddonsResponse(PageRequest pageRequest) {
-        Page<DefaultAddon> addons = defaultAddonRepository.findAll(pageRequest);
-        return DefaultAddonsResponse.builder()
-                .addonsResponse(addons.map(DefaultAddonResponse::from))
-                .build();
+        Page<DefaultAddon> defaultAddons = defaultAddonRepository.findAll(pageRequest);
+        return DefaultAddonsResponse.from(defaultAddons);
     }
 
     private DefaultAddon getDefaultAddon(DefaultAddonCreateRequest defaultAddonCreateRequest) {

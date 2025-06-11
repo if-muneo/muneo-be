@@ -9,6 +9,10 @@ import ureca.muneobe.common.chat.entity.Mplan;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MplanCreateResponse {
     private Long id;
-    private Long mplanDetailId;
-    private Long addonId;
+
+    public static MplanCreateResponse from(Mplan mplan) {
+        return MplanCreateResponse.builder()
+                .id(mplan.getId())
+                .build();
+    }
 }

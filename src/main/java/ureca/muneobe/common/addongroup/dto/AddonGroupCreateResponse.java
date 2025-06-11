@@ -9,12 +9,10 @@ import ureca.muneobe.common.chat.entity.AddonGroup;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AddonGroupCreateResponse {
     private Long id;
-    private String addonGroupName;
 
     public static AddonGroupCreateResponse from(AddonGroup addonGroup){
         return AddonGroupCreateResponse.builder()
                 .id(addonGroup.getId())
-                .addonGroupName(addonGroup.getAddonGroupName())
                 .build();
     }
 }

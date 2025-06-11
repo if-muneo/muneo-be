@@ -20,6 +20,15 @@ public class MplanService {
     private final MplanDetailRepository mplanDetailRepository;
     private final AddonGroupRepository addonGroupRepository;
 
+    public MplansResponse findAll(PageRequest pageRequest) {
+        return getMplanResponse(pageRequest);
+    }
+
+    private MplansResponse getMplanResponse(PageRequest pageRequest) {
+        Page<Mplan> mplans = mplanRepository.findAll(pageRequest);
+        return MplansResponse.from(mplans);
+    }
+
     @Transactional
     public MplanCreateResponse save(MplanCreateRequest mplanCreateRequest) {
         Mplan mplan = mplanRepository.save(getMplan(mplanCreateRequest));
@@ -33,6 +42,6 @@ public class MplanService {
     }
 
     private MplanCreateResponse getMplanCreateResponse(Mplan mplan) {
-        MplanCreateResponse
+        return MplanCreateResponse.from(mplan);
     }
 }

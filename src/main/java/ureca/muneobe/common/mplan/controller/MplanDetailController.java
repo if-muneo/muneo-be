@@ -15,7 +15,7 @@ import ureca.muneobe.global.response.ResponseBody;
 public class MplanDetailController {
     private final MplanDetailService mplanDetailService;
 
-    @GetMapping("/mplan-details")
+    @GetMapping("/mplan-detail")
     public ResponseEntity<ResponseBody<MplanDetailsResponse>> readMplanDetails(
             @RequestParam(defaultValue = "0")int page
     ){

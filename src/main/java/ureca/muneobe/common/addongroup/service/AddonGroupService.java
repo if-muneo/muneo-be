@@ -23,6 +23,10 @@ public class AddonGroupService {
         return getAddonGroupsResponse(pageRequest);
     }
 
+    public AddonGroupAddonsResponse findAddons(Long addonGroupId) {
+        return getAddonGroupAddonsResponse(addonGroupId);
+    }
+
     @Transactional
     public AddonGroupCreateResponse save(AddonGroupCreateRequest addonGroupCreateRequest) {
         AddonGroup savedAddonGroup = addonGroupRepository.save(getAddonGroup(addonGroupCreateRequest));
@@ -33,8 +37,12 @@ public class AddonGroupService {
 
     private AddonGroupsResponse getAddonGroupsResponse(PageRequest pageRequest) {
         Page<AddonGroup> addonGroups = addonGroupRepository.findAll(pageRequest);
-        return AddonGroupsResponse.builder().addonGroupsResponse(addonGroups.map(AddonGroupResponse::from))
-                .build();
+        return AddonGroupsResponse.from(addonGroups);
+    }
+
+    private AddonGroupAddonsResponse getAddonGroupAddonsResponse(Long addonGroupId) {
+        List<Addon> addons = addonRepository.findAddonsByAddonGroup(addonGroupRepository.getReferenceById(addonGroupId));
+        return AddonGroupAddonsResponse.from(addons);
     }
 
     private AddonGroup getAddonGroup(AddonGroupCreateRequest addonGroupCreateRequest) {

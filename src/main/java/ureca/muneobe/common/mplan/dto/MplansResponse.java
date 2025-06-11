@@ -6,17 +6,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
+import ureca.muneobe.common.chat.entity.Mplan;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MplansResponse {
-    private Page<MplanResponse> mplanResponses;
+    private Page<MplanResponse> mplansResponse;
 
-    public static MplansResponse from(Page<MplanResponse> simpMplansResponse){
+    public static MplansResponse from(Page<Mplan> mplans){
         return MplansResponse.builder()
-                .mplanResponses(simpMplansResponse)
+                .mplansResponse(mplans.map(MplanResponse::from))
                 .build();
     }
 }
