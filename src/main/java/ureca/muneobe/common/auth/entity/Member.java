@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import ureca.muneobe.common.auth.entity.enums.Category;
 import ureca.muneobe.common.auth.entity.enums.Gender;
 import ureca.muneobe.common.auth.entity.enums.Role;
-import ureca.muneobe.common.common.BaseEntity;
+import ureca.muneobe.global.common.BaseEntity;
 
 @Entity
 @Getter
@@ -33,18 +33,21 @@ public class Member extends BaseEntity {
     private Integer old;
 
     @Column(name = "gender")
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Column(name = "name")
     private String name;
 
     @Column(name = "category")
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     @Column(name = "active_yn")
     private Boolean activeYn;
 
     @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @Builder
