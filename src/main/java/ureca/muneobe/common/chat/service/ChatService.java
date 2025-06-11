@@ -6,8 +6,13 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import ureca.muneobe.common.chat.repository.ChatRedisRepository;
 import ureca.muneobe.common.openai.OpenAiClient;
+import ureca.muneobe.global.exception.GlobalException;
+import ureca.muneobe.global.response.ErrorCode;
 
 import java.util.List;
+
+import static ureca.muneobe.global.response.ErrorCode.CHAT_RESPONSE_ERROR;
+import static ureca.muneobe.global.response.ErrorCode.FIRST_PROMPT_ERROR;
 
 @Slf4j
 @Service
@@ -33,15 +38,15 @@ public class ChatService {
 
         // 3. GPT 1차 프롬프트 호출
         return openAiClient.callFirstPrompt(userMessage, chatLog)
-                .flatMap(intentJson -> {
+                .flatMap(firstPromptResponse -> {
 
                     // (부적절한 질문)
-                    if ("INAPPROPRIATE".equalsIgnoreCase(intentJson.getRouter())) {
+                    if ("INAPPROPRIATE".equalsIgnoreCase(firstPromptResponse.getRouter())) {
                         return Mono.just("부적절한 단어가 감지되었습니다. 다시 질문해주세요.");
                     }
 
                     // 5-1. RDB
-                    if ("RDB".equalsIgnoreCase(intentJson.getRouter())) {
+                    if ("RDB".equalsIgnoreCase(firstPromptResponse.getRouter())) {
 
                         // 데이터 조회
 
@@ -51,7 +56,7 @@ public class ChatService {
                     }
 
                     // 5-2. VECTOR
-                    if ("VECTOR".equalsIgnoreCase(intentJson.getRouter())) {
+                    if ("VECTOR".equalsIgnoreCase(firstPromptResponse.getRouter())) {
 
                         // 데이터 조회
 
@@ -65,8 +70,7 @@ public class ChatService {
 
                 })
                 .onErrorResume(e -> {
-                    log.error("응답 생성 중 예외 발생", e);
-                    return Mono.just("시스템 오류가 발생했어요. 다시 시도해주세요.");
+                    return Mono.error(new GlobalException(CHAT_RESPONSE_ERROR));
                 });
     }
 
