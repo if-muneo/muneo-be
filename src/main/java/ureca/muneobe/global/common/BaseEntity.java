@@ -1,4 +1,4 @@
-package ureca.muneobe.common.common;
+package ureca.muneobe.global.common;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

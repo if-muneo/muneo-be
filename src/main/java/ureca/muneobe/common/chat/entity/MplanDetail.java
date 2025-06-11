@@ -11,15 +11,16 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import ureca.muneobe.common.common.BaseEntity;
+
+import lombok.*;
+import ureca.muneobe.global.common.BaseEntity;
 
 @Entity
 @Table(name = "mplan_detail")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class MplanDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +34,7 @@ public class MplanDetail extends BaseEntity {
     private int dailyData;
 
     @Column(name = "sharing_data")
-    private String sharingData;
+    private int sharingData;
 
     @Column(name = "monthly_price")
     private int monthlyPrice;
@@ -42,7 +43,7 @@ public class MplanDetail extends BaseEntity {
     private int voiceCallVolume;
 
     @Column(name = "text_message")
-    private String textMessage;
+    private boolean textMessage;
 
     @Column(name = "sub_data_speed")
     private int subDataSpeed;
@@ -60,5 +61,6 @@ public class MplanDetail extends BaseEntity {
     private DataType dataType;
 
     @OneToMany(mappedBy = "mplanDetail")
+    @Builder.Default
     private List<Mplan> mplan = new ArrayList<>();
 }
