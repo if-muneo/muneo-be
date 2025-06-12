@@ -29,6 +29,7 @@ public class FatService {
     public void generateAndSaveAllNullEmbeddings() throws IOException, InterruptedException {
         List<Fat> fats = fatRepository.findByEmbeddingFalse();
 
+
         for (Fat fat : fats) {
             List<String> texts = fat.makeDisriptionForEmbedding();
 
