@@ -1,3 +1,88 @@
+<div align="center">
+👥 Team Members
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=Meet%20Our%20Team&fontSize=50&fontColor=fff" />
+<table>
+<tr>
+<th>🏆 팀장</th>
+<th>🧠 Vector Database 팀</th>
+<th>💬 프롬프트 & 채팅팀</th>
+<th>🗄️ RDB 팀</th>
+</tr>
+<tr>
+<td align="center">
+<a href="https://github.com/hjg727">
+<img src="https://avatars.githubusercontent.com/hjg727?s=100" width="100px;" alt="hjg727"/><br/>
+<b>hjg727</b><br/>
+홍정기
+</a>
+</td>
+<td align="center">
+<a href="https://github.com/minsukim9900">
+<img src="https://avatars.githubusercontent.com/minsukim9900?s=80" width="80px;" alt="minsukim9900"/><br/>
+<b>minsukim9900</b><br/>
+김민수
+</a>
+<br/><br/>
+<a href="https://github.com/marineAqu">
+<img src="https://avatars.githubusercontent.com/marineAqu?s=80" width="80px;" alt="marineAqu"/><br/>
+<b>marineAqu</b><br/>
+김도연
+</a>
+</td>
+<td align="center">
+<a href="https://github.com/Jeong-Minkyeong">
+<img src="https://avatars.githubusercontent.com/Jeong-Minkyeong?s=80" width="80px;" alt="Jeong-Minkyeong"/><br/>
+<b>Jeong-Minkyeong</b><br/>
+정민경
+</a>
+<br/><br/>
+<a href="https://github.com/likerhythm">
+<img src="https://avatars.githubusercontent.com/likerhythm?s=80" width="80px;" alt="likerhythm"/><br/>
+<b>likerhythm</b><br/>
+최정민
+</a>
+</td>
+<td align="center">
+<a href="https://github.com/sangyunpark99">
+<img src="https://avatars.githubusercontent.com/sangyunpark99?s=80" width="80px;" alt="sangyunpark99"/><br/>
+<b>sangyunpark99</b><br/>
+박상윤
+</a>
+<br/><br/>
+<a href="https://github.com/chungjeongsu">
+<img src="https://avatars.githubusercontent.com/chungjeongsu?s=80" width="80px;" alt="chungjeongsu"/><br/>
+<b>chungjeongsu</b><br/>
+정지호
+</a>
+</td>
+</tr>
+</table>
+</div>
+
+## 프로젝트 배경
+
+### 문제 인식
+
+현재 LG U+ 챗봇(홀맨)은 대부분 정형화된 응답 스크립트에 의존하고 있으며, 고객의 세부적인 통신 사용 패턴이나 선호도를 반영하지 못하는 룰 기반의 방식을 취하고 있습니다. 이로 인해 고객은 본인에게 적합하지 않은 요금제를 안내받거나, 관련없는 정보를 받는 등 불편을 겪고 있습니다.
+
+### 해결 목표
+
+본 프로젝트는 제시된 요구사항과 더불어 LG U+ 고객 대상 챗봇 서비스를 구현하여, 사용자의 통신 사용 패턴과 선호도를 반영한 맞춤형 요금제 추천과 간단한 질의응답 용례 기능을 제공하는 것을 목표로 합니다.
+
+### 기대 효과
+
+이에 따라 사용자 패턴순는 "나에게 맞는 요금제를 추천받고 싶은 고객"으로 제한하여 설정했으며, 해당 사용자에게 실제로 기존 홀맨의 응답에서 나아가 자연스럽고 정확한 응답을 제공하는 것에 목적이 있습니다.
+
+## ERD
+![image](https://github.com/user-attachments/assets/42f0310c-f8bd-431b-b874-05a7f48a0d7e)
+
+
+## 서비스 요청 흐름도
+
+![image](https://github.com/user-attachments/assets/c4377fa8-2b38-4ee5-a863-6bfdcd91d156)
+
+
+
 ## 기능 소개
 
 ### 1️⃣ 로그인
@@ -86,7 +171,83 @@
 <img src = "https://github.com/user-attachments/assets/6d52cabd-50ac-4104-9b51-adf44a3a202d" width="400" height="300"/>
 <br>
 
+## 🛠️ Tech Stack
 
+#### 📱 Frontend
+<div align="center">
+
+| React | TypeScript |
+|:---:|:---:|
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="60" height="60"/> | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="60" height="60"/> |
+
+</div>
+
+#### 🔧 Backend
+<div align="center">
+
+| Spring Boot | WebFlux | WebSocket | JUnit | JPA | JDBC |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" width="60" height="60"/> | <img src="https://img.shields.io/badge/WebFlux-6DB33F?style=flat&logo=spring&logoColor=white" width="60" height="30"/> | <img src="https://img.shields.io/badge/WebSocket-010101?style=flat&logo=socketdotio&logoColor=white" width="60" height="30"/> | <img src="https://img.shields.io/badge/JUnit-25A162?style=flat&logo=junit5&logoColor=white" width="60" height="30"/> | <img src="https://img.shields.io/badge/JPA-59666C?style=flat&logo=hibernate&logoColor=white" width="60" height="30"/> | <img src="https://img.shields.io/badge/JDBC-007396?style=flat&logo=java&logoColor=white" width="60" height="30"/> |
+
+</div>
+
+#### 🗄️ Database
+<div align="center">
+
+| PostgreSQL | pgvector |
+|:---:|:---:|
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" width="60" height="60"/> | <img src="https://img.shields.io/badge/pgvector-336791?style=flat&logo=postgresql&logoColor=white" width="60" height="30"/> |
+
+</div>
+
+#### ☁️ Infrastructure
+<div align="center">
+
+| Redis | OpenAI API | Docker | AWS EC2 | AWS RDS | AWS CloudFront |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" width="60" height="60"/> | <img src="https://img.shields.io/badge/OpenAI-412991?style=flat&logo=openai&logoColor=white" width="60" height="30"/> | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" width="60" height="60"/> | <img src="https://img.shields.io/badge/AWS_EC2-FF9900?style=flat&logo=amazon-ec2&logoColor=white" width="60" height="30"/> | <img src="https://img.shields.io/badge/AWS_RDS-527FFF?style=flat&logo=amazon-rds&logoColor=white" width="60" height="30"/> | <img src="https://img.shields.io/badge/CloudFront-FF9900?style=flat&logo=amazon-aws&logoColor=white" width="60" height="30"/> |
+
+</div>
+
+
+
+## Team Rule
+
+### 🌿 브랜치 관리
+
+- **기본 구조**: `main` ← `develop` ← `feature/MUN-123-feature-name`
+- **작업 절차**: develop에서 feature 브랜치 생성 → 개발 → PR 생성 → 코드 리뷰 → develop 머지
+- **동기화 원칙**: 작업 시작 전과 푸시 전에 반드시 develop 최신화 후 merge
+- **완료 기간**: 각 feature 브랜치는 1-3일 내 완료, develop 직접 커밋 금지
+
+### 📝 커밋 컨벤션
+
+```
+MUN-[티켓번호] [타입]: [간단한 설명]
+```
+
+- **타입**: `feat`(기능), `fix`(버그), `refactor`(리팩토링), `docs`(문서), `test`(테스트), `chore`(기타)
+- **예시**: `MUN-123 feat: 사용자 인증 기능 구현`
+
+### 🔍 코드 리뷰
+
+- **리뷰어**: 모든 PR에 3명 지정, 24시간 내 리뷰 완료
+- **PR 크기**: 200줄 이하 권장, 효율적인 리뷰를 위한 적절한 단위 유지
+
+### 💻 코딩 컨벤션
+
+- **엔드포인트**: `/v1/api/chat` 형식
+- **클래스명**: PascalCase, 역할별 suffix (`Controller`, `Service`, `Repository`)
+- **메서드명**: camelCase, 의도가 명확한 네이밍
+- **Bean 명명**: camelCase, 소문자 시작
+- **멤버 순서**: 상수 → 인스턴스 변수 → 생성자 → public 메서드 → private 메서드
+
+### ⚡ 개발 원칙
+
+- **레이어 분리**: Controller → Service → Repository 계층 구조 준수
+- **의존성 주입**: `@RequiredArgsConstructor` 활용한 생성자 주입
+- **예외 처리**: 글로벌 예외 핸들러를 통한 일관된 에러 응답
+- **테스트**: 비즈니스 로직에 대한 단위 테스트 필수 작성
 
 
 
