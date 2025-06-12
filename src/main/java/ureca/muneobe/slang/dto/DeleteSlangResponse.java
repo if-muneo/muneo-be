@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 @Getter
 @AllArgsConstructor
-public class AddSlangResponse {
+public class DeleteSlangResponse {
 
     private List<String> failedList;
 }

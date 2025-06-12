@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class RemoveSlangRequest {
+public class DeleteSlangRequest {
 
     private List<String> words;
 }
