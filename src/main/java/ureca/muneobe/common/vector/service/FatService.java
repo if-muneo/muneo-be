@@ -11,6 +11,7 @@ import ureca.muneobe.common.vector.repository.FatRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +30,16 @@ public class FatService {
         for (Fat fat : fats) {
             List<String> texts = fat.makeDisriptionForEmbedding();
 
-            for(String text : texts) {
-                float[] embeddingVector = embeddingSentence.requestEmbeddingFromOpenAI(text);
-                fatJdbcRepository.insertEmbedding(fat.getId(), embeddingVector);
+            try {
+                for(String text : texts) {
+                    float[] embeddingVector = embeddingSentence.requestEmbeddingFromOpenAI(text);
+                    fatJdbcRepository.insertEmbedding(fat.getId(), embeddingVector);
+                }
+
+                fat.setEmbedding(true);
+                fatRepository.save(fat);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }
