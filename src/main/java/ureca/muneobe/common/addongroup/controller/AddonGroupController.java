@@ -29,17 +29,17 @@ public class AddonGroupController {
         return ResponseEntity.ok().body(ResponseBody.success(addonGroupService.findAll(PageRequest.of(page, 10))));
     }
 
-    @GetMapping("/addon-group/{addonGroupId}")
-    public ResponseEntity<ResponseBody<AddonGroupAddonsResponse>> readAddonGroupAddons(
-        @PathVariable(name = "addonGroupId") Long addonGroupId
-    ){
-        return ResponseEntity.ok().body(ResponseBody.success(addonGroupService.findAddons(addonGroupId)));
-    }
-
     @PostMapping("/addon-group")
     public ResponseEntity<ResponseBody<AddonGroupCreateResponse>> createAddonGroup(
             @RequestBody AddonGroupCreateRequest addonGroupCreateRequest
     ){
         return ResponseEntity.ok().body(ResponseBody.success(addonGroupService.save(addonGroupCreateRequest)));
+    }
+
+    @GetMapping("/addon-group/{addonGroupId}")
+    public ResponseEntity<ResponseBody<AddonGroupAddonsResponse>> readAddonGroupAddons(
+            @PathVariable(name = "addonGroupId") Long addonGroupId
+    ){
+        return ResponseEntity.ok().body(ResponseBody.success(addonGroupService.findAddons(addonGroupId)));
     }
 }
