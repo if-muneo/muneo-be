@@ -25,8 +25,11 @@ public enum ErrorCode {
 
     //프롬프트 팀 에러 5000번 때
 
+    // 금칙어 에러 6000번대
+    SLANG_WORDS_REQUIRED(HttpStatus.BAD_REQUEST, 6001, "단어를 입력해야 합니다."),
+
     //demo 에러
-    DEMO_ERROR(HttpStatus.BAD_REQUEST, 9999, "데모 에러입니다.");
+    DEMO_ERROR(HttpStatus.BAD_REQUEST, 9999, "데모 에러입니다.")
     ;
 
     private final HttpStatus status;
