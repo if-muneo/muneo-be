@@ -121,7 +121,7 @@ public class Fat {
      * OO요금제에 대한 description 설명
      */
     private List<String> makeSentencesToDescription() {
-        return new ArrayList<>(List.of(description.split("\\\\")));
+        return new ArrayList<>(List.of(description.split("\\$")));
     }
 
     /**
