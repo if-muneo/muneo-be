@@ -19,7 +19,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/slang")
+@RequestMapping("/v1/slang")
 public class SlangController {
 
     private final SlangService slangService;
