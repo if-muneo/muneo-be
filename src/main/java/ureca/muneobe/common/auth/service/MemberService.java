@@ -23,9 +23,6 @@ public class MemberService {
 
         if (memberOpt.isPresent()) {
             Member member = memberOpt.get();
-            System.out.println("입력된 비밀번호: " + password);
-            System.out.println("저장된 해시: " + member.getPassword());
-            System.out.println("매칭 결과: " + passwordEncoder.matches(password, member.getPassword()));
             if (passwordEncoder.matches(password, member.getPassword())) {
                 return member;
             }
