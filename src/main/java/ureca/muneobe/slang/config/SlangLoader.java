@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ureca.muneobe.common.chat.entity.Slang;
-import ureca.muneobe.slang.AhocorasickTest;
 import ureca.muneobe.slang.SlangRepository;
 
 import java.io.BufferedReader;
@@ -41,7 +40,7 @@ public class SlangLoader {
     }
 
     private static InputStream getInputStream(String fileName) {
-        InputStream is = AhocorasickTest.class
+        InputStream is = SlangLoader.class
                 .getClassLoader()
                 .getResourceAsStream(fileName);
 
