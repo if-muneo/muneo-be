@@ -15,11 +15,11 @@ public class MemberService {
 
     //TODO: 사용자 회원가입할때 직접 기입받을 정보들 수정 예정
 
-    private MemberRepository memberRepository;
-    private PasswordEncoder passwordEncoder;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public Member authenticate(String username, String password) {
-        Optional<Member> memberOpt = memberRepository.findByName(username);
+    public Member authenticate(String email, String password) {
+        Optional<Member> memberOpt = memberRepository.findByEmail(email);
 
         if (memberOpt.isPresent()) {
             Member member = memberOpt.get();
