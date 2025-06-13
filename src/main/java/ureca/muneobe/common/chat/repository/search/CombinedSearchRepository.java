@@ -22,7 +22,7 @@ import static ureca.muneobe.common.chat.repository.search.SearchUtils.*;
 @RequiredArgsConstructor
 public class CombinedSearchRepository implements SearchRepository {
 
-    private final long LIMIT_VALUE = 3L;
+    private static final long LIMIT_VALUE = 3L;
     private final JPAQueryFactory jpaQueryFactory;
     private final QMplan mplan = QMplan.mplan;
     private final QMplanDetail detail = QMplanDetail.mplanDetail;
@@ -31,111 +31,123 @@ public class CombinedSearchRepository implements SearchRepository {
 
     @Override
     public List<FindingMplan> search(final Condition condition) {
+        MplanCondition mcond = condition.getMplanCondition();
+        AddonCondition acond = condition.getAddonCondition();
 
-        final List<Long> planIdsAfterMplan = fetchPlanIdsByMplanCondition(condition.getMplanCondition());
+        boolean hasMplanCond = !isMplanConditionEmpty(mcond);
+        boolean hasAddonCond = !isAddonConditionEmpty(acond);
 
-        if (planIdsAfterMplan != null && planIdsAfterMplan.isEmpty()) {
+        // 둘 다 조건이 없으면 바로 빈 리스트
+        if (!hasMplanCond && !hasAddonCond) {
             return Collections.emptyList();
         }
 
-        final AddonCondition acond = condition.getAddonCondition();
+        // where절 조합용 BooleanBuilder
+        BooleanBuilder whereBuilder = new BooleanBuilder();
 
-        if (!(acond.getPrice().getBaseNumber() == null && acond.getPrice().getSubNumber() == null && acond.getPrice().getOperator() == null
-                && acond.getNames().size() == 0 && acond.getAddonTypes().size() == 0)
-        ) {
+        // 1) MplanCondition이 있으면 predicate 결합
+        if (hasMplanCond) {
+            BooleanBuilder mplanPred = buildPredicateMplan(mcond);
+            whereBuilder.and(mplanPred);
+        }
 
-            final List<Long> addonGroupIds = fetchAddonGroupIdsByCondition(acond);
-
+        // 2) AddonCondition이 있으면, addonGroup.id in (matchingGroupIds) 형태로 where절 추가
+        if (hasAddonCond) {
+            List<Long> addonGroupIds = fetchAddonGroupIdsByCondition(acond);
             if (addonGroupIds.isEmpty()) {
+                // 부가서비스 조건을 만족하는 그룹이 없으면 결과 없음
                 return Collections.emptyList();
             }
-
-            final List<Long> finalPlanIds = fetchPlanIdsByAddonGroupIds(addonGroupIds, planIdsAfterMplan);
-
-            if (finalPlanIds.isEmpty()) {
-                return Collections.emptyList();
-            }
-
-            return fetchAndGroup(finalPlanIds);
+            whereBuilder.and(mplan.addonGroup.id.in(addonGroupIds));
         }
 
-        if (planIdsAfterMplan != null) {
-            return fetchAndGroup(planIdsAfterMplan);
-        }
-
-        return Collections.emptyList();
-    }
-
-    /**
-     * MplanCondition이 주어졌을 때 plan ID 목록 조회
-     * @param mcond MplanCondition; null이면 조건 없음
-     * @return 조건 없음일 때 null, 조건이 있고 결과가 없으면 빈 리스트, 결과가 있으면 ID 리스트
-     */
-    private List<Long> fetchPlanIdsByMplanCondition(final MplanCondition mcond) {
-        if (mcond == null) {
-            return null;
-        }
-
-        final BooleanBuilder mplanPredicate = buildPredicateMplan(mcond);
-
-        return jpaQueryFactory
-                .select(mplan.id)
+        // 3) 최종 조회: join + select + whereBuilder + limit 적용
+        //    SearchUtils.fetchTuples 내부를 사용하신다면, fetchTuples(jpaQueryFactory, whereBuilder, LIMIT_VALUE) 등의 형태로 조정.
+        List<Tuple> tuples = jpaQueryFactory
+                .select(
+                        // 예: mplan.id, mplan.name, detail.monthlyPrice, detail.dataType, addon.name 등
+                        mplan.id,
+                        mplan.name,
+                        detail.monthlyPrice,
+                        detail.dataType,
+                        // 필요시 addon 정보를 groupTuples 단계에서 따로 모으도록 할 수도 있음
+                        // 예: addon.name, addon.addonType, addon.price 등
+                        addon.name,
+                        addon.addonType,
+                        addon.price
+                )
                 .from(mplan)
-                .innerJoin(mplan.mplanDetail, detail)
-                .where(mplanPredicate)
+                .join(mplan.mplanDetail, detail)   // mplan_detail join
+                .leftJoin(mplan.addonGroup, addonGroup)
+                .leftJoin(addonGroup.addon, addon)
+                .where(whereBuilder)
+                .distinct()    // 중복 제거가 필요하면
                 .limit(LIMIT_VALUE)
                 .fetch();
-    }
-
-    /**
-     * addonGroupIds와 MplanCondition 결과(planIdsAfterMplan)를 조합하여 plan ID 조회
-     * @param addonGroupIds 부가서비스 그룹 ID 목록 (빈이 아님)
-     * @param planIdsAfterMplan MplanCondition 결과 ID 목록; null이면 MplanCondition 없음
-     * @return plan ID 목록 (조건에 맞거나 빈 리스트)
-     */
-    private List<Long> fetchPlanIdsByAddonGroupIds(final List<Long> addonGroupIds, final List<Long> planIdsAfterMplan) {
-        if (planIdsAfterMplan != null) {
-            return jpaQueryFactory
-                    .select(mplan.id)
-                    .from(mplan)
-                    .where(mplan.id.in(planIdsAfterMplan)
-                            .and(mplan.addonGroup.id.in(addonGroupIds)))
-                    .distinct()
-                    .limit(LIMIT_VALUE)
-                    .fetch();
-        } else {
-            return jpaQueryFactory
-                    .select(mplan.id)
-                    .from(mplan)
-                    .where(mplan.addonGroup.id.in(addonGroupIds))
-                    .distinct()
-                    .limit(LIMIT_VALUE)
-                    .fetch();
-        }
-    }
-
-    /**
-     * plan ID 목록을 받아서 Tuple 조회 후 FindingMplan DTO로 변환
-     * @param planIds plan ID 목록 (비어 있지 않음을 전제로 호출)
-     * @return FindingMplan 리스트
-     */
-    private List<FindingMplan> fetchAndGroup(final List<Long> planIds) {
-        final List<Tuple> tuples = fetchTuples(jpaQueryFactory, planIds);
+        // 4) Tuple 목록을 FindingMplan DTO로 변환
         return groupTuples(tuples);
     }
 
+    /**
+     * MplanCondition 내부가 실제로 비어있는지 판단.
+     */
+    private boolean isMplanConditionEmpty(MplanCondition mcond) {
+        if (mcond == null) {
+            return true;
+        }
+        // 예: Range 필드가 null 혹은 내부가 모두 null일 때 empty
+        Range monthly = mcond.getMonthlyPrice();
+        if (monthly != null && !isRangeEmpty(monthly)) return false;
+        Range basic = mcond.getBasicDataAmount();
+        if (basic != null && !isRangeEmpty(basic)) return false;
+        Range daily = mcond.getDailyData();
+        if (daily != null && !isRangeEmpty(daily)) return false;
+        Range sharing = mcond.getSharingData();
+        if (sharing != null && !isRangeEmpty(sharing)) return false;
+        Range voice = mcond.getVoiceCallVolume();
+        if (voice != null && !isRangeEmpty(voice)) return false;
+        Range subSpeed = mcond.getSubDataSpeed();
+        if (subSpeed != null && !isRangeEmpty(subSpeed)) return false;
+        // Boolean/enum 필드: null이 아니면 조건으로 간주
+        if (mcond.getTextMessage() != null) return false;
+        if (mcond.getDataType() != null) return false;
+        if (mcond.getMplanType() != null) return false;
+        if (mcond.getQualification() != null) return false;
+        // 필요시 다른 필드도 확인
+        return true;
+    }
+
+    private boolean isRangeEmpty(Range r) {
+        return r.getBaseNumber() == null && r.getSubNumber() == null && r.getOperator() == null;
+    }
 
     /**
-     * AddonCondition으로부터 addonGroup ID 목록 조회
-     * @param cond AddonCondition; names/types/price 조합 조건
-     * @return 조건에 맞는 addonGroup ID 리스트 (조건이 없으면 빈 리스트 또는 null이 아닌 빈 리스트; 호출 측에서 null 처리하지 않음)
+     * AddonCondition 내부가 실제 비어있는지 판단.
+     */
+    private boolean isAddonConditionEmpty(AddonCondition cond) {
+        if (cond == null) {
+            return true;
+        }
+        Range price = cond.getPrice();
+        boolean priceEmpty = (price == null) || isRangeEmpty(price);
+        boolean namesEmpty = (cond.getNames() == null || cond.getNames().isEmpty());
+        boolean typesEmpty = (cond.getAddonTypes() == null || cond.getAddonTypes().isEmpty());
+        return priceEmpty && namesEmpty && typesEmpty;
+    }
+
+    /**
+     * AddonCondition으로부터 addonGroup ID 목록을 조회.
+     * - names만 여러 개이고 types/price 없으면 GROUP BY+HAVING
+     * - names 하나 이상+types/price 섞이면 alias JOIN
+     * - names empty & types/price만 있을 때 OR 방식
+     * - 모두 empty면 빈 리스트
      */
     private List<Long> fetchAddonGroupIdsByCondition(final AddonCondition cond) {
-
         final List<String> names = cond.getNames();
         final List<AddonType> types = cond.getAddonTypes();
         final Range priceRange = cond.getPrice();
 
+        // 1) names 여러 개만 AND 매칭
         if (names != null && names.size() > 1
                 && (types == null || types.isEmpty())
                 && priceRange == null) {
@@ -150,8 +162,9 @@ public class CombinedSearchRepository implements SearchRepository {
                     .fetch();
         }
 
+        // 2) names 하나 이상 OR types/price 섞인 복합
         if (names != null && !names.isEmpty()) {
-            final List<QAddon> aliases = new ArrayList<>(names.size());
+            List<QAddon> aliases = new ArrayList<>(names.size());
             for (int i = 0; i < names.size(); i++) {
                 aliases.add(new QAddon("addonAlias" + i));
             }
@@ -175,8 +188,8 @@ public class CombinedSearchRepository implements SearchRepository {
             }
             return query.where(notNullAll).fetch();
         }
-
-        final BooleanBuilder predicate = new BooleanBuilder();
+        // 3) names empty, types/price만 있을 때 OR
+        BooleanBuilder predicate = new BooleanBuilder();
         if (types != null && !types.isEmpty()) {
             predicate.and(addon.addonType.in(types));
         }
