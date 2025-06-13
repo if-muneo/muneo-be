@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ureca.muneobe.common.vector.embedding.EmbeddingSentence;
 import ureca.muneobe.common.vector.entity.Fat;
+import ureca.muneobe.common.vector.entity.FatEmbedding;
+import ureca.muneobe.common.vector.repository.FatEmbeddingRepository;
 import ureca.muneobe.common.vector.repository.FatJdbcRepository;
 import ureca.muneobe.common.vector.repository.FatRepository;
 
@@ -21,11 +23,11 @@ public class FatService {
     private final FatRepository fatRepository;
     private final FatJdbcRepository fatJdbcRepository;
     private final EmbeddingSentence embeddingSentence;
+    private final FatEmbeddingRepository fatEmbeddingRepository;
 
     @Transactional
     public void generateAndSaveAllNullEmbeddings() throws IOException, InterruptedException {
         List<Fat> fats = fatRepository.findByEmbeddingFalse();
-
 
         for (Fat fat : fats) {
             List<String> texts = fat.makeDisriptionForEmbedding();
@@ -41,6 +43,35 @@ public class FatService {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    @Transactional
+    public void generateAndSaveAllUpdateEmbeddings(Long fat_id) throws IOException, InterruptedException {
+        Optional<Fat> optionalFat = fatRepository.findById(fat_id);
+
+        if (optionalFat.isEmpty()) {
+            System.out.println("id "+fat_id+"는 발견되지 않음.");
+            return;
+        }
+
+        Fat fat = optionalFat.get();
+
+        for(FatEmbedding l : fatEmbeddingRepository.findByFatId(fat_id)) fatEmbeddingRepository.deleteById(l.getId());
+
+        List<String> texts = fat.makeDisriptionForEmbedding();
+
+        try {
+            for(String text : texts) {
+                float[] embeddingVector = embeddingSentence.requestEmbeddingFromOpenAI(text);
+                fatJdbcRepository.insertEmbedding(fat.getId(), embeddingVector);
+            }
+
+            fat.setEmbedding(true);
+            fatRepository.save(fat);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
