@@ -2,10 +2,7 @@ package ureca.muneobe.common.vector.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ureca.muneobe.common.vector.dto.RecommendationRequest;
 import ureca.muneobe.common.vector.entity.Fat;
 import ureca.muneobe.common.vector.service.FatService;
@@ -35,6 +32,23 @@ public class MobilePlanController {
     public ResponseEntity<String> generateEmbeddings() {
         try {
             fatService.generateAndSaveAllNullEmbeddings();
+            return ResponseEntity.ok("embedding 생성 완료");
+        } catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body("임베딩 생성 실패: " + e.getMessage());
+        }
+    }
+
+    /**
+     * POST plans/update/{id}
+     *
+     * update 요청이 들어온 요금제 id에 대해 OpenAI API로 임베딩 생성 후 저장합니다.
+     */
+    @PostMapping("/update/{id}")
+    public ResponseEntity<String> generateUpdateEmbeddings(@PathVariable Long id) {
+        try {
+            fatService.generateAndSaveAllUpdateEmbeddings(id);
             return ResponseEntity.ok("embedding 생성 완료");
         } catch (Exception e) {
             return ResponseEntity
