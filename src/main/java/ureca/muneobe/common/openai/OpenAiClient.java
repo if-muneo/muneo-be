@@ -35,7 +35,7 @@ public class OpenAiClient {
      */
     public Mono<FirstPromptResponse> callFirstPrompt(String userMassage, List<String> chatLog) {
         List<Message> messages = List.of(
-                Message.from("system", firstPrompt.getPrompt()),
+                Message.from("system", firstPrompt.getPrompt() + " 이전 대화기록 " + chatLog ),
                 Message.from("user", userMassage)
         );
 
@@ -54,9 +54,9 @@ public class OpenAiClient {
     /**
      * 2차 프롬프트 호출
      */
-    public <T> Mono<String> callSecondPrompt(String userMessage, List<T> dbData) {
+    public <T> Mono<String> callSecondPrompt(String userMessage, List<T> dbData, List<String> chatLog) {
         List<Message> messages = List.of(
-                Message.from("system", secondPrompt.getPrompt() + " 활용 데이터 " + dbData),
+                Message.from("system", secondPrompt.getPrompt() + " 활용 데이터 " + dbData + " 이전 대화 기록 " + chatLog),
                 Message.from("user", "사용자 질문: " + userMessage)
         );
 

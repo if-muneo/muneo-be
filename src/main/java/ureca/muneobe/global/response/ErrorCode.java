@@ -29,6 +29,11 @@ public enum ErrorCode {
     SECOND_PROMPT_ERROR(HttpStatus.NOT_FOUND, 5002, "2차 프롬프트 에러입니다."),
     CHAT_RESPONSE_ERROR(HttpStatus.NOT_FOUND, 5003, "채팅 응답 생성 중 오류가 발생했습니다."),
 
+    // REDIS 에러 6000번 때
+    REDIS_CHAT_STORE_ERROR(HttpStatus.NOT_FOUND, 6001, "대화 내용 redis 저장 중 요류가 발생했습니다."),
+    REDIS_CHAT_PARSE_ERROR(HttpStatus.NOT_FOUND, 6001, "대화 내용 DB 저장 중 요류가 발생했습니다."),
+
+
     //demo 에러
     DEMO_ERROR(HttpStatus.BAD_REQUEST, 9999, "데모 에러입니다.");
     ;
