@@ -9,9 +9,9 @@ import ureca.muneobe.common.chat.repository.ChatRedisRepository;
 import ureca.muneobe.common.chat.repository.search.CombinedSearchRepository;
 import ureca.muneobe.common.chat.service.rdb.input.Condition;
 import ureca.muneobe.common.openai.OpenAiClient;
+import ureca.muneobe.common.openai.dto.router.DailyResponse;
 import ureca.muneobe.common.openai.dto.router.RdbResponse;
 import ureca.muneobe.common.openai.dto.router.VectorResponse;
-import ureca.muneobe.common.vector.entity.Fat;
 import ureca.muneobe.common.vector.service.FatService;
 import ureca.muneobe.global.exception.GlobalException;
 
@@ -35,6 +35,7 @@ public class ChatService {
      */
     public Mono<String> createChatResponse(String username, String userMessage) {
 
+        long startTime = System.currentTimeMillis(); // ⏱ 시작 시각 기록
         // 0. 금칙어 필터링 (일단 보류)
 
         // 1. 채팅 저장
@@ -46,6 +47,14 @@ public class ChatService {
         // 3. GPT 1차 프롬프트 호출
         return openAiClient.callFirstPrompt(userMessage, chatLog)
                 .flatMap(firstPromptResponse -> {
+
+                    log.info("어디로 갈까요? {}", firstPromptResponse.getRouter());
+
+                    // (부적절한 질문)
+                    if ("DAILY".equalsIgnoreCase(firstPromptResponse.getRouter())) {
+                        DailyResponse dailyResponse = (DailyResponse) firstPromptResponse;
+                        return Mono.just(dailyResponse.getReformInput());
+                    }
 
                     // (부적절한 질문)
                     if ("INAPPROPRIATE".equalsIgnoreCase(firstPromptResponse.getRouter())) {
@@ -82,12 +91,8 @@ public class ChatService {
 
                     // 5-2. VECTOR
                     if ("VECTOR".equalsIgnoreCase(firstPromptResponse.getRouter())) {
-
                         // 데이터 조회
                         VectorResponse response = (VectorResponse) firstPromptResponse;
-
-                        List<Fat> result = fatService.search(response.getReformInput());
-                        System.out.println(result);
                         return Mono.fromCallable(() -> fatService.search(response.getReformInput()))
                                 .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행
                                 .flatMap(plans -> {
@@ -107,6 +112,10 @@ public class ChatService {
                     // 예외 상황 (응답이 비어있거나 등등)
                     return Mono.just("죄송합니다. 다시 질문해주세요.");
 
+                })
+                .doOnSuccess(result -> {
+                    long endTime = System.currentTimeMillis(); // ⏱ 종료 시각
+                    log.info("🔁 Chat 응답 생성 소요 시간: {} ms", (endTime - startTime));
                 })
                 .onErrorResume(e -> Mono.error(new GlobalException(CHAT_RESPONSE_ERROR)));
     }
