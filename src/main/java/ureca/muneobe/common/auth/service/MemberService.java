@@ -23,7 +23,10 @@ public class MemberService {
 
         if (memberOpt.isPresent()) {
             Member member = memberOpt.get();
-            if (passwordEncoder.matches(password, member.getPassword())) {
+//            if (passwordEncoder.matches(password, member.getPassword())) {
+//                return member;
+//            }
+            if (password.equals(member.getPassword())) {
                 return member;
             }
         }
@@ -35,11 +38,11 @@ public class MemberService {
             throw new RuntimeException("이미 존재하는 사용자입니다.");
         }
 
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
+//        String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         Member member = Member.builder()
                 .name(request.getMemberName())
-                .password(encodedPassword)
+                .password(request.getPassword())
                 .phoneNumber(request.getPhoneNumber())
                 .email(request.getEmail())
                 .old(request.getOld())
@@ -48,9 +51,5 @@ public class MemberService {
                 .build();
 
         return memberRepository.save(member);
-    }
-
-    public Member findByMemberName(String name) {
-        return memberRepository.findByName(name).orElse(null);
     }
 }
