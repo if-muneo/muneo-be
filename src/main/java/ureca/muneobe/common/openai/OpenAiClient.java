@@ -8,7 +8,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ureca.muneobe.common.chat.config.openai.OpenAiFirstPrompt;
 import ureca.muneobe.common.chat.config.openai.OpenAiSecondPrompt;
-import ureca.muneobe.common.chat.service.rdb.output.FindingMplan;
 import ureca.muneobe.common.openai.dto.Message;
 import ureca.muneobe.common.openai.dto.OpenAiRequest;
 import ureca.muneobe.common.openai.dto.OpenAiResponse;
@@ -35,7 +34,7 @@ public class OpenAiClient {
      */
     public Mono<FirstPromptResponse> callFirstPrompt(String userMassage, List<String> chatLog) {
         List<Message> messages = List.of(
-                Message.from("system", firstPrompt.getPrompt()),
+                Message.from("system", firstPrompt.getPrompt() + "이전 대화 " + chatLog),
                 Message.from("user", userMassage)
         );
 
