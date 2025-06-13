@@ -89,6 +89,7 @@ public class FatJdbcRepository {
                         SELECT f.*
                         FROM fat_embedding fe
                         JOIN fat f ON fe.fat_id = f.id
+                        GROUP BY fe.fat_id
                         ORDER BY fe.embedding <=> ?
                         LIMIT ?
                     """;
