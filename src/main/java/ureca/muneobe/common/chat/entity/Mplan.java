@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.*;
-import ureca.muneobe.common.mplan.dto.MplanCreateRequest;
+import ureca.muneobe.common.mplan.dto.request.MplanCreateRequest;
 
 @Entity
 @Table(name = "mplan")

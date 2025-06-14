@@ -14,7 +14,7 @@ import java.util.List;
 
 import lombok.*;
 import ureca.muneobe.common.common.BaseEntity;
-import ureca.muneobe.common.mplan.dto.MplanDetailCreateRequest;
+import ureca.muneobe.common.mplan.dto.request.MplanDetailCreateRequest;
 
 @Entity
 @Table(name = "mplan_detail")

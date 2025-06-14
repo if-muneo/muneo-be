@@ -2,7 +2,7 @@ package ureca.muneobe.common.chat.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ureca.muneobe.common.addongroup.dto.AddonCreateRequest;
+import ureca.muneobe.common.addongroup.dto.request.AddonCreateRequest;
 
 @Entity
 @Table(name = "addon")

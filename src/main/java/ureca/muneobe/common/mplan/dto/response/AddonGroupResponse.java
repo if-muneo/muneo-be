@@ -1,11 +1,11 @@
-package ureca.muneobe.common.mplan.dto;
+package ureca.muneobe.common.mplan.dto.response;
 
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ureca.muneobe.common.addongroup.dto.response.AddonGroupAddonsResponse;
 import ureca.muneobe.common.chat.entity.AddonGroup;
 
 @Getter
@@ -15,13 +15,13 @@ import ureca.muneobe.common.chat.entity.AddonGroup;
 public class AddonGroupResponse {
     private Long id;
     private String addonGroupName;
-    private List<AddonGroupAddonResponse> addonGroupAddonsResponse;
+    private AddonGroupAddonsResponse addonGroupAddonsResponse;
 
     public static AddonGroupResponse from(final AddonGroup addonGroup) {
         return AddonGroupResponse.builder()
                 .id(addonGroup.getId())
                 .addonGroupName(addonGroup.getAddonGroupName())
-                .addonGroupAddonsResponse(addonGroup.getAddons())
+                .addonGroupAddonsResponse(AddonGroupAddonsResponse.from(addonGroup.getAddons()))
                 .build();
     }
 }

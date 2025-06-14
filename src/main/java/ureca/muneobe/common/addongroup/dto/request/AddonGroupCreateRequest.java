@@ -1,20 +1,17 @@
-package ureca.muneobe.common.addongroup.dto;
+package ureca.muneobe.common.addongroup.dto.request;
 
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ureca.muneobe.common.chat.entity.AddonType;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class AddonCreateRequest {
-    private Long id;
+public class AddonGroupCreateRequest {
     private String name;
-    private String description;
-    private Integer price;
-    private AddonType addonType;
+    private List<AddonCreateRequest> addonsCreateRequest;
 }

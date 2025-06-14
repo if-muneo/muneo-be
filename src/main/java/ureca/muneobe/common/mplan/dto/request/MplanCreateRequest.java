@@ -1,4 +1,4 @@
-package ureca.muneobe.common.mplan.dto;
+package ureca.muneobe.common.mplan.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

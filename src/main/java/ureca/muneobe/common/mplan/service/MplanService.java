@@ -6,12 +6,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ureca.muneobe.common.addongroup.repository.AddonGroupRepository;
+import ureca.muneobe.common.auth.entity.enums.Role;
 import ureca.muneobe.common.chat.entity.AddonGroup;
 import ureca.muneobe.common.chat.entity.Mplan;
 import ureca.muneobe.common.chat.entity.MplanDetail;
-import ureca.muneobe.common.mplan.dto.*;
+import ureca.muneobe.common.mplan.dto.request.MplanCreateRequest;
+import ureca.muneobe.common.mplan.dto.response.MplanCreateResponse;
+import ureca.muneobe.common.mplan.dto.response.MplansResponse;
 import ureca.muneobe.common.mplan.repository.MplanDetailRepository;
 import ureca.muneobe.common.mplan.repository.MplanRepository;
+import ureca.muneobe.global.exception.GlobalException;
+import ureca.muneobe.global.response.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +35,8 @@ public class MplanService {
     }
 
     @Transactional
-    public MplanCreateResponse save(MplanCreateRequest mplanCreateRequest) {
+    public MplanCreateResponse save(MplanCreateRequest mplanCreateRequest, Role role) {
+        if(role == Role.USER) throw new GlobalException(ErrorCode.FORBIDDEN);
         Mplan mplan = mplanRepository.save(getMplan(mplanCreateRequest));
         return getMplanCreateResponse(mplan);
     }

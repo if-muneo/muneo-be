@@ -1,4 +1,4 @@
-package ureca.muneobe.common.addongroup.dto;
+package ureca.muneobe.common.addongroup.dto.response;
 
 import java.util.List;
 import lombok.AccessLevel;
@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ureca.muneobe.common.chat.entity.Addon;
-import ureca.muneobe.common.chat.entity.AddonType;
 
 @Getter
 @Builder

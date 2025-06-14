@@ -1,10 +1,7 @@
-package ureca.muneobe.common.mplan.dto;
+package ureca.muneobe.common.mplan.dto.response;
 
 import lombok.*;
-import ureca.muneobe.common.chat.entity.DataType;
 import ureca.muneobe.common.chat.entity.MplanDetail;
-import ureca.muneobe.common.chat.entity.MplanType;
-import ureca.muneobe.common.chat.entity.Qualification;
 
 @Getter
 @Builder
@@ -13,7 +10,7 @@ import ureca.muneobe.common.chat.entity.Qualification;
 public class MplanDetailCreateResponse {
     private Long id;
 
-    public static MplanDetailCreateResponse from(MplanDetail mplanDetail){
+    public static MplanDetailCreateResponse from(final MplanDetail mplanDetail){
         return MplanDetailCreateResponse.builder()
                 .id(mplanDetail.getId())
                 .build();

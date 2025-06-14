@@ -5,12 +5,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ureca.muneobe.common.addon.dto.DefaultAddonCreateRequest;
-import ureca.muneobe.common.addon.dto.DefaultAddonCreateResponse;
-import ureca.muneobe.common.addon.dto.DefaultAddonResponse;
-import ureca.muneobe.common.addon.dto.DefaultAddonsResponse;
+import ureca.muneobe.common.addon.dto.request.DefaultAddonCreateRequest;
+import ureca.muneobe.common.addon.dto.response.DefaultAddonCreateResponse;
+import ureca.muneobe.common.addon.dto.response.DefaultAddonsResponse;
 import ureca.muneobe.common.addon.entity.DefaultAddon;
 import ureca.muneobe.common.addon.repository.DefaultAddonRepository;
+import ureca.muneobe.common.auth.entity.enums.Role;
+import ureca.muneobe.global.exception.GlobalException;
+import ureca.muneobe.global.response.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +24,8 @@ public class DefaultAddonService {
     }
 
     @Transactional
-    public DefaultAddonCreateResponse save(DefaultAddonCreateRequest defaultAddonCreateRequest) {
+    public DefaultAddonCreateResponse save(DefaultAddonCreateRequest defaultAddonCreateRequest, Role role) {
+        if(role == Role.USER)throw new GlobalException(ErrorCode.FORBIDDEN);
         DefaultAddon savedDefaultAddon = defaultAddonRepository.save(getDefaultAddon(defaultAddonCreateRequest));
         return getDefaultAddonCreateResponse(savedDefaultAddon.getId());
     }

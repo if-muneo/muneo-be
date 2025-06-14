@@ -1,4 +1,4 @@
-package ureca.muneobe.common.addongroup.dto;
+package ureca.muneobe.common.mplan.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ public class AddonGroupAddonResponse {
     private Integer price;
     private AddonType addonType;
 
-    public static AddonGroupAddonResponse from(Addon addon){
+    public static AddonGroupAddonResponse from(final Addon addon){
         return AddonGroupAddonResponse.builder()
                 .id(addon.getId())
                 .name(addon.getName())

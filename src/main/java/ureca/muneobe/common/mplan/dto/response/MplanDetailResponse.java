@@ -1,4 +1,4 @@
-package ureca.muneobe.common.mplan.dto;
+package ureca.muneobe.common.mplan.dto.response;
 
 import lombok.*;
 import ureca.muneobe.common.chat.entity.DataType;
@@ -23,7 +23,7 @@ public class MplanDetailResponse {
     private MplanType mplanType;
     private DataType dataType;
 
-    public static MplanDetailResponse from(MplanDetail mplanDetail){
+    public static MplanDetailResponse from(final MplanDetail mplanDetail){
         return MplanDetailResponse.builder()
                 .id(mplanDetail.getId())
                 .basicDataAmount(mplanDetail.getBasicDataAmount())

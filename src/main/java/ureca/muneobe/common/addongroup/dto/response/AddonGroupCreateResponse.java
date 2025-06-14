@@ -1,4 +1,4 @@
-package ureca.muneobe.common.addongroup.dto;
+package ureca.muneobe.common.addongroup.dto.response;
 
 import lombok.*;
 import ureca.muneobe.common.chat.entity.AddonGroup;

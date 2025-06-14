@@ -1,4 +1,4 @@
-package ureca.muneobe.common.addon.dto;
+package ureca.muneobe.common.addongroup.dto.request;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import ureca.muneobe.common.chat.entity.AddonType;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class DefaultAddonCreateRequest {
+public class AddonCreateRequest {
     private Long id;
     private String name;
     private String description;

@@ -5,11 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ureca.muneobe.common.auth.entity.enums.Role;
 import ureca.muneobe.common.chat.entity.MplanDetail;
-import ureca.muneobe.common.mplan.dto.MplanDetailCreateRequest;
-import ureca.muneobe.common.mplan.dto.MplanDetailCreateResponse;
-import ureca.muneobe.common.mplan.dto.MplanDetailResponse;
-import ureca.muneobe.common.mplan.dto.MplanDetailsResponse;
+import ureca.muneobe.common.mplan.dto.request.MplanDetailCreateRequest;
+import ureca.muneobe.common.mplan.dto.response.MplanDetailCreateResponse;
+import ureca.muneobe.common.mplan.dto.response.MplanDetailResponse;
+import ureca.muneobe.common.mplan.dto.response.MplanDetailsResponse;
 import ureca.muneobe.common.mplan.repository.MplanDetailRepository;
 
 @Service
@@ -22,7 +23,7 @@ public class MplanDetailService {
     }
 
     @Transactional
-    public MplanDetailCreateResponse save(MplanDetailCreateRequest mplanDetailCreateRequest) {
+    public MplanDetailCreateResponse save(MplanDetailCreateRequest mplanDetailCreateRequest, Role role) {
         MplanDetail mplanDetail = mplanDetailRepository.save(getMplanDetail(mplanDetailCreateRequest));
         return getMplanDetailCreateResponse(mplanDetail);
     }

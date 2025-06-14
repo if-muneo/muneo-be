@@ -1,4 +1,4 @@
-package ureca.muneobe.common.mplan.dto;
+package ureca.muneobe.common.mplan.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import ureca.muneobe.common.chat.entity.Mplan;
 @Getter
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class MplansResponse {
     private Page<MplanResponse> mplansResponse;
 

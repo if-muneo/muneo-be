@@ -1,4 +1,4 @@
-package ureca.muneobe.common.addongroup.dto;
+package ureca.muneobe.common.addongroup.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

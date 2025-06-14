@@ -1,5 +1,6 @@
 package ureca.muneobe.common.addon.controller;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -8,10 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ureca.muneobe.common.addon.dto.DefaultAddonCreateRequest;
-import ureca.muneobe.common.addon.dto.DefaultAddonCreateResponse;
-import ureca.muneobe.common.addon.dto.DefaultAddonsResponse;
+import ureca.muneobe.common.addon.dto.request.DefaultAddonCreateRequest;
+import ureca.muneobe.common.addon.dto.response.DefaultAddonCreateResponse;
+import ureca.muneobe.common.addon.dto.response.DefaultAddonsResponse;
 import ureca.muneobe.common.addon.service.DefaultAddonService;
+import ureca.muneobe.common.auth.entity.Member;
+import ureca.muneobe.common.auth.utils.SessionUtil;
 import ureca.muneobe.global.response.ResponseBody;
 
 @RestController
@@ -19,17 +22,19 @@ import ureca.muneobe.global.response.ResponseBody;
 public class DefaultAddonController {
     private final DefaultAddonService addonService;
 
-    @GetMapping("/addon")
+    @GetMapping("/v1/addon")
     public ResponseEntity<ResponseBody<DefaultAddonsResponse>> readAddons(
             @RequestParam(defaultValue = "0") int page
     ) {
-        return ResponseEntity.ok().body(ResponseBody.success(addonService.findAll(PageRequest.of(page, 10))));
+        return ResponseEntity.ok().body(ResponseBody.success(addonService.findAll(PageRequest.of(page, 4))));
     }
 
-    @PostMapping("/addon")
+    @PostMapping("/v1/addon")
     public ResponseEntity<ResponseBody<DefaultAddonCreateResponse>> createAddon(
-            @RequestBody DefaultAddonCreateRequest defaultAddonCreateRequest
-            ){
-        return ResponseEntity.ok().body(ResponseBody.success(addonService.save(defaultAddonCreateRequest)));
+            @RequestBody DefaultAddonCreateRequest defaultAddonCreateRequest,
+            HttpSession httpSession
+    ){
+        return ResponseEntity.ok().body(ResponseBody.success(
+                addonService.save(defaultAddonCreateRequest, SessionUtil.getLoginMember(httpSession).getRole())));
     }
 }
