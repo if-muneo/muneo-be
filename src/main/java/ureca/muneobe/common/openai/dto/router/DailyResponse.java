@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class DailyResponse extends FirstPromptResponse {
-    private String message;
+    private String reformInput;
 }

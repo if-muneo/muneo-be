@@ -15,7 +15,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws") // 핸드셰이크를 수행하는 URL
-                //.addInterceptors(new UserHandshakeInterceptor())
+                .addInterceptors(new UserHandshakeInterceptor())
                 .setHandshakeHandler(new CustomHandshakeHandler())
                 .setAllowedOriginPatterns("*") // 프론트엔드의 origin에 상관없이 /muneo-chat 엔드 포인트에 접근 가능
                 .withSockJS(); // 브라우저가 websocket을 지원하지 않거나 네트워크 환경상 websocket 연결이 불가능할 때

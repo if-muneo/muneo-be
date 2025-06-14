@@ -1,14 +1,21 @@
 package ureca.muneobe.common.chat.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import ureca.muneobe.common.auth.entity.Member;
+import ureca.muneobe.common.auth.respository.MemberRepository;
+import ureca.muneobe.common.chat.entity.Chat;
+import ureca.muneobe.common.chat.entity.ChatType;
 import ureca.muneobe.common.chat.repository.ChatRedisRepository;
+import ureca.muneobe.common.chat.repository.ChatRepository;
 import ureca.muneobe.common.chat.repository.search.CombinedSearchRepository;
 import ureca.muneobe.common.chat.service.rdb.input.Condition;
 import ureca.muneobe.common.openai.OpenAiClient;
+import ureca.muneobe.common.openai.dto.router.DailyResponse;
 import ureca.muneobe.common.openai.dto.router.RdbResponse;
 import ureca.muneobe.common.openai.dto.router.VectorResponse;
 import ureca.muneobe.common.vector.entity.Fat;
@@ -29,6 +36,8 @@ public class ChatService {
 
     private final CombinedSearchRepository combinedSearchRepository;
     private final FatService fatService;
+    private final ChatRepository chatRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 채팅 응답 생성
@@ -37,15 +46,20 @@ public class ChatService {
 
         // 0. 금칙어 필터링 (일단 보류)
 
-        // 1. 채팅 저장
-        saveChatToRedis(username, userMessage);
-
-        // 2. 최근 채팅 내역 불러오기
+        // 1. 최근 채팅 내역 불러오기
         List<String> chatLog = getChatForMultiTurn(username);
+
+        // 2. 사용자 채팅 저장
+        saveChatToRedis(username, userMessage, ChatType.REQUEST);
 
         // 3. GPT 1차 프롬프트 호출
         return openAiClient.callFirstPrompt(userMessage, chatLog)
                 .flatMap(firstPromptResponse -> {
+
+                    if ("DAILY".equalsIgnoreCase(firstPromptResponse.getRouter())) {
+                        DailyResponse response = (DailyResponse) firstPromptResponse;
+                        return Mono.just(response.getReformInput());
+                    }
 
                     // (부적절한 질문)
                     if ("INAPPROPRIATE".equalsIgnoreCase(firstPromptResponse.getRouter())) {
@@ -72,8 +86,10 @@ public class ChatService {
                                         return Mono.just("조건에 맞는 요금제가 없습니다.");
                                     }
 
-                                    return openAiClient.callSecondPrompt(userMessage, plans);
+
+                                    return openAiClient.callSecondPrompt(userMessage, plans, chatLog);
                                 })
+                                .doOnNext(answer -> saveChatToRedis(username, answer, ChatType.RESPONSE))
                                 .onErrorResume(e -> {
                                     // 에러 처리
                                     return Mono.just("요금제 검색 또는 2차 프롬프트 호출 중 오류가 발생했습니다.");
@@ -96,8 +112,9 @@ public class ChatService {
                                         return Mono.just("조건에 맞는 요금제가 없습니다.");
                                     }
 
-                                    return openAiClient.callSecondPrompt(userMessage, plans);
+                                    return openAiClient.callSecondPrompt(userMessage, plans, chatLog);
                                 })
+                                .doOnNext(answer -> saveChatToRedis(username, answer, ChatType.RESPONSE))
                                 .onErrorResume(e -> {
                                     // 에러 처리
                                     return Mono.just("요금제 검색 또는 2차 프롬프트 호출 중 오류가 발생했습니다.");
@@ -111,12 +128,11 @@ public class ChatService {
                 .onErrorResume(e -> Mono.error(new GlobalException(CHAT_RESPONSE_ERROR)));
     }
 
-
     /**
-     * 채팅 저장
+     * 채팅 Redis저장
      */
-    private void saveChatToRedis(String username, String userMessage) {
-        chatRedisRepository.saveChat(username, userMessage);
+    private void saveChatToRedis(String username, String userMessage, ChatType chatType) {
+        chatRedisRepository.saveChat(username, userMessage, chatType);
     }
 
     /**
@@ -124,5 +140,23 @@ public class ChatService {
      */
     private List<String> getChatForMultiTurn(String username) {
         return chatRedisRepository.findChat(username);
+    }
+
+
+    /**
+     * 채팅 DB 저장
+     */
+    @Transactional
+    public void saveChatLogToDB(String username) {
+
+        // 유저 정보 가져오기
+        Member member = memberRepository.findByName(username).orElse(null);
+
+        List<Chat> chatLogs = chatRedisRepository.extractChatLogsFromRedis(member);
+
+        if (chatLogs.isEmpty()) return;
+
+        chatRepository.saveAll(chatLogs);
+        chatRedisRepository.clearChat(username);
     }
 }

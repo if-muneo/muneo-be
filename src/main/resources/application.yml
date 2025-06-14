@@ -96,10 +96,10 @@ spring:
           ### RDB > "mplanCondition"
           - name : 요금제 이름
           - price: 월정액과 부가서비스 가격을 합칙 가격
-          - basicDataAmount:  기본 데이터 (예: 20, 단위는 GB)
+          - basicDataAmount:  기본 데이터 (예: 10000, 단위는 MB) ※ 주의할 점: 데이터는 MB단위로 저장되어 있음. GB로 질문이 들어오면 MB크기로 바꿔주어야해
           - sharingData: 공유 데이터 수치 (예: 10)
           - monthlyPrice: 월 정액요금 (예: 55000)
-          - voiceCallVolume: 통화량 (예: 200, 단위는 분 혹은 시간)
+          - voiceCallVolume: 통화량 (예: 200, 단위는 분 혹은 시간) 
           - textMessages: 문자 제공 여부 (true | false)
           - basicBenefits: 기본 제공 혜택 수 (정수)
           - qualification: "ALL" (모든 사용자)
@@ -109,10 +109,10 @@ spring:
                 | "BOY"  (4세 ~ 18세)
                 | "SOLDIER" (군인)
                 | "KID" (0세 ~ 4세)
-          - mplanType: "_5G" | "LTE" 
-          - dataType: "LTE_5G"  (5G_LTE 모바일 요금제) 
+          - mplanType: "LTE_5G"  (5G_LTE 모바일 요금제) 
                 | NUGGET  (USIM/ESIM 전용 모바일 요금제) 
                 | SMART_DEVICE  (스마트기기/테블릿 전용 모바일 요금제)
+           - dataType: "_5G" | "LTE" 
           
           ※ 세부 속성이 의미하는 바는 다음과 같음
           - Integer, Long 등등을 나타내는 수치 데이터 형식
@@ -192,7 +192,7 @@ spring:
                   "operator":{비교 연산자(String)}
                 },
                 "qualification":{Enum값(String)}, // 자격 요건
-                "mplanType":{Enum값(String)}, // (모바일 요금제 타입(5G/LTE), 온라인 전용 요금제(너겟), 태블릿/스마트워치, 듀얼넘버 플러스)
+                "mplanType":{Enum값(String)}, // (모바일 요금제 타입(5G/LTE), 온라인 전용 요금제(NUGGET), 태블릿/스마트워치, 듀얼넘버 플러스)
                 "dataType":{Enum값(String)} // 5G, LTE
               },
               "addonCondition":{ // 부가서비스 정보
@@ -202,11 +202,9 @@ spring:
                   "operator":{비교 연산자(String)}
                 },
                 "names": [ // 부가서비스 이름
-                  {"name" : 이름(String)},
                   ...
                 ],
                 "addonTypes": [ // 부가서비스 타입
-                  {"addonType" : Enum값(String)}, // (데이터, 영상/음악, 통화/문자메시지, 할인/편의, 금융/보안, 안심/보험)
                   ...
                 ]
               },
@@ -251,8 +249,9 @@ spring:
         prompt: |
           너는 LG U+ 통신 요금제 상담사야.
           사용자는 요금제를 추천 혹은 비교하기 위해서 너에게 도움을 요청하고 있어.
-          사용자 입력 값, 사용자가 현재 가입한 상품, 제공 데이터 이렇게
-          세가지 정보를 바탕으로 요금제를 추천 혹은 비교해서 알려줘.
+          사용자 입력 값, 사용자가 현재 가입한 상품, 제공 데이터, 이전 대화 기록 이렇게
+          네 가지 정보를 바탕으로 요금제를 추천 혹은 비교해서 알려줘.
+          사용자 입력 값에 제공 데이터가 관련이 없어보이면 이전 대화 기록을 바탕으로 사용자 질문에 가장 적합한 응답을 해도 돼.
           말투는 친절하게 부탁해!
 
 server:
