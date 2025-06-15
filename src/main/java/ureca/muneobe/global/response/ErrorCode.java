@@ -34,8 +34,8 @@ public enum ErrorCode {
     REDIS_CHAT_PARSE_ERROR(HttpStatus.NOT_FOUND, 6001, "대화 내용 DB 저장 중 요류가 발생했습니다."),
 
 
-    //demo 에러
-    DEMO_ERROR(HttpStatus.BAD_REQUEST, 9999, "데모 에러입니다.");
+    //CRUD 에러 6000번 때
+    NO_MPLAN(HttpStatus.BAD_REQUEST, 6000, "해당 id에 해당하는 mplan이 없습니다.");
     ;
 
     private final HttpStatus status;

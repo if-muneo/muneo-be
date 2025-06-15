@@ -12,14 +12,16 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
+import ureca.muneobe.common.mplan.dto.request.MplanCreateRequest;
 
 @Entity
 @Table(name = "mplan")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Mplan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +44,12 @@ public class Mplan {
 
     @OneToMany(mappedBy = "mplan")
     List<Subscription> subscriptions = new ArrayList<>();
+
+    public static Mplan of(MplanCreateRequest mplanCreateRequest, AddonGroup addonGroup, MplanDetail mplanDetail){
+        return Mplan.builder()
+                .name(mplanCreateRequest.getName())
+                .addonGroup(addonGroup)
+                .mplanDetail(mplanDetail)
+                .build();
+    }
 }

@@ -8,6 +8,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ureca.muneobe.common.chat.config.openai.OpenAiFirstPrompt;
 import ureca.muneobe.common.chat.config.openai.OpenAiSecondPrompt;
+import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
+import ureca.muneobe.common.chat.dto.result.PreProcessResult;
 import ureca.muneobe.common.openai.dto.Message;
 import ureca.muneobe.common.openai.dto.OpenAiRequest;
 import ureca.muneobe.common.openai.dto.OpenAiResponse;
@@ -32,10 +34,10 @@ public class OpenAiClient {
     /**
      * 1차 프롬프트 호출
      */
-    public Mono<FirstPromptResponse> callFirstPrompt(String userMassage, List<String> chatLog) {
+    public Mono<FirstPromptResult> callFirstPrompt(PreProcessResult preProcessResult) {
         List<Message> messages = List.of(
-                Message.from("system", firstPrompt.getPrompt() + " 이전 대화기록 " + chatLog ),
-                Message.from("user", userMassage)
+                Message.from("system", firstPrompt.getPrompt() + " 이전 대화기록 " + preProcessResult.getChatLog()),
+                Message.from("user", preProcessResult.getMessage())
         );
 
         OpenAiRequest request = OpenAiRequest.of(firstPrompt.getModel(), messages, firstPrompt.getTemperature(), firstPrompt.getMaxTokens());
@@ -46,6 +48,7 @@ public class OpenAiClient {
                 .bodyToMono(OpenAiResponse.class)
                 .map(OpenAiResponse::getIntentJson)
                 .map(this::parseIntentJson)
+                .map(firstPromptResponse -> FirstPromptResult.of(firstPromptResponse, preProcessResult.getMessage(), preProcessResult.getChatLog()))
                 .doOnNext(resp -> log.info("1차 응답 IntentJson: {}", resp))
                 .onErrorResume(this::handlePromptError);
     }
@@ -87,7 +90,7 @@ public class OpenAiClient {
     /**
      * Error 핸들러
      */
-    private Mono<FirstPromptResponse> handlePromptError(Throwable e) {
+    private Mono<FirstPromptResult> handlePromptError(Throwable e) {
         // json 에러일 경우
         if (e instanceof GlobalException) {
             return Mono.error(e);

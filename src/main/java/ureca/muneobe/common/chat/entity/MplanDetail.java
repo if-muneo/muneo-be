@@ -11,16 +11,20 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import ureca.muneobe.common.mplan.dto.request.MplanDetailCreateRequest;
 import ureca.muneobe.global.common.BaseEntity;
 
 @Entity
 @Table(name = "mplan_detail")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MplanDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,25 +32,25 @@ public class MplanDetail extends BaseEntity {
     private Long id;
 
     @Column(name = "basic_data_amount")
-    private int basicDataAmount;
+    private Integer basicDataAmount;
 
     @Column(name = "daily_data")
-    private int dailyData;
+    private Integer dailyData;
 
     @Column(name = "sharing_data")
-    private int sharingData;
+    private Integer sharingData;
 
     @Column(name = "monthly_price")
-    private int monthlyPrice;
+    private Integer monthlyPrice;
 
     @Column(name = "voice_call_volume")
-    private int voiceCallVolume;
+    private Integer voiceCallVolume;
 
     @Column(name = "text_message")
-    private boolean textMessage;
+    private Boolean textMessage;
 
     @Column(name = "sub_data_speed")
-    private int subDataSpeed;
+    private Integer subDataSpeed;
 
     @Column(name = "qualification")
     @Enumerated(EnumType.STRING)
@@ -61,6 +65,20 @@ public class MplanDetail extends BaseEntity {
     private DataType dataType;
 
     @OneToMany(mappedBy = "mplanDetail")
-    @Builder.Default
     private List<Mplan> mplan = new ArrayList<>();
+
+    public static MplanDetail from(MplanDetailCreateRequest mplanDetailCreateRequest){
+        return MplanDetail.builder()
+                .basicDataAmount(mplanDetailCreateRequest.getBasicDataAmount())
+                .dailyData(mplanDetailCreateRequest.getDailyData())
+                .sharingData(mplanDetailCreateRequest.getSharingData())
+                .monthlyPrice(mplanDetailCreateRequest.getMonthlyPrice())
+                .voiceCallVolume(mplanDetailCreateRequest.getVoiceCallVolume())
+                .textMessage(mplanDetailCreateRequest.getTextMessage())
+                .subDataSpeed(mplanDetailCreateRequest.getSubDataSpeed())
+                .qualification(mplanDetailCreateRequest.getQualification())
+                .mplanType(mplanDetailCreateRequest.getMplanType())
+                .dataType(mplanDetailCreateRequest.getDataType())
+                .build();
+    }
 }

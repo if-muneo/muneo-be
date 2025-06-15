@@ -7,6 +7,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import ureca.muneobe.common.chat.dto.chat.ChatRequest;
 import ureca.muneobe.common.chat.dto.chat.ChatResponse;
+import ureca.muneobe.common.chat.dto.result.ChatResult;
+import ureca.muneobe.common.chat.entity.ChatType;
 import ureca.muneobe.common.chat.service.ChatService;
 
 import java.security.Principal;
@@ -23,10 +25,8 @@ public class ChatController {
     public void sendMessage(ChatRequest message, Principal principal){
         String memberName = principal.getName();
         String userMessage = message.getContent();
-
-        chatService.createChatResponse(memberName, userMessage)
+        chatService.createChatResponse(ChatResult.of(memberName, userMessage, ChatType.REQUEST))
                 .subscribe(chatBotMessage -> {
-                    // Mono 완료 후 사용자에게 WebSocket 응답 전송
                     simpMessagingTemplate.convertAndSendToUser(
                             memberName,
                             "/queue/public",
