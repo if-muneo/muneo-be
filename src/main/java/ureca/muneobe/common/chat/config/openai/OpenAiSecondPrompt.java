@@ -1,0 +1,17 @@
+package ureca.muneobe.common.chat.config.openai;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+@Getter
+@Setter
+@Component
+@ConfigurationProperties(prefix = "spring.ai.openai.second")
+public class OpenAiSecondPrompt {
+    private String model;
+    private double temperature;
+    private int maxTokens;
+    private String prompt;
+}
