@@ -106,11 +106,19 @@ jobs:
     
     - name: 📤 S3에 JAR 업로드
       run: |
-        aws s3 cp build/libs/*.jar s3://muneo-s3/app-latest.jar
+        # JAR 파일 이름 확인 (build시 생성되는 실제 파일명 사용)
+        JAR_FILE=$(ls build/libs/*.jar | head -1)
+        aws s3 cp $JAR_FILE s3://muneo-s3/app-$(date +%Y%m%d-%H%M%S).jar
+        aws s3 cp $JAR_FILE s3://muneo-s3/app-latest.jar
     
     - name: 🚀 EC2 배포 실행
       run: |
         aws ssm send-command \
           --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
           --document-name "AWS-RunShellScript" \
-          --parameters 'commands=["aws s3 cp s3://muneo-s3/app-latest.jar /home/ubuntu/app.jar"]'
+          --parameters 'commands=[
+            "cd /home/ubuntu/app",
+            "aws s3 cp s3://muneo-s3/app-latest.jar ./app.jar",
+            "pkill -f java || true",
+            "nohup java -jar app.jar -Dspring.profiles.active=dev > app.log 2>&1 &"
+          ]'
