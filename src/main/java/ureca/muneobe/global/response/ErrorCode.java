@@ -20,6 +20,8 @@ public enum ErrorCode {
     //인증 에러 2000번 때
 
     //벡터 팀 에러 3000번 때
+    TOKENIZATION_FAILED(HttpStatus.BAD_REQUEST, 3001, "토큰화가 되지 않았습니다."),
+    NO_SIMILAR_DATA(HttpStatus.NOT_FOUND, 3002, "유사한 데이터를 조회할 수 없습니다."),
 
     //RDB 팀 에러 4000번 때
 
