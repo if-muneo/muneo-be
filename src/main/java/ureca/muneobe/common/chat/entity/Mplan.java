@@ -29,9 +29,6 @@ public class Mplan {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "price")
-    private Integer price;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "addon_group_id")
     private AddonGroup addonGroup;

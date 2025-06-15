@@ -14,9 +14,11 @@ public class CustomHandshakeHandler extends DefaultHandshakeHandler {
                                       WebSocketHandler wsHandler,
                                       Map<String, Object> attributes) {
 
-        Member member = (Member) attributes.get("member");
+        //Member member = (Member) attributes.get("member");
+        Member member = Member.builder().name("박상윤").build();
+
         if (member != null) {
-            return () -> member.getName(); // Principal.getName()에 사용됨
+            return member::getName; // Principal.getName()에 사용됨
         }
 
         return null;

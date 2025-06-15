@@ -13,7 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ureca.muneobe.common.auth.entity.Member;
-import ureca.muneobe.common.common.BaseEntity;
+import ureca.muneobe.global.common.BaseEntity;
 
 @Entity
 @Table(name = "subscription")

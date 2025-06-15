@@ -8,12 +8,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ureca.muneobe.common.chat.config.openai.OpenAiFirstPrompt;
 import ureca.muneobe.common.chat.config.openai.OpenAiSecondPrompt;
-import ureca.muneobe.common.openai.dto.IntentJson;
+import ureca.muneobe.common.chat.service.rdb.output.FindingMplan;
 import ureca.muneobe.common.openai.dto.Message;
 import ureca.muneobe.common.openai.dto.OpenAiRequest;
 import ureca.muneobe.common.openai.dto.OpenAiResponse;
+import ureca.muneobe.common.openai.dto.router.FirstPromptResponse;
+import ureca.muneobe.global.exception.GlobalException;
 
 import java.util.List;
+
+import static ureca.muneobe.global.response.ErrorCode.FIRST_PROMPT_ERROR;
+import static ureca.muneobe.global.response.ErrorCode.JSON_PARSING_ERROR;
 
 @Slf4j
 @Service
@@ -23,45 +28,36 @@ public class OpenAiClient {
     private final WebClient openAiWebClient;
     private final OpenAiFirstPrompt firstPrompt;
     private final OpenAiSecondPrompt secondPrompt;
+    private final ObjectMapper objectMapper;
 
     /**
      * 1차 프롬프트 호출
      */
-    public Mono<IntentJson> callFirstPrompt(String userMassage, List<String> chatLog) {
+    public Mono<FirstPromptResponse> callFirstPrompt(String userMassage, List<String> chatLog) {
         List<Message> messages = List.of(
-                Message.from("system", firstPrompt.getPrompt()),
+                Message.from("system", firstPrompt.getPrompt() + " 이전 대화기록 " + chatLog ),
                 Message.from("user", userMassage)
         );
 
         OpenAiRequest request = OpenAiRequest.of(firstPrompt.getModel(), messages, firstPrompt.getTemperature(), firstPrompt.getMaxTokens());
-
-        log.info(userMassage);
 
         return openAiWebClient.post()
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(OpenAiResponse.class)
                 .map(OpenAiResponse::getIntentJson)
-                .map(content -> {
-                    try {
-                        return new ObjectMapper().readValue(content, IntentJson.class);
-                    } catch (Exception e) {
-                        throw new RuntimeException("JSON 파싱 실패", e);
-                    }
-                }
-               )
+                .map(this::parseIntentJson)
                 .doOnNext(resp -> log.info("1차 응답 IntentJson: {}", resp))
-                .onErrorResume(e -> {
-                    log.error("1차 프롬프트 에러", e);
-                    return Mono.error(e);
-                });
+                .onErrorResume(this::handlePromptError);
     }
 
-    public Mono<String> callSecondPrompt(String userMessage, String dbData) {
+    /**
+     * 2차 프롬프트 호출
+     */
+    public <T> Mono<String> callSecondPrompt(String userMessage, List<T> dbData, List<String> chatLog) {
         List<Message> messages = List.of(
-                Message.from("system", secondPrompt.getPrompt()),
-                Message.from("user", "사용자 질문: " + userMessage),
-                Message.from("user", "참고 데이터: " + dbData)
+                Message.from("system", secondPrompt.getPrompt() + " 활용 데이터 " + dbData + " 이전 대화 기록 " + chatLog),
+                Message.from("user", "사용자 질문: " + userMessage)
         );
 
         OpenAiRequest request = OpenAiRequest.of(secondPrompt.getModel(), messages, secondPrompt.getTemperature(), secondPrompt.getMaxTokens());
@@ -76,5 +72,27 @@ public class OpenAiClient {
                     log.error("2차 프롬프트 에러", e);
                     return Mono.error(e);
                 });
+    }
+
+    /**
+     * 1차 프롬프트 Json 파싱
+     */
+    private FirstPromptResponse parseIntentJson(String content) {
+        try {
+            return objectMapper.readValue(content, FirstPromptResponse.class);
+        } catch (Exception e) {
+            throw new GlobalException(JSON_PARSING_ERROR);
+        }
+    }
+
+    /**
+     * Error 핸들러
+     */
+    private Mono<FirstPromptResponse> handlePromptError(Throwable e) {
+        // json 에러일 경우
+        if (e instanceof GlobalException) {
+            return Mono.error(e);
+        }
+        return Mono.error(new GlobalException(FIRST_PROMPT_ERROR));
     }
 }

@@ -1,0 +1,29 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update  # 개발서버에서는 create 사용 (데이터 초기화 가능)
+    show-sql: true      # 개발서버에서는 SQL 로그 보기
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+
+server:
+  servlet:
+    session:
+      cookie:
+        secure: false  # 개발서버에서는 HTTP 허용
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace
+    org.springframework.transaction: debug
+    ureca: DEBUG
+    org.springframework.test: DEBUG
+    org.springframework.web.socket: DEBUG

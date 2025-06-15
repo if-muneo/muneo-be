@@ -24,6 +24,15 @@ public enum ErrorCode {
     //RDB 팀 에러 4000번 때
 
     //프롬프트 팀 에러 5000번 때
+    JSON_PARSING_ERROR(HttpStatus.NOT_FOUND, 5001, "JSON 파싱을 실패했습니다."),
+    FIRST_PROMPT_ERROR(HttpStatus.NOT_FOUND, 5002, "1차 프롬프트 에러입니다."),
+    SECOND_PROMPT_ERROR(HttpStatus.NOT_FOUND, 5002, "2차 프롬프트 에러입니다."),
+    CHAT_RESPONSE_ERROR(HttpStatus.NOT_FOUND, 5003, "채팅 응답 생성 중 오류가 발생했습니다."),
+
+    // REDIS 에러 6000번 때
+    REDIS_CHAT_STORE_ERROR(HttpStatus.NOT_FOUND, 6001, "대화 내용 redis 저장 중 요류가 발생했습니다."),
+    REDIS_CHAT_PARSE_ERROR(HttpStatus.NOT_FOUND, 6001, "대화 내용 DB 저장 중 요류가 발생했습니다."),
+
 
     // 금칙어 에러 6000번대
     SLANG_WORDS_REQUIRED(HttpStatus.BAD_REQUEST, 6001, "단어를 입력해야 합니다."),

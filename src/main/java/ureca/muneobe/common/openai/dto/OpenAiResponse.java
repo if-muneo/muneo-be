@@ -1,9 +1,11 @@
 package ureca.muneobe.common.openai.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 @JsonIgnoreProperties(ignoreUnknown = true) // 응답의 필요 없는 필드는 무시
 public class OpenAiResponse {
 
@@ -12,7 +14,8 @@ public class OpenAiResponse {
     // 응답의 가장 첫번째 choice의 message.content
     public String getIntentJson() {
         if (choices != null && !choices.isEmpty()) {
-            return choices.get(0).getMessage().getContent();
+            log.info("응답= {}", choices.get(0).getMessage().getContent().replaceAll("```","").replace("json",""));
+            return choices.get(0).getMessage().getContent().replaceAll("```","").replace("json","");
         }
         return "{\"router\": \"NONE\"}";
     }
