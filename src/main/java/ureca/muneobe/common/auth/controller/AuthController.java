@@ -35,7 +35,9 @@ public class AuthController {
 
                 response.put("success", true);
                 response.put("message", "로그인 성공");
-                response.put("user", member.getId());
+                response.put("id", member.getId());
+                response.put("role", member.getRole());
+                response.put("name", member.getName());
 
                 return ResponseEntity.ok(response);
 
@@ -69,9 +71,12 @@ public class AuthController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            Member signup = memberService.signup(signupRequest);
+            Member member = memberService.signup(signupRequest);
             response.put("success", true);
             response.put("message", "회원가입이 완료되었습니다");
+            response.put("id", member.getId());
+            response.put("role", member.getRole());
+            response.put("name", member.getName());
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
