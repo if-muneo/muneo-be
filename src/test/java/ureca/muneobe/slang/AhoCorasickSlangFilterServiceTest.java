@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import ureca.muneobe.slang.service.SlangFilterService;
+import ureca.muneobe.slang.service.AhoCorasickSlangFilterService;
 
 @SpringBootTest
-public class SlangFilterServiceTest {
+public class AhoCorasickSlangFilterServiceTest {
 
     @Autowired
-    SlangFilterService slangFilterService;
+    AhoCorasickSlangFilterService ahoCorasickSlangFilterService;
 
     @Autowired
     ApplicationContext applicationContext;
@@ -31,7 +31,7 @@ public class SlangFilterServiceTest {
     @DisplayName("비속어를 정상적으로 필터링합니다.")
     void filteringSlangTest() {
         String text = "닥쳐";
-        int count = slangFilterService.countSlang(text);
-        Assertions.assertEquals(1, count);
+        boolean isSafe = ahoCorasickSlangFilterService.isSafeContent(text);
+        Assertions.assertFalse(isSafe);
     }
 }
