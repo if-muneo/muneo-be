@@ -5,9 +5,9 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import ureca.muneobe.common.chat.entity.DataType;
-import ureca.muneobe.common.chat.entity.MplanType;
-import ureca.muneobe.common.chat.entity.Qualification;
+import ureca.muneobe.common.mplan.entity.DataType;
+import ureca.muneobe.common.mplan.entity.MplanType;
+import ureca.muneobe.common.mplan.entity.Qualification;
 
 @AllArgsConstructor
 @Getter

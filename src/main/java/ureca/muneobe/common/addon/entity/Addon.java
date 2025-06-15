@@ -1,4 +1,4 @@
-package ureca.muneobe.common.chat.entity;
+package ureca.muneobe.common.addon.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ureca.muneobe.common.addongroup.entity.AddonGroup;
 
 @Entity
 @Table(name = "addon")

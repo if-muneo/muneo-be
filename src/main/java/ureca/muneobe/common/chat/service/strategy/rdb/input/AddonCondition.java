@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import ureca.muneobe.common.chat.entity.AddonType;
+import ureca.muneobe.common.addon.entity.AddonType;
 
 @Getter
 @AllArgsConstructor

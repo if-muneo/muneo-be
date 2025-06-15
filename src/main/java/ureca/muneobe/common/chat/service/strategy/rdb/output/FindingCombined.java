@@ -1,6 +1,6 @@
 package ureca.muneobe.common.chat.service.strategy.rdb.output;
 
-import ureca.muneobe.common.chat.entity.CombinedType;
+import ureca.muneobe.common.combined.CombinedType;
 
 public class FindingCombined {
     private String name;

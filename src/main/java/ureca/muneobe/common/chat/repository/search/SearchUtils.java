@@ -5,6 +5,14 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import ureca.muneobe.common.addon.entity.AddonType;
+import ureca.muneobe.common.addon.entity.QAddon;
+import ureca.muneobe.common.addongroup.entity.QAddonGroup;
+import ureca.muneobe.common.mplan.entity.DataType;
+import ureca.muneobe.common.mplan.entity.MplanType;
+import ureca.muneobe.common.mplan.entity.QMplan;
+import ureca.muneobe.common.mplan.entity.QMplanDetail;
+import ureca.muneobe.common.mplan.entity.Qualification;
 import ureca.muneobe.common.chat.entity.*;
 import ureca.muneobe.common.chat.service.strategy.rdb.input.MplanCondition;
 import ureca.muneobe.common.chat.service.strategy.rdb.input.Range;
@@ -93,7 +101,7 @@ public class SearchUtils {
                 .from(mplan)
                 .innerJoin(mplan.mplanDetail, detail)
                 .leftJoin(mplan.addonGroup, addonGroup)
-                .leftJoin(addonGroup.addon, addon)
+                .leftJoin(addonGroup.addons, addon)
                 .where(mplan.id.in(planIds))
                 .fetch();
     }

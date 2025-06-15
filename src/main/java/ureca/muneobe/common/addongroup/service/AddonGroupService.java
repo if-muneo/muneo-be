@@ -12,8 +12,8 @@ import ureca.muneobe.common.addongroup.dto.response.AddonGroupCreateResponse;
 import ureca.muneobe.common.addongroup.dto.response.AddonGroupsResponse;
 import ureca.muneobe.common.addongroup.repository.AddonGroupRepository;
 import ureca.muneobe.common.auth.entity.enums.Role;
-import ureca.muneobe.common.chat.entity.Addon;
-import ureca.muneobe.common.chat.entity.AddonGroup;
+import ureca.muneobe.common.addon.entity.Addon;
+import ureca.muneobe.common.addongroup.entity.AddonGroup;
 import ureca.muneobe.common.chat.repository.AddonRepository;
 
 import java.util.List;

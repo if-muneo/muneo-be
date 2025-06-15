@@ -1,4 +1,4 @@
-package ureca.muneobe.common.chat.entity;
+package ureca.muneobe.common.addongroup.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import java.util.List;
 import lombok.*;
 import ureca.muneobe.common.addongroup.dto.request.AddonGroupCreateRequest;
+import ureca.muneobe.common.addon.entity.Addon;
 
 @Entity
 @Table(name = "addon_group")

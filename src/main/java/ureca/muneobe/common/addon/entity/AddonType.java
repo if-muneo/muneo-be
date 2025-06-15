@@ -1,4 +1,4 @@
-package ureca.muneobe.common.chat.entity;
+package ureca.muneobe.common.addon.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

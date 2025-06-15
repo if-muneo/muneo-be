@@ -3,9 +3,9 @@ package ureca.muneobe.common.chat.service.strategy.rdb.input;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import ureca.muneobe.common.chat.entity.DataType;
-import ureca.muneobe.common.chat.entity.MplanType;
-import ureca.muneobe.common.chat.entity.Qualification;
+import ureca.muneobe.common.mplan.entity.DataType;
+import ureca.muneobe.common.mplan.entity.MplanType;
+import ureca.muneobe.common.mplan.entity.Qualification;
 
 @Getter
 @AllArgsConstructor

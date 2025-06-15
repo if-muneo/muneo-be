@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ureca.muneobe.common.chat.entity.AddonGroup;
+import ureca.muneobe.common.addongroup.entity.AddonGroup;
 
 @Getter
 @Builder

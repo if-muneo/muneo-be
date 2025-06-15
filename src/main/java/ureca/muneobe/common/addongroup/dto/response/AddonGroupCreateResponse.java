@@ -1,7 +1,7 @@
 package ureca.muneobe.common.addongroup.dto.response;
 
 import lombok.*;
-import ureca.muneobe.common.chat.entity.AddonGroup;
+import ureca.muneobe.common.addongroup.entity.AddonGroup;
 
 @Getter
 @Builder

@@ -11,6 +11,8 @@ import ureca.muneobe.common.chat.service.strategy.rdb.input.MplanCondition;
 import ureca.muneobe.common.chat.service.strategy.rdb.output.FindingMplan;
 
 import java.util.*;
+import ureca.muneobe.common.mplan.entity.QMplan;
+import ureca.muneobe.common.mplan.entity.QMplanDetail;
 
 import static ureca.muneobe.common.chat.repository.search.SearchUtils.*;
 

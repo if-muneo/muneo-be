@@ -1,5 +1,4 @@
-package ureca.muneobe.common.chat.entity;
-
+package ureca.muneobe.common.subscription.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,24 +13,30 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ureca.muneobe.common.auth.entity.Member;
+import ureca.muneobe.common.combined.CombinedGroup;
+import ureca.muneobe.common.mplan.entity.Mplan;
 import ureca.muneobe.global.common.BaseEntity;
 
 @Entity
-@Table(name = "Review")
+@Table(name = "subscription")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review extends BaseEntity {
+public class Subscription extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "content")
-    private String content;
+    @Column(name = "fee")
+    private Integer fee;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "member_id")
     private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "combined_group_id")
+    private CombinedGroup combinedGroup;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mplan_id")

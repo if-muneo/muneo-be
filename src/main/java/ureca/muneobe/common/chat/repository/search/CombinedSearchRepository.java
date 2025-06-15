@@ -5,6 +5,9 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import ureca.muneobe.common.addon.entity.AddonType;
+import ureca.muneobe.common.addon.entity.QAddon;
+import ureca.muneobe.common.addongroup.entity.QAddonGroup;
 import ureca.muneobe.common.chat.entity.*;
 import ureca.muneobe.common.chat.service.strategy.rdb.input.AddonCondition;
 import ureca.muneobe.common.chat.service.strategy.rdb.input.Condition;
@@ -15,6 +18,8 @@ import ureca.muneobe.common.chat.service.strategy.rdb.output.FindingMplan;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import ureca.muneobe.common.mplan.entity.QMplan;
+import ureca.muneobe.common.mplan.entity.QMplanDetail;
 
 import static ureca.muneobe.common.chat.repository.search.SearchUtils.*;
 
@@ -79,7 +84,7 @@ public class CombinedSearchRepository implements SearchRepository {
                 .from(mplan)
                 .join(mplan.mplanDetail, detail)   // mplan_detail join
                 .leftJoin(mplan.addonGroup, addonGroup)
-                .leftJoin(addonGroup.addon, addon)
+                .leftJoin(addonGroup.addons, addon)
                 .where(whereBuilder)
                 .distinct()    // 중복 제거가 필요하면
                 .limit(LIMIT_VALUE)
@@ -156,7 +161,7 @@ public class CombinedSearchRepository implements SearchRepository {
             return jpaQueryFactory
                     .select(addonGroup.id)
                     .from(addonGroup)
-                    .join(addonGroup.addon, addon)
+                    .join(addonGroup.addons, addon)
                     .where(addon.name.in(names))
                     .groupBy(addonGroup.id)
                     .having(addon.name.countDistinct().eq(requiredCount))
@@ -180,7 +185,7 @@ public class CombinedSearchRepository implements SearchRepository {
                 if (priceRange != null) {
                     applyRange(on, a.price, priceRange);
                 }
-                query = query.leftJoin(addonGroup.addon, a).on(on);
+                query = query.leftJoin(addonGroup.addons, a).on(on);
             }
             BooleanBuilder notNullAll = new BooleanBuilder();
             for (QAddon a : aliases) {
@@ -202,7 +207,7 @@ public class CombinedSearchRepository implements SearchRepository {
         return jpaQueryFactory
                 .select(addonGroup.id)
                 .from(addonGroup)
-                .join(addonGroup.addon, addon)
+                .join(addonGroup.addons, addon)
                 .where(predicate)
                 .distinct()
                 .fetch();

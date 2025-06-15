@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
-import ureca.muneobe.common.chat.entity.AddonGroup;
+import ureca.muneobe.common.addongroup.entity.AddonGroup;
 
 @Getter
 @Builder

@@ -1,4 +1,4 @@
-package ureca.muneobe.common.chat.entity;
+package ureca.muneobe.common.combined;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +15,7 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ureca.muneobe.common.subscription.entity.Subscription;
 
 @Entity
 @Table(name = "combined")

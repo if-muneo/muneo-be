@@ -41,7 +41,7 @@ public class ChatService {
                 .subscribeOn(Schedulers.boundedElastic())   //비동기 쓰레드 전환
                 .flatMap(preProcessResult -> openAiClient.callFirstPrompt(preProcessResult))
                 .flatMap(firstPromptResult -> searchAndCallSecondPrompt(firstPromptResult))
-                .onErrorResume(e -> Mono.error(new GlobalException(CHAT_RESPONSE_ERROR)));
+                .onErrorResume(Mono::error);
     }
 
     /**

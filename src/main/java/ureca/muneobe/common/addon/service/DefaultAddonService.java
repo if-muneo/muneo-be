@@ -6,7 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ureca.muneobe.common.addon.dto.request.DefaultAddonCreateRequest;
+import ureca.muneobe.common.addon.dto.request.DefaultAddonSearchRequest;
 import ureca.muneobe.common.addon.dto.response.DefaultAddonCreateResponse;
+import ureca.muneobe.common.addon.dto.response.DefaultAddonResponse;
 import ureca.muneobe.common.addon.dto.response.DefaultAddonsResponse;
 import ureca.muneobe.common.addon.entity.DefaultAddon;
 import ureca.muneobe.common.addon.repository.DefaultAddonRepository;
@@ -30,6 +32,10 @@ public class DefaultAddonService {
         return getDefaultAddonCreateResponse(savedDefaultAddon.getId());
     }
 
+    public DefaultAddonResponse findByName(DefaultAddonSearchRequest defaultAddonSearchRequest) {
+        return getDefaultAddonByName(defaultAddonSearchRequest);
+    }
+
     private DefaultAddonsResponse getAddonsResponse(PageRequest pageRequest) {
         Page<DefaultAddon> defaultAddons = defaultAddonRepository.findAll(pageRequest);
         return DefaultAddonsResponse.from(defaultAddons);
@@ -41,5 +47,11 @@ public class DefaultAddonService {
 
     private DefaultAddonCreateResponse getDefaultAddonCreateResponse(Long id){
         return DefaultAddonCreateResponse.from(id);
+    }
+
+    private DefaultAddonResponse getDefaultAddonByName(DefaultAddonSearchRequest defaultAddonSearchRequest) {
+        DefaultAddon defaultAddon = defaultAddonRepository.findByName(defaultAddonSearchRequest.getName())
+                .orElseThrow(() -> new GlobalException(ErrorCode.DB_ERROR));
+        return DefaultAddonResponse.from(defaultAddon);
     }
 }

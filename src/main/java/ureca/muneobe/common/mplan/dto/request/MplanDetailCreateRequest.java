@@ -1,9 +1,9 @@
 package ureca.muneobe.common.mplan.dto.request;
 
 import lombok.*;
-import ureca.muneobe.common.chat.entity.DataType;
-import ureca.muneobe.common.chat.entity.MplanType;
-import ureca.muneobe.common.chat.entity.Qualification;
+import ureca.muneobe.common.mplan.entity.DataType;
+import ureca.muneobe.common.mplan.entity.MplanType;
+import ureca.muneobe.common.mplan.entity.Qualification;
 
 @Getter
 @Builder

@@ -14,7 +14,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ureca.muneobe.common.addon.dto.request.DefaultAddonCreateRequest;
-import ureca.muneobe.common.chat.entity.AddonType;
 
 @Entity
 @Table(name = "default_addon")

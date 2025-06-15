@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ureca.muneobe.common.addon.dto.request.DefaultAddonCreateRequest;
+import ureca.muneobe.common.addon.dto.request.DefaultAddonSearchRequest;
 import ureca.muneobe.common.addon.dto.response.DefaultAddonCreateResponse;
+import ureca.muneobe.common.addon.dto.response.DefaultAddonResponse;
 import ureca.muneobe.common.addon.dto.response.DefaultAddonsResponse;
 import ureca.muneobe.common.addon.service.DefaultAddonService;
 import ureca.muneobe.common.auth.entity.Member;
@@ -27,6 +29,13 @@ public class DefaultAddonController {
             @RequestParam(defaultValue = "0") int page
     ) {
         return ResponseEntity.ok().body(ResponseBody.success(addonService.findAll(PageRequest.of(page, 4))));
+    }
+
+    @GetMapping("/v1/addon/search")
+    public ResponseEntity<ResponseBody<DefaultAddonResponse>> readAddon(
+            @RequestBody DefaultAddonSearchRequest defaultAddonSearchRequest
+    ){
+        return ResponseEntity.ok().body(ResponseBody.success(addonService.findByName(defaultAddonSearchRequest)));
     }
 
     @PostMapping("/v1/addon")

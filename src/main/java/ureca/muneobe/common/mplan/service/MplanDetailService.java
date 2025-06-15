@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ureca.muneobe.common.auth.entity.enums.Role;
-import ureca.muneobe.common.chat.entity.MplanDetail;
+import ureca.muneobe.common.mplan.entity.MplanDetail;
 import ureca.muneobe.common.mplan.dto.request.MplanDetailCreateRequest;
 import ureca.muneobe.common.mplan.dto.response.MplanDetailCreateResponse;
 import ureca.muneobe.common.mplan.dto.response.MplanDetailResponse;

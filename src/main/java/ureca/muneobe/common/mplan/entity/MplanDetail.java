@@ -1,4 +1,4 @@
-package ureca.muneobe.common.chat.entity;
+package ureca.muneobe.common.mplan.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

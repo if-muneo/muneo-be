@@ -1,12 +1,11 @@
 package ureca.muneobe.common.mplan.dto.response;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
-import ureca.muneobe.common.chat.entity.Mplan;
+import ureca.muneobe.common.mplan.entity.Mplan;
 
 @Getter
 @Builder

@@ -1,4 +1,4 @@
-package ureca.muneobe.common.chat.entity;
+package ureca.muneobe.common.mplan.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.*;
+import ureca.muneobe.common.addongroup.entity.AddonGroup;
+import ureca.muneobe.common.review.entity.Review;
+import ureca.muneobe.common.subscription.entity.Subscription;
 import ureca.muneobe.common.mplan.dto.request.MplanCreateRequest;
 
 @Entity

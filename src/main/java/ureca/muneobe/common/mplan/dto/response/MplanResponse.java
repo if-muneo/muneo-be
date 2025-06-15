@@ -1,16 +1,14 @@
 package ureca.muneobe.common.mplan.dto.response;
 
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ureca.muneobe.common.addongroup.dto.response.AddonGroupsResponse;
-import ureca.muneobe.common.chat.entity.DataType;
-import ureca.muneobe.common.chat.entity.Mplan;
-import ureca.muneobe.common.chat.entity.MplanType;
-import ureca.muneobe.common.chat.entity.Qualification;
+import ureca.muneobe.common.mplan.entity.DataType;
+import ureca.muneobe.common.mplan.entity.Mplan;
+import ureca.muneobe.common.mplan.entity.MplanType;
+import ureca.muneobe.common.mplan.entity.Qualification;
 
 @Getter
 @Builder

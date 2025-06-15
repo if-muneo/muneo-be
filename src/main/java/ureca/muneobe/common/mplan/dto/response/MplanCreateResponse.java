@@ -1,7 +1,7 @@
 package ureca.muneobe.common.mplan.dto.response;
 
 import lombok.*;
-import ureca.muneobe.common.chat.entity.Mplan;
+import ureca.muneobe.common.mplan.entity.Mplan;
 
 @Getter
 @Builder
