@@ -1,4 +1,4 @@
-package ureca.muneobe.common.chat.service.rdb.input;
+package ureca.muneobe.common.chat.service.strategy.rdb.input;
 
 import java.util.List;
 

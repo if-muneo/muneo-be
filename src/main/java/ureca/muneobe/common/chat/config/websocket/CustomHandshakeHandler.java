@@ -1,4 +1,4 @@
-package ureca.muneobe.common.chat;
+package ureca.muneobe.common.chat.config.websocket;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;

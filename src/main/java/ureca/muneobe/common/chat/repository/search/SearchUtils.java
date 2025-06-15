@@ -6,10 +6,10 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import ureca.muneobe.common.chat.entity.*;
-import ureca.muneobe.common.chat.service.rdb.input.MplanCondition;
-import ureca.muneobe.common.chat.service.rdb.input.Range;
-import ureca.muneobe.common.chat.service.rdb.output.FindingAddon;
-import ureca.muneobe.common.chat.service.rdb.output.FindingMplan;
+import ureca.muneobe.common.chat.service.strategy.rdb.input.MplanCondition;
+import ureca.muneobe.common.chat.service.strategy.rdb.input.Range;
+import ureca.muneobe.common.chat.service.strategy.rdb.output.FindingAddon;
+import ureca.muneobe.common.chat.service.strategy.rdb.output.FindingMplan;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

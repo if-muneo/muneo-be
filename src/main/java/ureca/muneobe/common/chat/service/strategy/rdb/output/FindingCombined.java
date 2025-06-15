@@ -1,4 +1,4 @@
-package ureca.muneobe.common.chat.service.rdb.output;
+package ureca.muneobe.common.chat.service.strategy.rdb.output;
 
 import ureca.muneobe.common.chat.entity.CombinedType;
 

@@ -6,9 +6,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ureca.muneobe.common.chat.entity.*;
-import ureca.muneobe.common.chat.service.rdb.input.Condition;
-import ureca.muneobe.common.chat.service.rdb.input.MplanCondition;
-import ureca.muneobe.common.chat.service.rdb.output.FindingMplan;
+import ureca.muneobe.common.chat.service.strategy.rdb.input.Condition;
+import ureca.muneobe.common.chat.service.strategy.rdb.input.MplanCondition;
+import ureca.muneobe.common.chat.service.strategy.rdb.output.FindingMplan;
 
 import java.util.*;
 

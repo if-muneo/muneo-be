@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import ureca.muneobe.common.chat.dto.ChatRequest;
-import ureca.muneobe.common.chat.dto.ChatResponse;
+import ureca.muneobe.common.chat.dto.chat.ChatRequest;
+import ureca.muneobe.common.chat.dto.chat.ChatResponse;
 import ureca.muneobe.common.chat.service.ChatService;
 
 import java.security.Principal;
