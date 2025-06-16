@@ -1,7 +1,7 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: update  # 개발서버에서는 create 사용 (데이터 초기화 가능)
+      ddl-auto: create  # 개발서버에서는 create 사용 (데이터 초기화 가능)
     show-sql: true      # 개발서버에서는 SQL 로그 보기
 
   datasource:
