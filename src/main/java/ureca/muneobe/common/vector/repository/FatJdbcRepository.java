@@ -87,11 +87,13 @@ public class FatJdbcRepository {
 
             String sql = """
                         SELECT f.*
-                        FROM fat_embedding fe
-                        JOIN fat f ON fe.fat_id = f.id
-                        GROUP BY fe.fat_id
-                        ORDER BY fe.embedding <=> ?
-                        LIMIT ?
+                        FROM fat f
+                        WHERE f.id IN(
+                            SELECT fe.fat_id
+                            FROM fat_embedding fe
+                            ORDER BY fe.embedding <=> ?
+                            LIMIT ?
+                        )
                     """;
 
             return jdbcTemplate.query(
