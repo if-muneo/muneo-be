@@ -28,7 +28,7 @@ public class AddonGroupController {
     public ResponseEntity<ResponseBody<AddonGroupsResponse>> readAddons(
             @RequestParam(defaultValue = "0") int page
     ){
-        return ResponseEntity.ok().body(ResponseBody.success(addonGroupService.findAll(PageRequest.of(page, 4))));
+        return ResponseEntity.ok().body(ResponseBody.success(addonGroupService.findAll(PageRequest.of(page, 8))));
     }
 
     @PostMapping("/v1/addon-group")
