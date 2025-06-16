@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import ureca.muneobe.common.chat.entity.ChatType;
 import ureca.muneobe.common.chat.repository.ChatRedisRepository;
 import ureca.muneobe.common.chat.repository.search.CombinedSearchRepository;
 import ureca.muneobe.common.chat.service.rdb.input.Condition;
@@ -130,7 +131,7 @@ public class ChatService {
      * 채팅 저장
      */
     private void saveChatToRedis(String username, String userMessage) {
-        chatRedisRepository.saveChat(username, userMessage);
+        chatRedisRepository.saveChat(username, userMessage, ChatType.REQUEST);
     }
 
     /**
