@@ -31,14 +31,8 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         if (requireLogin(requestURI)) {
             if (!SessionUtil.isLoggedIn(session)) {
-                // AJAX 요청인 경우
-                if (isAjaxRequest(request)) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("{\"error\":\"로그인이 필요합니다\"}");
-                    return false;
-                }
-                // 일반 요청인 경우
-                response.sendRedirect("/login?redirectUrl=" + requestURI);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\":\"로그인이 필요합니다\"}");
                 return false;
             }
 

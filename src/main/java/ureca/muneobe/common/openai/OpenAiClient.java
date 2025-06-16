@@ -8,6 +8,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ureca.muneobe.common.chat.config.openai.OpenAiFirstPrompt;
 import ureca.muneobe.common.chat.config.openai.OpenAiSecondPrompt;
+import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
+import ureca.muneobe.common.chat.dto.result.PreProcessResult;
 import ureca.muneobe.common.openai.dto.Message;
 import ureca.muneobe.common.openai.dto.OpenAiRequest;
 import ureca.muneobe.common.openai.dto.OpenAiResponse;
@@ -32,30 +34,36 @@ public class OpenAiClient {
     /**
      * 1차 프롬프트 호출
      */
-    public Mono<FirstPromptResponse> callFirstPrompt(String userMassage, List<String> chatLog) {
+    public Mono<FirstPromptResult> callFirstPrompt(PreProcessResult preProcessResult) {
         List<Message> messages = List.of(
-                Message.from("system", firstPrompt.getPrompt() + "이전 대화 " + chatLog),
-                Message.from("user", userMassage)
+                Message.from("system", firstPrompt.getPrompt() + " 이전 대화기록 " + preProcessResult.getChatLog()),
+                Message.from("user", preProcessResult.getMessage())
         );
 
         OpenAiRequest request = OpenAiRequest.of(firstPrompt.getModel(), messages, firstPrompt.getTemperature(), firstPrompt.getMaxTokens());
 
-        return openAiWebClient.post()
+        long startTime = System.currentTimeMillis();
+        Mono<FirstPromptResult> firstPromptResultMono = openAiWebClient.post()
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(OpenAiResponse.class)
                 .map(OpenAiResponse::getIntentJson)
                 .map(this::parseIntentJson)
+                .map(firstPromptResponse -> FirstPromptResult.of(firstPromptResponse, preProcessResult.getMessage(), preProcessResult.getChatLog()))
                 .doOnNext(resp -> log.info("1차 응답 IntentJson: {}", resp))
                 .onErrorResume(this::handlePromptError);
+        long endTime = System.currentTimeMillis();
+        log.info("수행 시간(ms): {}", (endTime - startTime));
+
+        return firstPromptResultMono;
     }
 
     /**
      * 2차 프롬프트 호출
      */
-    public <T> Mono<String> callSecondPrompt(String userMessage, List<T> dbData) {
+    public <T> Mono<String> callSecondPrompt(String userMessage, List<T> dbData, List<String> chatLog) {
         List<Message> messages = List.of(
-                Message.from("system", secondPrompt.getPrompt() + " 활용 데이터 " + dbData),
+                Message.from("system", secondPrompt.getPrompt() + " 활용 데이터 " + dbData + " 이전 대화 기록 " + chatLog),
                 Message.from("user", "사용자 질문: " + userMessage)
         );
 
@@ -87,7 +95,7 @@ public class OpenAiClient {
     /**
      * Error 핸들러
      */
-    private Mono<FirstPromptResponse> handlePromptError(Throwable e) {
+    private Mono<FirstPromptResult> handlePromptError(Throwable e) {
         // json 에러일 경우
         if (e instanceof GlobalException) {
             return Mono.error(e);
