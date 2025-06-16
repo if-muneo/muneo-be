@@ -103,15 +103,6 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
-        
-    - name: 🔧 Parameter Store 설정
-      run: |
-        aws ssm put-parameter --name "/muneo/db-url" --value "${{ secrets.DB_URL }}" --type "SecureString" --overwrite
-        aws ssm put-parameter --name "/muneo/db-username" --value "${{ secrets.DB_USERNAME }}" --type "SecureString" --overwrite
-        aws ssm put-parameter --name "/muneo/db-password" --value "${{ secrets.DB_PASSWORD }}" --type "SecureString" --overwrite
-        aws ssm put-parameter --name "/muneo/openai-api-key" --value "${{ secrets.OPENAI_API_KEY }}" --type "SecureString" --overwrite
-    
-    
     
     - name: 📤 S3에 JAR 업로드
       run: |
@@ -122,47 +113,12 @@ jobs:
     
     - name: 🚀 EC2 배포 실행
       run: |
-        # 배포 스크립트 생성
-        cat > deploy.sh << 'EOF'
-        #!/bin/bash
-        cd /home/ubuntu/app
-        aws s3 cp s3://muneo-s3/app-latest.jar ./app.jar
-        pkill -f java || true
-        
-        # Parameter Store에서 환경변수 가져오기
-        export DB_URL=$(aws ssm get-parameter --name /muneo/db-url --with-decryption --query Parameter.Value --output text)
-        export DB_USERNAME=$(aws ssm get-parameter --name /muneo/db-username --with-decryption --query Parameter.Value --output text)
-        export DB_PASSWORD=$(aws ssm get-parameter --name /muneo/db-password --with-decryption --query Parameter.Value --output text)
-        export OPENAI_API_KEY=$(aws ssm get-parameter --name /muneo/openai-api-key --with-decryption --query Parameter.Value --output text)
-        
-        # 환경변수 확인 (디버깅용)
-        echo "DB_URL: $DB_URL"
-        echo "DB_USERNAME: $DB_USERNAME"
-        
-        # Java 애플리케이션 시작
-        nohup java -jar app.jar \
-          -Dspring.profiles.active=dev \
-          -Dspring.datasource.url="$DB_URL" \
-          -Dspring.datasource.username="$DB_USERNAME" \
-          -Dspring.datasource.password="$DB_PASSWORD" \
-          -Dspring.ai.openai.api-key="$OPENAI_API_KEY" \
-          > app.log 2>&1 &
-        
-        echo "Application started with PID: $!"
-        sleep 5
-        ps aux | grep java | grep -v grep
-        EOF
-        
-        # S3에 스크립트 업로드
-        aws s3 cp deploy.sh s3://muneo-s3/deploy.sh
-        
-        # EC2에서 스크립트 실행
         aws ssm send-command \
           --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
           --document-name "AWS-RunShellScript" \
           --parameters 'commands=[
             "cd /home/ubuntu/app",
-            "aws s3 cp s3://muneo-s3/deploy.sh ./deploy.sh",
-            "chmod +x deploy.sh",
-            "./deploy.sh"
+            "aws s3 cp s3://muneo-s3/app-latest.jar ./app.jar",
+            "pkill -f java || true",
+            "source ~/.bashrc && nohup java -jar app.jar -Dspring.profiles.active=dev > app.log 2>&1 &"
           ]'
