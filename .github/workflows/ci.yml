@@ -47,7 +47,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
-    name: 🏗️ 빌드 및 Docker 이미지 생성
+    name: 🏗️ 빌드 이미지 생성
     
     steps:
     - name: 📂 코드 체크아웃
@@ -73,7 +73,7 @@ jobs:
       run: chmod +x ./gradlew
     
     - name: 🏗️ JAR 파일 빌드
-      run: ./gradlew build -x test
+      run: ./gradlew bootJar
     
     - name: 📦 빌드 결과 업로드
       uses: actions/upload-artifact@v4
@@ -103,6 +103,15 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
+        
+    - name: 🔧 Parameter Store 설정
+      run: |
+        aws ssm put-parameter --name "/muneo/db-url" --value "${{ secrets.DB_URL }}" --type "SecureString" --overwrite
+        aws ssm put-parameter --name "/muneo/db-username" --value "${{ secrets.DB_USERNAME }}" --type "SecureString" --overwrite
+        aws ssm put-parameter --name "/muneo/db-password" --value "${{ secrets.DB_PASSWORD }}" --type "SecureString" --overwrite
+        aws ssm put-parameter --name "/muneo/openai-api-key" --value "${{ secrets.OPENAI_API_KEY }}" --type "SecureString" --overwrite
+    
+    
     
     - name: 📤 S3에 JAR 업로드
       run: |
