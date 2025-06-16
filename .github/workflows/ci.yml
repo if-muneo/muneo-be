@@ -129,10 +129,10 @@ jobs:
           "cd /home/ubuntu/app",
           "aws s3 cp s3://muneo-s3/app-latest.jar ./app.jar",
           "pkill -f java || true",
-          "DB_URL=$(aws ssm get-parameter --name /muneo/db-url --with-decryption --query Parameter.Value --output text)",
-          "DB_USERNAME=$(aws ssm get-parameter --name /muneo/db-username --with-decryption --query Parameter.Value --output text)",
-          "DB_PASSWORD=$(aws ssm get-parameter --name /muneo/db-password --with-decryption --query Parameter.Value --output text)",
-          "OPENAI_API_KEY=$(aws ssm get-parameter --name /muneo/openai-api-key --with-decryption --query Parameter.Value --output text)",
-          "nohup java -jar app.jar -Dspring.profiles.active=dev -Dspring.datasource.url=$DB_URL -Dspring.datasource.username=$DB_USERNAME -Dspring.datasource.password=$DB_PASSWORD -Dspring.ai.openai.api-key=$OPENAI_API_KEY > app.log 2>&1 &"
+          "export DB_URL=$(aws ssm get-parameter --name /muneo/db-url --with-decryption --query Parameter.Value --output text)",
+          "export DB_USERNAME=$(aws ssm get-parameter --name /muneo/db-username --with-decryption --query Parameter.Value --output text)", 
+          "export DB_PASSWORD=$(aws ssm get-parameter --name /muneo/db-password --with-decryption --query Parameter.Value --output text)",
+          "export OPENAI_API_KEY=$(aws ssm get-parameter --name /muneo/openai-key --with-decryption --query Parameter.Value --output text)",
+          "nohup java -jar app.jar -Dspring.profiles.active=dev > app.log 2>&1 &"
         ]'
 
