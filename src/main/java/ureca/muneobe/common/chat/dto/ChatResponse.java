@@ -9,4 +9,5 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class ChatResponse implements Serializable{
     private String content;
+
 }

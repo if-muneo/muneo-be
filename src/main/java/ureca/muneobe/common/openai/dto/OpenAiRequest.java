@@ -15,13 +15,15 @@ public class OpenAiRequest {
     private double temperature;
     @JsonProperty("max_tokens")
     private int maxTokens;
+    private boolean stream;
 
-    public static OpenAiRequest of(String model, List<Message> messages, double temperature, int maxTokens){
+    public static OpenAiRequest of(String model, List<Message> messages, double temperature, int maxTokens, boolean stream){
         return OpenAiRequest.builder()
                 .model(model)
                 .messages(messages)
                 .temperature(temperature)
                 .maxTokens(maxTokens)
+                .stream(stream)
                 .build();
     }
 }

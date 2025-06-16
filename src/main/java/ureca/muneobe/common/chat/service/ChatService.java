@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import ureca.muneobe.common.auth.entity.Member;
@@ -42,7 +43,7 @@ public class ChatService {
     /**
      * 채팅 응답 생성
      */
-    public Mono<String> createChatResponse(String username, String userMessage) {
+    public Flux<String> createChatResponse(String username, String userMessage) {
 
         // 0. 금칙어 필터링 (일단 보류)
 
@@ -54,16 +55,16 @@ public class ChatService {
 
         // 3. GPT 1차 프롬프트 호출
         return openAiClient.callFirstPrompt(userMessage, chatLog)
-                .flatMap(firstPromptResponse -> {
+                .flatMapMany(firstPromptResponse -> {
 
                     if ("DAILY".equalsIgnoreCase(firstPromptResponse.getRouter())) {
                         DailyResponse response = (DailyResponse) firstPromptResponse;
-                        return Mono.just(response.getReformInput());
+                        return Flux.just(response.getReformInput());
                     }
 
                     // (부적절한 질문)
                     if ("INAPPROPRIATE".equalsIgnoreCase(firstPromptResponse.getRouter())) {
-                        return Mono.just("부적절한 단어가 감지되었습니다. 다시 질문해주세요.");
+                        return Flux.just("부적절한 단어가 감지되었습니다. 다시 질문해주세요.");
                     }
 
                     // 5-1. RDB
@@ -80,19 +81,17 @@ public class ChatService {
                         // 2차 프롬프트
                         return Mono.fromCallable(() -> combinedSearchRepository.search(condition))
                                 .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행
-                                .flatMap(plans -> {
+                                .flatMapMany(plans -> {
                                     if (plans == null || plans.isEmpty()) {
                                         // 검색 결과가 없을 때의 처리: Mono.empty()로 두거나, 다른 기본 메시지 반환
                                         return Mono.just("조건에 맞는 요금제가 없습니다.");
                                     }
 
-
                                     return openAiClient.callSecondPrompt(userMessage, plans, chatLog);
                                 })
                                 .doOnNext(answer -> saveChatToRedis(username, answer, ChatType.RESPONSE))
                                 .onErrorResume(e -> {
-                                    // 에러 처리
-                                    return Mono.just("요금제 검색 또는 2차 프롬프트 호출 중 오류가 발생했습니다.");
+                                    return Flux.just("요금제 검색 또는 2차 프롬프트 호출 중 오류가 발생했습니다.");
                                 });
                     }
 
@@ -105,27 +104,25 @@ public class ChatService {
                         List<Fat> result = fatService.search(response.getReformInput());
                         System.out.println(result);
                         return Mono.fromCallable(() -> fatService.search(response.getReformInput()))
-                                .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행
-                                .flatMap(plans -> {
+                                .subscribeOn(Schedulers.boundedElastic())
+                                .flatMapMany(plans -> {
                                     if (plans == null || plans.isEmpty()) {
-                                        // 검색 결과가 없을 때의 처리: Mono.empty()로 두거나, 다른 기본 메시지 반환
-                                        return Mono.just("조건에 맞는 요금제가 없습니다.");
+                                        return Flux.just("조건에 맞는 요금제가 없습니다.");
                                     }
-
                                     return openAiClient.callSecondPrompt(userMessage, plans, chatLog);
                                 })
                                 .doOnNext(answer -> saveChatToRedis(username, answer, ChatType.RESPONSE))
                                 .onErrorResume(e -> {
-                                    // 에러 처리
-                                    return Mono.just("요금제 검색 또는 2차 프롬프트 호출 중 오류가 발생했습니다.");
+                                    log.error("VECTOR 응답 중 오류", e);
+                                    return Flux.just("요금제 검색 또는 2차 프롬프트 호출 중 오류가 발생했습니다.");
                                 });
                     }
 
                     // 예외 상황 (응답이 비어있거나 등등)
-                    return Mono.just("죄송합니다. 다시 질문해주세요.");
+                    return Flux.just("죄송합니다. 다시 질문해주세요.");
 
                 })
-                .onErrorResume(e -> Mono.error(new GlobalException(CHAT_RESPONSE_ERROR)));
+                .onErrorResume(e -> Flux.error(new GlobalException(CHAT_RESPONSE_ERROR)));
     }
 
     /**

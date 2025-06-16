@@ -6,10 +6,11 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import ureca.muneobe.common.chat.dto.ChatRequest;
-import ureca.muneobe.common.chat.dto.ChatResponse;
+import ureca.muneobe.common.chat.dto.StreamChatResponse;
 import ureca.muneobe.common.chat.service.ChatService;
 
 import java.security.Principal;
+import java.util.UUID;
 
 @Slf4j
 @Controller
@@ -23,21 +24,27 @@ public class ChatController {
     public void sendMessage(ChatRequest message, Principal principal){
         String memberName = principal.getName();
         String userMessage = message.getContent();
+        String streamId = UUID.randomUUID().toString();
 
         chatService.createChatResponse(memberName, userMessage)
-                .subscribe(chatBotMessage -> {
-                    // Mono 완료 후 사용자에게 WebSocket 응답 전송
+                .subscribe(chatChunk -> {
                     simpMessagingTemplate.convertAndSendToUser(
                             memberName,
                             "/queue/public",
-                            new ChatResponse(chatBotMessage)
+                            new StreamChatResponse(streamId, chatChunk, false) // chunk 단위
                     );
                 }, error -> {
                     log.error("챗봇 응답 생성 실패", error);
                     simpMessagingTemplate.convertAndSendToUser(
                             memberName,
                             "/queue/public",
-                            new ChatResponse("챗봇 응답 중 문제가 발생했어요!")
+                            new StreamChatResponse(streamId, "챗봇 응답 중 문제가 발생했어요!", true)
+                    );
+                }, () -> {
+                    simpMessagingTemplate.convertAndSendToUser(
+                            memberName,
+                            "/queue/public",
+                            new StreamChatResponse(streamId, "", true)
                     );
                 });
     }
