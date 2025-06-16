@@ -133,7 +133,7 @@ jobs:
         export DB_URL=$(aws ssm get-parameter --name /muneo/db-url --with-decryption --query Parameter.Value --output text)
         export DB_USERNAME=$(aws ssm get-parameter --name /muneo/db-username --with-decryption --query Parameter.Value --output text)
         export DB_PASSWORD=$(aws ssm get-parameter --name /muneo/db-password --with-decryption --query Parameter.Value --output text)
-        export OPENAI_API_KEY=$(aws ssm get-parameter --name /muneo/openai-key --with-decryption --query Parameter.Value --output text)
+        export OPENAI_API_KEY=$(aws ssm get-parameter --name /muneo/openai-api-key --with-decryption --query Parameter.Value --output text)
         
         # 환경변수 확인 (디버깅용)
         echo "DB_URL: $DB_URL"
