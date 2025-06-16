@@ -73,6 +73,7 @@ public class ChatService {
                                 .build();
 
                         // 2차 프롬프트
+                        long dbStart = System.currentTimeMillis();
                         return Mono.fromCallable(() -> combinedSearchRepository.search(condition))
                                 .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행
                                 .flatMap(plans -> {
@@ -82,6 +83,10 @@ public class ChatService {
                                     }
 
                                     return openAiClient.callSecondPrompt(userMessage, plans);
+                                })
+                                .doOnSuccess(result -> {
+                                    long dbEnd = System.currentTimeMillis();
+                                    log.info("RDB 쿼리 소요 시간: {} ms", (dbEnd - dbStart));
                                 })
                                 .onErrorResume(e -> {
                                     // 에러 처리
