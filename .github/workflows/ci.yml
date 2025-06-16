@@ -120,6 +120,6 @@ jobs:
             "cd /home/ubuntu/app",
             "aws s3 cp s3://muneo-s3/app-latest.jar ./app.jar",
             "pkill -f java || true",
-            "source /home/ubuntu/.bashrc",
+            "source ~/.bashrc",
             "nohup java -jar app.jar --spring.profiles.active=dev > app.log 2>&1 &"
           ]'
