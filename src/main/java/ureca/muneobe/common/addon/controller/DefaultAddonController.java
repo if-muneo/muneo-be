@@ -4,11 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ureca.muneobe.common.addon.dto.request.DefaultAddonCreateRequest;
 import ureca.muneobe.common.addon.dto.request.DefaultAddonSearchRequest;
 import ureca.muneobe.common.addon.dto.response.DefaultAddonCreateResponse;
@@ -30,11 +26,11 @@ public class DefaultAddonController {
         return ResponseEntity.ok().body(ResponseBody.success(addonService.findAll(PageRequest.of(page, 8))));
     }
 
-    @GetMapping("/v1/addon/search")
+    @GetMapping("/v1/addon/{addonId}")
     public ResponseEntity<ResponseBody<DefaultAddonResponse>> readAddon(
-            @RequestBody DefaultAddonSearchRequest defaultAddonSearchRequest
+            @PathVariable Long addonId
     ){
-        return ResponseEntity.ok().body(ResponseBody.success(addonService.findById(defaultAddonSearchRequest)));
+        return ResponseEntity.ok().body(ResponseBody.success(addonService.findById(addonId)));
     }
 
     @PostMapping("/v1/addon")
