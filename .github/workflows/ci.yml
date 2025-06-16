@@ -112,6 +112,11 @@ jobs:
         aws s3 cp $JAR_FILE s3://muneo-s3/app-latest.jar
     
     - name: 🚀 EC2 배포 실행
+      env:
+        DB_URL: ${{ secrets.DB_URL }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
         aws ssm send-command \
           --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
@@ -120,9 +125,5 @@ jobs:
             "cd /home/ubuntu/app",
             "aws s3 cp s3://muneo-s3/app-latest.jar ./app.jar",
             "pkill -f java || true",
-            "export DB_URL=\"${{ secrets.DB_URL }}\"",
-            "export DB_USERNAME=\"${{ secrets.DB_USERNAME }}\"", 
-            "export DB_PASSWORD=\"${{ secrets.DB_PASSWORD }}\"",
-            "export OPENAI_API_KEY=\"${{ secrets.OPENAI_API_KEY }}\"",
-            "nohup java -jar app.jar -Dspring.profiles.active=dev > app.log 2>&1 &"
+            "nohup java -jar app.jar -Dspring.profiles.active=dev -Dspring.datasource.url='"$DB_URL"' -Dspring.datasource.username='"$DB_USERNAME"' -Dspring.datasource.password='"$DB_PASSWORD"' -Dspring.ai.openai.api-key='"$OPENAI_API_KEY"' > app.log 2>&1 &"
           ]'
