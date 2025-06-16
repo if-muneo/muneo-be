@@ -6,10 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ureca.muneobe.common.chat.entity.*;
-import ureca.muneobe.common.chat.service.rdb.input.AddonCondition;
-import ureca.muneobe.common.chat.service.rdb.input.Condition;
-import ureca.muneobe.common.chat.service.rdb.input.MplanCondition;
-import ureca.muneobe.common.chat.service.rdb.input.Range;
+import ureca.muneobe.common.chat.service.rdb.input.*;
 import ureca.muneobe.common.chat.service.rdb.output.FindingMplan;
 
 import java.util.Collections;
@@ -22,7 +19,9 @@ import static ureca.muneobe.common.chat.repository.search.SearchUtils.*;
 @RequiredArgsConstructor
 public class CombinedSearchRepository implements SearchRepository {
 
-    private static final long LIMIT_VALUE = 3L;
+    private final int COUNT_VALUE = 1;
+    private final String PERCENT = "%";
+    private final long LIMIT_VALUE = 3L;
     private final JPAQueryFactory jpaQueryFactory;
     private final QMplan mplan = QMplan.mplan;
     private final QMplanDetail detail = QMplanDetail.mplanDetail;
@@ -31,32 +30,9 @@ public class CombinedSearchRepository implements SearchRepository {
 
     @Override
     public List<FindingMplan> search(final Condition condition) {
-        MplanCondition mcond = condition.getMplanCondition();
-        AddonCondition acond = condition.getAddonCondition();
+        BooleanBuilder whereBuilder = buildWhereCondition(condition);
+        if (whereBuilder == null) return Collections.emptyList();
 
-        boolean hasMplanCond = !isMplanConditionEmpty(mcond);
-        boolean hasAddonCond = !isAddonConditionEmpty(acond);
-
-        if (!hasMplanCond && !hasAddonCond) {
-            return Collections.emptyList();
-        }
-
-        BooleanBuilder whereBuilder = new BooleanBuilder();
-
-        if (hasMplanCond) {
-            BooleanBuilder mplanPred = buildPredicateMplan(mcond);
-            whereBuilder.and(mplanPred);
-        }
-
-        if (hasAddonCond) {
-            Optional<Long> addonGroupIdOpt = fetchAddonGroupIdByCondition(acond);
-            if (addonGroupIdOpt.isEmpty()) {
-                return Collections.emptyList();
-            }
-            whereBuilder.and(mplan.addonGroup.id.eq(addonGroupIdOpt.get()));
-        }
-
-        // 1. 먼저 mplan.id 리스트 가져오기
         List<Long> planIds = jpaQueryFactory
                 .select(mplan.id)
                 .from(mplan)
@@ -65,6 +41,8 @@ public class CombinedSearchRepository implements SearchRepository {
                 .where(whereBuilder)
                 .limit(LIMIT_VALUE)
                 .fetch();
+
+        if (planIds.isEmpty()) return Collections.emptyList();
 
         List<Tuple> tuples = jpaQueryFactory
                 .select(
@@ -94,62 +72,69 @@ public class CombinedSearchRepository implements SearchRepository {
         return groupTuples(tuples);
     }
 
+    private BooleanBuilder buildWhereCondition(Condition condition) {
+        MplanCondition mcond = condition.getMplanCondition();
+        AddonCondition acond = condition.getAddonCondition();
+
+        boolean hasMplanCond = !isMplanConditionEmpty(mcond);
+        boolean hasAddonCond = !isAddonConditionEmpty(acond);
+
+        if (!hasMplanCond && !hasAddonCond) return null;
+
+        BooleanBuilder whereBuilder = new BooleanBuilder();
+
+        if (hasMplanCond) {
+            whereBuilder.and(buildPredicateMplan(mcond));
+        }
+
+        if (hasAddonCond) {
+            Optional<Long> addonGroupIdOpt = fetchAddonGroupIdByCondition(acond);
+            addonGroupIdOpt.ifPresent(id -> whereBuilder.and(mplan.addonGroup.id.eq(id)));
+            if (addonGroupIdOpt.isEmpty()) return null;
+        }
+
+        return whereBuilder;
+    }
+
     private boolean isMplanConditionEmpty(MplanCondition mcond) {
-        if (mcond == null) {
-            return true;
-        }
+        if (mcond == null) return true;
 
-        Range monthly = mcond.getMonthlyPrice();
-        if (monthly != null && !isRangeEmpty(monthly)) return false;
-        Range basic = mcond.getBasicDataAmount();
-        if (basic != null && !isRangeEmpty(basic)) return false;
-        Range daily = mcond.getDailyData();
-        if (daily != null && !isRangeEmpty(daily)) return false;
-        Range sharing = mcond.getSharingData();
-        if (sharing != null && !isRangeEmpty(sharing)) return false;
-        Range voice = mcond.getVoiceCallVolume();
-        if (voice != null && !isRangeEmpty(voice)) return false;
-        Range subSpeed = mcond.getSubDataSpeed();
-
-        if (subSpeed != null && !isRangeEmpty(subSpeed)) return false;
-        if (mcond.getTextMessage() != null) return false;
-        if (mcond.getDataType() != null) return false;
-        if (mcond.getMplanType() != null) return false;
-        if (mcond.getQualification() != null) return false;
-        return true;
+        return isRangeEmpty(mcond.getMonthlyPrice()) &&
+                isRangeEmpty(mcond.getBasicDataAmount()) &&
+                isRangeEmpty(mcond.getDailyData()) &&
+                isRangeEmpty(mcond.getSharingData()) &&
+                isRangeEmpty(mcond.getVoiceCallVolume()) &&
+                isRangeEmpty(mcond.getSubDataSpeed()) &&
+                mcond.getTextMessage() == null &&
+                mcond.getDataType() == null &&
+                mcond.getMplanType() == null &&
+                mcond.getQualification() == null;
     }
 
-    private boolean isRangeEmpty(Range r) {
-        return r.getBaseNumber() == null && r.getSubNumber() == null && r.getOperator() == null;
-    }
-
-    /**
-     * AddonCondition 내부가 실제 비어있는지 판단.
-     */
     private boolean isAddonConditionEmpty(AddonCondition cond) {
-        if (cond == null) {
-            return true;
-        }
-        Range price = cond.getPrice();
-        boolean priceEmpty = (price == null) || isRangeEmpty(price);
-        boolean namesEmpty = (cond.getNames() == null || cond.getNames().isEmpty());
-        boolean typesEmpty = (cond.getAddonTypes() == null || cond.getAddonTypes().isEmpty());
-        return priceEmpty && namesEmpty && typesEmpty;
+        if (cond == null) return true;
+
+        return isRangeEmpty(cond.getPrice()) &&
+                (cond.getNames() == null || cond.getNames().isEmpty()) &&
+                (cond.getAddonTypes() == null || cond.getAddonTypes().isEmpty());
     }
 
-    /**
-     * AddonCondition으로부터 addonGroup ID 목록을 조회.
-     * - names만 여러 개이고 types/price 없으면 GROUP BY+HAVING
-     * - names 하나 이상+types/price 섞이면 alias JOIN
-     * - names empty & types/price만 있을 때 OR 방식
-     * - 모두 empty면 빈 리스트
-     */
+    private boolean isRangeEmpty(Range range) {
+        return range == null || (range.getBaseNumber() == null &&
+                range.getSubNumber() == null &&
+                range.getOperator() == null);
+    }
 
     private Optional<Long> fetchAddonGroupIdByCondition(final AddonCondition cond) {
         BooleanBuilder predicate = new BooleanBuilder();
 
         if (cond.getNames() != null && !cond.getNames().isEmpty()) {
-            predicate.and(addon.name.in(cond.getNames()));
+            BooleanBuilder likeBuilder = new BooleanBuilder();
+            for (String name : cond.getNames()) {
+                String lowerName = name.toLowerCase();
+                likeBuilder.or(addon.name.like(PERCENT + lowerName + PERCENT));
+            }
+            predicate.and(likeBuilder);
         }
 
         if (cond.getAddonTypes() != null && !cond.getAddonTypes().isEmpty()) {
@@ -160,9 +145,7 @@ public class CombinedSearchRepository implements SearchRepository {
             applyRange(predicate, addon.price, cond.getPrice());
         }
 
-        if (!predicate.hasValue()) {
-            return Optional.empty();
-        }
+        if (!predicate.hasValue()) return Optional.empty();
 
         return Optional.ofNullable(
                 jpaQueryFactory
@@ -171,7 +154,7 @@ public class CombinedSearchRepository implements SearchRepository {
                         .join(addonGroup.addon, addon)
                         .where(predicate)
                         .groupBy(addonGroup.id)
-                        .having(addon.count().goe(1)) // 최소 하나라도 매칭되면
+                        .having(addon.count().goe(COUNT_VALUE))
                         .fetchFirst()
         );
     }
