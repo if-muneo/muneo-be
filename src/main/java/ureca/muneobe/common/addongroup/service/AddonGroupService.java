@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ureca.muneobe.common.addon.entity.DefaultAddon;
+import ureca.muneobe.common.addon.repository.DefaultAddonRepository;
 import ureca.muneobe.common.addongroup.dto.request.AddonCreateRequest;
 import ureca.muneobe.common.addongroup.dto.request.AddonGroupCreateRequest;
 import ureca.muneobe.common.addongroup.dto.response.AddonGroupAddonsResponse;
@@ -25,6 +27,7 @@ import ureca.muneobe.global.response.ErrorCode;
 public class AddonGroupService {
     private final AddonGroupRepository addonGroupRepository;
     private final AddonRepository addonRepository;
+    private final DefaultAddonRepository defaultAddonRepository;
 
     public AddonGroupsResponse findAll(PageRequest pageRequest) {
         return getAddonGroupsResponse(pageRequest);
@@ -58,9 +61,14 @@ public class AddonGroupService {
     }
 
     private List<Addon> getAddons(AddonGroupCreateRequest addonGroupCreateRequest, Long addonGroupId) {
-        List<AddonCreateRequest> addonCreateRequests = addonGroupCreateRequest.getAddonsCreateRequest();
-        return addonCreateRequests.stream().map(addonCreateRequest ->
-            Addon.of(addonCreateRequest, addonGroupRepository.getReferenceById(addonGroupId))).toList();
+        List<DefaultAddon> defaultAddons = defaultAddonRepository.findAllById(getIdList(addonGroupCreateRequest));
+
+        return defaultAddons.stream().map(defaultAddon ->
+            Addon.of(defaultAddon, addonGroupRepository.getReferenceById(addonGroupId))).toList();
+    }
+
+    private List<Long> getIdList(AddonGroupCreateRequest addonGroupCreateRequest) {
+        return addonGroupCreateRequest.getAddonsCreateRequest().stream().map(AddonCreateRequest::getId).toList();
     }
 
     private AddonGroupCreateResponse getAddonGroupCreateResponse(AddonGroup addonGroup) {

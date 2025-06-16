@@ -15,7 +15,6 @@ import ureca.muneobe.common.addon.dto.response.DefaultAddonCreateResponse;
 import ureca.muneobe.common.addon.dto.response.DefaultAddonResponse;
 import ureca.muneobe.common.addon.dto.response.DefaultAddonsResponse;
 import ureca.muneobe.common.addon.service.DefaultAddonService;
-import ureca.muneobe.common.auth.entity.Member;
 import ureca.muneobe.common.auth.utils.SessionUtil;
 import ureca.muneobe.global.response.ResponseBody;
 
@@ -35,7 +34,7 @@ public class DefaultAddonController {
     public ResponseEntity<ResponseBody<DefaultAddonResponse>> readAddon(
             @RequestBody DefaultAddonSearchRequest defaultAddonSearchRequest
     ){
-        return ResponseEntity.ok().body(ResponseBody.success(addonService.findByName(defaultAddonSearchRequest)));
+        return ResponseEntity.ok().body(ResponseBody.success(addonService.findById(defaultAddonSearchRequest)));
     }
 
     @PostMapping("/v1/addon")

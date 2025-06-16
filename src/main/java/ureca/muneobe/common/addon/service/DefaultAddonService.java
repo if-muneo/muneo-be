@@ -32,8 +32,8 @@ public class DefaultAddonService {
         return getDefaultAddonCreateResponse(savedDefaultAddon.getId());
     }
 
-    public DefaultAddonResponse findByName(DefaultAddonSearchRequest defaultAddonSearchRequest) {
-        return getDefaultAddonByName(defaultAddonSearchRequest);
+    public DefaultAddonResponse findById(DefaultAddonSearchRequest defaultAddonSearchRequest) {
+        return getDefaultAddonById(defaultAddonSearchRequest);
     }
 
     private DefaultAddonsResponse getAddonsResponse(PageRequest pageRequest) {
@@ -49,8 +49,8 @@ public class DefaultAddonService {
         return DefaultAddonCreateResponse.from(id);
     }
 
-    private DefaultAddonResponse getDefaultAddonByName(DefaultAddonSearchRequest defaultAddonSearchRequest) {
-        DefaultAddon defaultAddon = defaultAddonRepository.findByName(defaultAddonSearchRequest.getName())
+    private DefaultAddonResponse getDefaultAddonById(DefaultAddonSearchRequest defaultAddonSearchRequest) {
+        DefaultAddon defaultAddon = defaultAddonRepository.findById(defaultAddonSearchRequest.getId())
                 .orElseThrow(() -> new GlobalException(ErrorCode.DB_ERROR));
         return DefaultAddonResponse.from(defaultAddon);
     }

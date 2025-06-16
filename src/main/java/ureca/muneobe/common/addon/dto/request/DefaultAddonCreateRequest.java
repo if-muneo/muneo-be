@@ -12,7 +12,6 @@ import ureca.muneobe.common.addon.entity.AddonType;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DefaultAddonCreateRequest {
-    private Long id;
     private String name;
     private String description;
     private Integer price;

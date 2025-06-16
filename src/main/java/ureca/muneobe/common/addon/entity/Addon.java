@@ -45,21 +45,12 @@ public class Addon {
     @JoinColumn(name = "addon_group_id")
     private AddonGroup addonGroup;
 
-    public static Addon from(AddonCreateRequest addonCreateRequest){
+    public static Addon of(DefaultAddon defaultAddon, AddonGroup addonGroup){
         return Addon.builder()
-                .name(addonCreateRequest.getName())
-                .description(addonCreateRequest.getDescription())
-                .price(addonCreateRequest.getPrice())
-                .addonType(addonCreateRequest.getAddonType())
-                .build();
-    }
-
-    public static Addon of(AddonCreateRequest addonCreateRequest, AddonGroup addonGroup){
-        return Addon.builder()
-                .name(addonCreateRequest.getName())
-                .description(addonCreateRequest.getDescription())
-                .price(addonCreateRequest.getPrice())
-                .addonType(addonCreateRequest.getAddonType())
+                .name(defaultAddon.getName())
+                .description(defaultAddon.getDescription())
+                .price(defaultAddon.getPrice())
+                .addonType(defaultAddon.getAddonType())
                 .addonGroup(addonGroup)
                 .build();
     }

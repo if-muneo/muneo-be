@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DefaultAddonSearchRequest {
-    private String name;
+    private Long id;
 }
