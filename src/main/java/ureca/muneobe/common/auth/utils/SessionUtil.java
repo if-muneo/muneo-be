@@ -1,9 +1,13 @@
 package ureca.muneobe.common.auth.utils;
 
 import jakarta.servlet.http.HttpSession;
+import javax.validation.constraints.Null;
+import org.aspectj.weaver.NewConstructorTypeMunger;
 import org.springframework.stereotype.Component;
 import ureca.muneobe.common.auth.entity.Member;
 import ureca.muneobe.common.auth.entity.enums.Role;
+import ureca.muneobe.global.exception.GlobalException;
+import ureca.muneobe.global.response.ErrorCode;
 
 @Component
 public class SessionUtil {
@@ -16,8 +20,9 @@ public class SessionUtil {
     }
     // 세션에서 로그인 사용자 정보 가져오기
     public static Member getLoginMember(HttpSession session) {
-        if (session == null) return null;
-        return (Member) session.getAttribute(MEMBER_SESSION_KEY);
+        Member member = (Member) session.getAttribute(MEMBER_SESSION_KEY);
+        if(member == null) throw new GlobalException(ErrorCode.UNAUTHORIZED);
+        return member;
     }
 
     // 로그인 여부 확인

@@ -17,14 +17,14 @@ import ureca.muneobe.global.response.ResponseBody;
 public class MplanDetailController {
     private final MplanDetailService mplanDetailService;
 
-    @GetMapping("/mplan-detail")
+    @GetMapping("/v1/mplan-detail")
     public ResponseEntity<ResponseBody<MplanDetailsResponse>> readMplanDetails(
             @RequestParam(defaultValue = "0")int page
     ){
         return ResponseEntity.ok().body(ResponseBody.success(mplanDetailService.findAll(PageRequest.of(page, 4))));
     }
 
-    @PostMapping("/mplan-detail")
+    @PostMapping("/v1/mplan-detail")
     public ResponseEntity<ResponseBody<MplanDetailCreateResponse>> createMplanDetail(
             @RequestBody MplanDetailCreateRequest mplanDetailCreateRequest,
             HttpSession httpSession

@@ -10,7 +10,6 @@ import ureca.muneobe.common.mplan.entity.Qualification;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MplanDetailCreateRequest {
-    private Long id;
     private Integer basicDataAmount;
     private Integer dailyData;
     private Integer sharingData;

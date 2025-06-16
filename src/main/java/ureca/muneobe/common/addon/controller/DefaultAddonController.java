@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ureca.muneobe.common.addon.dto.request.DefaultAddonCreateRequest;
-import ureca.muneobe.common.addon.dto.request.DefaultAddonSearchRequest;
 import ureca.muneobe.common.addon.dto.response.DefaultAddonCreateResponse;
 import ureca.muneobe.common.addon.dto.response.DefaultAddonResponse;
 import ureca.muneobe.common.addon.dto.response.DefaultAddonsResponse;

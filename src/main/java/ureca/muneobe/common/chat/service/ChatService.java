@@ -16,11 +16,8 @@ import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
 import ureca.muneobe.common.chat.service.strategy.RoutingStrategy;
 import ureca.muneobe.common.chat.service.strategy.RoutingStrategyFactory;
 import ureca.muneobe.common.openai.OpenAiClient;
-import ureca.muneobe.global.exception.GlobalException;
 
 import java.util.List;
-
-import static ureca.muneobe.global.response.ErrorCode.CHAT_RESPONSE_ERROR;
 
 @Slf4j
 @Service
@@ -38,7 +35,7 @@ public class ChatService {
      */
     public Mono<String> createChatResponse(ChatResult chatResult) {
         return Mono.fromCallable(()->chatMessagePreProcessor.preProcess(chatResult))
-                .subscribeOn(Schedulers.boundedElastic())   //비동기 쓰레드 전환
+                .subscribeOn(Schedulers.boundedElastic())
                 .flatMap(preProcessResult -> openAiClient.callFirstPrompt(preProcessResult))
                 .flatMap(firstPromptResult -> searchAndCallSecondPrompt(firstPromptResult))
                 .onErrorResume(Mono::error);
