@@ -12,7 +12,7 @@ public class AhoCorasickSlangFilterService implements SlangFilterService {
     private final SlangHolder slangHolder;
 
     @Override
-    public boolean isSafeContent(String text) {
-        return slangHolder.countSlang(text) == 0;
+    public boolean filteringSlang(String text) {
+        return slangHolder.countSlang(text) > 0;
     }
 }
