@@ -47,7 +47,7 @@ public class ChatService {
     public Mono<String> createChatResponse(String username, String userMessage) {
 
         // 0. 금칙어 필터링 (일단 보류)
-        if (slangFilterService.isSafeContent(userMessage)) {
+        if (slangFilterService.filteringSlang(userMessage)) {
             return Mono.just("부적절한 입력입니다.");
         }
         // 1. 최근 채팅 내역 불러오기

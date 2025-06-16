@@ -14,19 +14,19 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 @Slf4j
-@Service
 public class ModerationApiSlangFilterService implements SlangFilterService {
 
     @Value("${spring.ai.openai.api-key}")
     private String apiKey;
 
     @Override
-    public boolean isSafeContent(String content) {
+    public boolean filteringSlang(String content) {
         String json = buildJson(content);
         HttpRequest request = buildRequest(json);
         HttpResponse<String> response = sendRequest(request);
 
-        return getSafe(response.body());
+        log.info("content = {}", content);
+        return findSlang(response.body());
     }
 
     private static String buildJson(String content) {
@@ -58,12 +58,16 @@ public class ModerationApiSlangFilterService implements SlangFilterService {
         return response;
     }
 
-    private boolean getSafe(String body) {
+    private boolean findSlang(String body) {
         ObjectMapper mapper = new ObjectMapper();
-        boolean isSafe;
+        log.info("body = {}", body);
+        boolean isSlang;
         try {
             JsonNode root = mapper.readTree(body);
-            isSafe = !root
+            if (root.get("error") != null) {
+                throw new RuntimeException(String.valueOf(root.get("error").get("message")));
+            }
+            isSlang = root
                     .get("results")
                     .get(0)
                     .get("flagged") // unsafe일 경우 true
@@ -72,6 +76,6 @@ public class ModerationApiSlangFilterService implements SlangFilterService {
             log.info("body 파싱 중 오류가 발생했습니다");
             throw new RuntimeException(e);
         }
-        return isSafe;
+        return isSlang;
     }
 }
