@@ -10,9 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ureca.muneobe.common.auth.entity.Member;
 import ureca.muneobe.common.mplan.entity.Mplan;
 import ureca.muneobe.global.common.BaseEntity;
@@ -20,7 +18,9 @@ import ureca.muneobe.global.common.BaseEntity;
 @Entity
 @Table(name = "Review")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,4 +37,12 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mplan_id")
     private Mplan mplan;
+
+    public static Review of(Member member, Mplan mplan, String content){
+        return Review.builder()
+                .content(content)
+                .member(member)
+                .mplan(mplan)
+                .build();
+    }
 }

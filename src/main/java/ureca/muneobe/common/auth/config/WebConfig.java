@@ -22,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
+        registry.addMapping("/**")
                 // TODO: 개발 및 운영 서버의 url 결정이 난다면, 추가 예정 + yml 설정으로 옮기기
                 .allowedOrigins("http://localhost:5173", "http://localhost:8080")
                 .allowedMethods("*")

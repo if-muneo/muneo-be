@@ -28,7 +28,7 @@ public class DefaultAddonController {
     public ResponseEntity<ResponseBody<DefaultAddonsResponse>> readAddons(
             @RequestParam(defaultValue = "0") int page
     ) {
-        return ResponseEntity.ok().body(ResponseBody.success(addonService.findAll(PageRequest.of(page, 4))));
+        return ResponseEntity.ok().body(ResponseBody.success(addonService.findAll(PageRequest.of(page, 8))));
     }
 
     @GetMapping("/v1/addon/search")
