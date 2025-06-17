@@ -10,7 +10,6 @@ import ureca.muneobe.common.chat.dto.StreamChatResponse;
 import ureca.muneobe.common.chat.service.ChatService;
 
 import java.security.Principal;
-import java.util.UUID;
 
 @Slf4j
 @Controller
