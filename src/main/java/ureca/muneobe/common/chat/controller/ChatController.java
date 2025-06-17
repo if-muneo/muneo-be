@@ -49,6 +49,7 @@ public class ChatController {
                                     .streamId(streamId)
                                     .content("챗봇 응답 중 문제가 발생했어요!")
                                     .done(true)
+                                    .build()
                     );
                 }, () -> {
                         simpMessagingTemplate.convertAndSendToUser(
