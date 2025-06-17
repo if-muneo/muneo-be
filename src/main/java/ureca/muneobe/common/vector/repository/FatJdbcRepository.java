@@ -87,20 +87,23 @@ public class FatJdbcRepository {
 
             String sql = """
                         SELECT f.*
-                        FROM fat f
-                        WHERE f.id IN(
-                            SELECT fe.fat_id
                             FROM fat_embedding fe
+                            JOIN fat f ON fe.fat_id = f.id
+                            WHERE f.id IN (
+                                SELECT DISTINCT ON (fe.fat_id) fe.fat_id
+                                FROM fat_embedding fe
+                                ORDER BY fe.fat_id, fe.embedding <=> ?
+                            )
                             ORDER BY fe.embedding <=> ?
-                            LIMIT ?
-                        )
+                            LIMIT ?;
                     """;
 
             return jdbcTemplate.query(
                     sql,
                     ps -> {
                         ps.setObject(1, new PGvector(queryVector));
-                        ps.setInt(2, limit);
+                        ps.setObject(2, new PGvector(queryVector));
+                        ps.setInt(3, limit);
                     },
                     fatRowMapper
             );
