@@ -9,4 +9,5 @@ public class ChatRequest {
     private String content;
     private Long userId;
     private String timestamp;
+    private String streamId;
 }
