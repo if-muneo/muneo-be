@@ -6,7 +6,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import ureca.muneobe.common.chat.dto.chat.ChatRequest;
-import ureca.muneobe.common.chat.dto.chat.ChatResponse;
 import ureca.muneobe.common.chat.dto.chat.StreamChatResponse;
 import ureca.muneobe.common.chat.dto.result.ChatResult;
 import ureca.muneobe.common.chat.entity.ChatType;
@@ -35,20 +34,29 @@ public class ChatController {
                     simpMessagingTemplate.convertAndSendToUser(
                             memberName,
                             URL,
-                            new StreamChatResponse(streamId, chatBotMessage, false)
+                            StreamChatResponse.builder()
+                                    .streamId(streamId)
+                                    .content(chatBotMessage)
+                                    .done(false)
                     );
                 }, error -> {
                     log.error("챗봇 응답 생성 실패", error);
                     simpMessagingTemplate.convertAndSendToUser(
                             memberName,
                             URL,
-                            new StreamChatResponse(streamId, "챗봇 응답 중 문제가 발생했어요!", true)
+                            StreamChatResponse.builder()
+                                    .streamId(streamId)
+                                    .content("챗봇 응답 중 문제가 발생했어요!")
+                                    .done(true)
                     );
                 }, () -> {
                         simpMessagingTemplate.convertAndSendToUser(
                                 memberName,
                                 URL,
-                                new StreamChatResponse(streamId, "", true)
+                                StreamChatResponse.builder()
+                                        .streamId(streamId)
+                                        .content("")
+                                        .done(true)
                         );
                     }
 
