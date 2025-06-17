@@ -19,6 +19,13 @@ server:
       cookie:
         secure: false  # 개발서버에서는 HTTP 허용
 
+app:
+  cors:
+    allowed-origins:
+      - "http://localhost:5173"
+      - "http://localhost:8080"
+      - "https://web-muneo-fe-m3d8djgv98deef95.sel4.cloudtype.app"
+
 logging:
   level:
     org.hibernate.SQL: debug
