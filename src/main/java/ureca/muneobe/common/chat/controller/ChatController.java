@@ -38,6 +38,7 @@ public class ChatController {
                                     .streamId(streamId)
                                     .content(chatBotMessage)
                                     .done(false)
+                                    .build()
                     );
                 }, error -> {
                     log.error("챗봇 응답 생성 실패", error);
@@ -57,6 +58,7 @@ public class ChatController {
                                         .streamId(streamId)
                                         .content("")
                                         .done(true)
+                                        .build()
                         );
                     }
 
