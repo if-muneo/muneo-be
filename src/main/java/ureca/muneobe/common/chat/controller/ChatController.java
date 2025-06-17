@@ -24,7 +24,7 @@ public class ChatController {
     public void sendMessage(ChatRequest message, Principal principal){
         String memberName = principal.getName();
         String userMessage = message.getContent();
-        String streamId = UUID.randomUUID().toString();
+        String streamId = message.getStreamId();
 
         chatService.createChatResponse(memberName, userMessage)
                 .subscribe(chatChunk -> {
