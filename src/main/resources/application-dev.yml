@@ -5,7 +5,6 @@ spring:
     show-sql: true      # 개발서버에서는 SQL 로그 보기
 
   datasource:
-    driver-class-name: org.postgresql.Driver  # 명시적으로 추가
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
@@ -30,6 +29,8 @@ app:
 logging:
   level:
     org.hibernate.SQL: debug
-    ureca: DEBUG
-    org.springframework.web.socket: DEBUG
+    org.hibernate.type.descriptor.sql: trace
     org.springframework.transaction: debug
+    ureca: DEBUG
+    org.springframework.test: DEBUG
+    org.springframework.web.socket: DEBUG

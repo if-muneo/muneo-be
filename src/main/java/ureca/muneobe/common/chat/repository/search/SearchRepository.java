@@ -1,6 +1,6 @@
 package ureca.muneobe.common.chat.repository.search;
 
-import ureca.muneobe.common.chat.service.rdb.input.Condition;
+import ureca.muneobe.common.chat.service.strategy.rdb.input.Condition;
 
 import java.util.List;
 
