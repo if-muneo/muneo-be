@@ -11,9 +11,9 @@
 //import org.testcontainers.containers.PostgreSQLContainer;
 //import org.testcontainers.junit.jupiter.Container;
 //import org.testcontainers.junit.jupiter.Testcontainers;
-//import ureca.muneobe.common.chat.entity.DataType;
-//import ureca.muneobe.common.chat.entity.MplanType;
-//import ureca.muneobe.common.chat.entity.Qualification;
+//import ureca.muneobe.common.mplan.entity.DataType;
+//import ureca.muneobe.common.mplan.entity.MplanType;
+//import ureca.muneobe.common.mplan.entity.Qualification;
 //import ureca.muneobe.common.chat.service.rdb.input.Condition;
 //import ureca.muneobe.common.chat.service.rdb.input.MplanCondition;
 //import ureca.muneobe.common.chat.service.rdb.input.Range;

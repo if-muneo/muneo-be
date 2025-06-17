@@ -5,9 +5,15 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ureca.muneobe.common.chat.entity.*;
-import ureca.muneobe.common.chat.service.rdb.input.*;
-import ureca.muneobe.common.chat.service.rdb.output.FindingMplan;
+import ureca.muneobe.common.addon.entity.QAddon;
+import ureca.muneobe.common.addongroup.entity.QAddonGroup;
+import ureca.muneobe.common.chat.service.strategy.rdb.input.AddonCondition;
+import ureca.muneobe.common.chat.service.strategy.rdb.input.Condition;
+import ureca.muneobe.common.chat.service.strategy.rdb.input.MplanCondition;
+import ureca.muneobe.common.chat.service.strategy.rdb.input.Range;
+import ureca.muneobe.common.chat.service.strategy.rdb.output.FindingMplan;
+import ureca.muneobe.common.mplan.entity.QMplan;
+import ureca.muneobe.common.mplan.entity.QMplanDetail;
 
 import java.util.Collections;
 import java.util.List;
@@ -151,7 +157,7 @@ public class CombinedSearchRepository implements SearchRepository {
                 jpaQueryFactory
                         .select(addonGroup.id)
                         .from(addonGroup)
-                        .join(addonGroup.addon, addon)
+                        .join(addonGroup.addons, addon)
                         .where(predicate)
                         .groupBy(addonGroup.id)
                         .having(addon.count().goe(COUNT_VALUE))
