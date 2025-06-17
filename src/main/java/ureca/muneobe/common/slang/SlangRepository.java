@@ -1,4 +1,4 @@
-package ureca.muneobe.slang;
+package ureca.muneobe.common.slang;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ureca.muneobe.common.chat.entity.Slang;

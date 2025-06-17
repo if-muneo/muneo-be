@@ -1,12 +1,11 @@
-package ureca.muneobe.slang.service;
+package ureca.muneobe.common.slang.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ureca.muneobe.common.chat.entity.Slang;
-import ureca.muneobe.slang.SlangRepository;
-import ureca.muneobe.slang.dto.AddSlangResponse;
+import ureca.muneobe.common.slang.SlangRepository;
 
 import java.util.ArrayList;
 import java.util.List;

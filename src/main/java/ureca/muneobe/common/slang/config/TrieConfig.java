@@ -1,4 +1,4 @@
-package ureca.muneobe.slang.config;
+package ureca.muneobe.common.slang.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ahocorasick.trie.Trie;
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import ureca.muneobe.common.chat.entity.Slang;
-import ureca.muneobe.slang.SlangRepository;
+import ureca.muneobe.common.slang.SlangRepository;
 
 import java.util.List;
 

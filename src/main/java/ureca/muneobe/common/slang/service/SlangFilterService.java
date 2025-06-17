@@ -1,4 +1,4 @@
-package ureca.muneobe.slang.service;
+package ureca.muneobe.common.slang.service;
 
 public interface SlangFilterService {
 

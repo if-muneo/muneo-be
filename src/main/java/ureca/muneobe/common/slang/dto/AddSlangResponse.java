@@ -1,4 +1,4 @@
-package ureca.muneobe.slang.dto;
+package ureca.muneobe.common.slang.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

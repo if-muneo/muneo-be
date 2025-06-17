@@ -15,7 +15,7 @@ import ureca.muneobe.common.chat.repository.ChatRepository;
 import ureca.muneobe.common.chat.repository.search.CombinedSearchRepository;
 import ureca.muneobe.common.chat.service.rdb.input.Condition;
 import ureca.muneobe.common.openai.OpenAiClient;
-import ureca.muneobe.slang.service.SlangFilterService;
+import ureca.muneobe.common.slang.service.SlangFilterService;
 import ureca.muneobe.common.openai.dto.router.DailyResponse;
 import ureca.muneobe.common.openai.dto.router.RdbResponse;
 import ureca.muneobe.common.openai.dto.router.VectorResponse;
