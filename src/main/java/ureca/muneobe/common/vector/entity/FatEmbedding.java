@@ -18,6 +18,6 @@ public class FatEmbedding {
     @Column(name = "fat_id")
     private Long fatId;
 
-    @Column(name = "embedding")
+    @Column(name = "embedding", columnDefinition = "vector(1536)")
     private float[] embedding;
 }
