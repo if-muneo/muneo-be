@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ureca.muneobe.common.chat.entity.Slang;
-import ureca.muneobe.slang.service.SlangHolder;
+import ureca.muneobe.common.slang.SlangRepository;
+import ureca.muneobe.common.slang.service.SlangHolder;
 
 @SpringBootTest
 @Transactional

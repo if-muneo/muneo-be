@@ -1,4 +1,4 @@
-package ureca.muneobe.slang.dto;
+package ureca.muneobe.common.slang.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class AddSlangRequest {
+public class DeleteSlangRequest {
 
     private List<String> words;
 }
