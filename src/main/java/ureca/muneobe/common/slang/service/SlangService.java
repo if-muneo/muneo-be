@@ -50,7 +50,7 @@ public class SlangService {
     @Transactional
     public String deleteSlang(String word) {
         Slang findWord = slangRepository.findByWord(word);
-        if (findWord != null) {
+        if (findWord == null) {
             log.info("{}는 등록되지 않은 금칙어입니다.", word);
             return word;
         }
@@ -58,6 +58,7 @@ public class SlangService {
         return null;
     }
 
+    @Transactional
     public List<String> deleteSlang(List<String> words) {
         List<String> failedList = new ArrayList<>();
         for (String word : words) {
