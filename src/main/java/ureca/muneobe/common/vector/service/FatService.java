@@ -17,7 +17,6 @@ import ureca.muneobe.global.response.ErrorCode;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,26 +29,30 @@ public class FatService {
     private final FatEmbeddingRepository fatEmbeddingRepository;
 
     @Transactional
-    public EmbeddingGenerateResponse generateAndSaveAllNullEmbeddings() {
+    public EmbeddingGenerateResponse generateAndSaveAllNullEmbeddings(){
         List<Fat> fats = fatRepository.findByEmbeddingFalse();
 
         for (Fat fat : fats) {
-            List<String> texts = fat.makeDisriptionForEmbedding();
-
-            try {
-                for(String text : texts) {
-                    float[] embeddingVector = embeddingSentence.requestEmbeddingFromOpenAI(text);
-                    fatJdbcRepository.insertEmbedding(fat.getId(), embeddingVector);
-                }
-
-                fat.setEmbedding(true);
-                fatRepository.save(fat);
-            } catch (Exception e) {
-                throw  new GlobalException(ErrorCode.EMBEDDING_FAILED);
-            }
+            requestAndInsertEmbedding(fat);
         }
 
         return EmbeddingGenerateResponse.from("embedding 생성 완료");
+    }
+
+    private void requestAndInsertEmbedding(Fat fat){
+        List<String> texts = fat.makeDisriptionForEmbedding();
+
+        try {
+            for(String text : texts) {
+                float[] embeddingVector = embeddingSentence.requestEmbeddingFromOpenAI(text);
+                fatJdbcRepository.insertEmbedding(fat.getId(), embeddingVector);
+            }
+
+            fat.setEmbedding(true);
+            fatRepository.save(fat);
+        } catch (Exception e) {
+            throw  new GlobalException(ErrorCode.EMBEDDING_FAILED);
+        }
     }
 
     @Transactional
@@ -76,7 +79,6 @@ public class FatService {
 
         return EmbeddingGenerateResponse.from("embedding 생성 완료");
     }
-
 
     public VectorSearchResponse search(String userQuery) {
         try {
