@@ -1,4 +1,4 @@
-package ureca.muneobe.common.vector.dto;
+package ureca.muneobe.common.vector.dto.request;
 
 import lombok.Data;
 
