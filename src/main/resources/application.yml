@@ -260,11 +260,15 @@ server:
       timeout: 30m
       cookie:
         http-only: true
-        same-site: strict
+        same-site: none
+        secure: true
+
 app:
   cors:
     allowed-origins:
-      - "http://localhost:3000"
+      - "http://localhost:5173"
+      - "http://localhost:8080"
+      - "https://web-muneo-fe-m3d8djgv98deef95.sel4.cloudtype.app"
     allowed-methods: "*"
     allowed-headers: "*"
     allow-credentials: true
