@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-import ureca.muneobe.common.auth.respository.MemberRepository;
+import reactor.util.retry.Retry;
 import ureca.muneobe.common.auth.entity.Member;
+import ureca.muneobe.common.auth.respository.MemberRepository;
 import ureca.muneobe.common.chat.entity.Chat;
+import ureca.muneobe.common.chat.entity.ChatType;
 import ureca.muneobe.common.chat.repository.ChatRedisRepository;
 import ureca.muneobe.common.chat.repository.ChatRepository;
 import ureca.muneobe.common.chat.dto.result.ChatResult;
@@ -25,12 +27,14 @@ import ureca.muneobe.common.vector.entity.Fat;
 import ureca.muneobe.common.vector.service.FatService;
 import ureca.muneobe.global.exception.GlobalException;
 
+import java.time.Duration;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatService {
+
     private final OpenAiClient openAiClient;
     private final ChatRedisRepository chatRedisRepository;
     private final RoutingStrategyFactory routingStrategyFactory;
@@ -42,12 +46,37 @@ public class ChatService {
     /**
      * 채팅 응답 생성
      */
-    public Flux<String> createChatResponse(ChatResult chatResult) {
-        return Mono.fromCallable(()->chatMessagePreProcessor.preProcess(chatResult))
+    public Flux<String> createChatResponse(final ChatResult chatResult) {
+        return Mono.fromCallable(() -> chatMessagePreProcessor.preProcess(chatResult))
                 .subscribeOn(Schedulers.boundedElastic())
                 .flatMap(preProcessResult -> openAiClient.callFirstPrompt(preProcessResult))
-                .flatMapMany(firstPromptResult -> searchAndCallSecondPrompt(firstPromptResult))
-                .onErrorResume(Mono::error);
+                .flatMapMany(firstPromptResult -> saveResponse(chatResult, firstPromptResult))
+                .onErrorResume(error -> {
+                    log.error("에러 발생 : {}", error.getMessage(), error);
+                    return Flux.empty();
+                });
+    }
+
+    private Flux<String> saveResponse(final ChatResult chatResult, final FirstPromptResult firstPromptResult) {
+
+        final StringBuilder buffer = new StringBuilder();
+
+        return searchAndCallSecondPrompt(firstPromptResult)
+                .concatMap(line -> Mono.fromSupplier(() -> {
+                    buffer.append(line);
+                    return line;
+                }))
+                .doOnComplete(() -> {
+                    final String memberName = chatResult.getMemberName();
+                    final String text = buffer.toString();
+                    Mono.fromRunnable(() ->
+                                    chatRedisRepository.saveChat(memberName, text, ChatType.RESPONSE)
+                            )
+                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)))
+                            .doOnError(e -> log.error("Redis 저장 실패: {}", e.getMessage(), e))
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .subscribe();
+                });
     }
 
     /**
