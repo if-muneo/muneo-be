@@ -20,8 +20,9 @@ public enum ErrorCode {
     //인증 에러 2000번 때
 
     //벡터 팀 에러 3000번 때
-    TOKENIZATION_FAILED(HttpStatus.BAD_REQUEST, 3001, "토큰화가 되지 않았습니다."),
-    NO_SIMILAR_DATA(HttpStatus.NOT_FOUND, 3002, "유사한 데이터를 조회할 수 없습니다."),
+    VECTOR_SEARCH_FAILED(HttpStatus.NOT_FOUND, 3001, "유사한 데이터 조회에 실패했습니다."),
+    PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, 3002, "해당하는 id의 요금제가 발견되지 않았습니다."),
+    EMBEDDING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, 3003, "임베딩 생성에 실패했습니다."),
 
     //RDB 팀 에러 4000번 때
 
