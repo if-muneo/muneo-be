@@ -13,7 +13,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ureca.muneobe.common.auth.entity.Member;
-import ureca.muneobe.common.combined.CombinedGroup;
 import ureca.muneobe.common.mplan.entity.Mplan;
 import ureca.muneobe.global.common.BaseEntity;
 
