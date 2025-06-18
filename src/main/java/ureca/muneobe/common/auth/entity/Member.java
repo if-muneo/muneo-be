@@ -50,17 +50,6 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Builder
-    private Member(String name, String password, String phoneNumber,
-                   String email, Integer old, Gender gender, Category category) {
-        this.name = name;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.old = old;
-        this.gender = gender;
-        this.category = category;
-        this.activeYn = true;  // 기본값
-        this.role = Role.USER; // 기본값
-    }
+    @Column(name = "use_amount")
+    private Integer useAmount;
 }
