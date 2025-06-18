@@ -43,10 +43,18 @@ public class Mplan {
     private MplanDetail mplanDetail;
 
     @OneToMany(mappedBy = "mplan")
-    List<Review> reviews = new ArrayList<>();
+<<<<<<< MUN-51-채팅-대화-내용-Redis-저장
+    @Builder.Default
+    private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "mplan")
-    List<Subscription> subscriptions = new ArrayList<>();
+    @Builder.Default
+=======
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "mplan")
+>>>>>>> develop
+    private List<Subscription> subscriptions = new ArrayList<>();
 
     public static Mplan of(MplanCreateRequest mplanCreateRequest, AddonGroup addonGroup, MplanDetail mplanDetail){
         return Mplan.builder()
