@@ -54,13 +54,8 @@ public class FatService {
 
     @Transactional
     public EmbeddingGenerateResponse generateAndSaveAllUpdateEmbeddings(Long fat_id) {
-        Optional<Fat> optionalFat = fatRepository.findById(fat_id);
 
-        if (optionalFat.isEmpty()) {
-            throw new GlobalException(ErrorCode.PLAN_NOT_FOUND);
-        }
-
-        Fat fat = optionalFat.get();
+        Fat fat = fatRepository.findById(fat_id).orElseThrow(() -> new GlobalException(ErrorCode.EMBEDDING_FAILED));
 
         for(FatEmbedding embedding : fatEmbeddingRepository.findByFatId(fat_id)) fatEmbeddingRepository.deleteById(embedding.getId());
 
