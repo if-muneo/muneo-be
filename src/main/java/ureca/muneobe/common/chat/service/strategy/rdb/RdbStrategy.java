@@ -3,6 +3,7 @@ package ureca.muneobe.common.chat.service.strategy.rdb;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import ureca.muneobe.common.chat.repository.search.CombinedSearchRepository;
@@ -19,7 +20,7 @@ public class RdbStrategy implements RoutingStrategy {
     private final OpenAiClient openAiClient;
 
     @Override
-    public Mono<String> process(FirstPromptResult firstPromptResult) {
+    public Flux<String> process(FirstPromptResult firstPromptResult) {
         RdbResponse response = (RdbResponse) firstPromptResult.getFirstPromptResponse();
         String userMessage = firstPromptResult.getMessage();
         List<String> chatLog = firstPromptResult.getChatLog();
@@ -27,7 +28,7 @@ public class RdbStrategy implements RoutingStrategy {
 
         return Mono.fromCallable(() -> combinedSearchRepository.search(condition))
                 .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행
-                .flatMap(plans -> {
+                .flatMapMany(plans -> {
                     if (plans == null || plans.isEmpty())return Mono.just("조건에 맞는 요금제가 없습니다.");
                     return openAiClient.callSecondPrompt(userMessage, plans, chatLog);
                 })
