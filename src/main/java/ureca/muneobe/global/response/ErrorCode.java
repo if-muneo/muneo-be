@@ -36,7 +36,10 @@ public enum ErrorCode {
 
     //CRUD 에러 6000번 때
     NO_MPLAN(HttpStatus.BAD_REQUEST, 6000, "해당 id에 해당하는 mplan이 없습니다."),
-    NOT_YOUR_REVIEW(HttpStatus.BAD_REQUEST, 6001, "당신의 리뷰가 아닙니다.")
+    NOT_YOUR_REVIEW(HttpStatus.BAD_REQUEST, 6001, "당신의 리뷰가 아닙니다."),
+
+    // 금칙어 에러 7000번대
+    SLANG_WORDS_REQUIRED(HttpStatus.BAD_REQUEST, 6001, "단어를 입력해야 합니다."),
     ;
 
     private final HttpStatus status;
