@@ -47,6 +47,7 @@ public class Mplan {
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "mplan")
+    @Builder.Default
     private List<Subscription> subscriptions = new ArrayList<>();
 
     public static Mplan of(MplanCreateRequest mplanCreateRequest, AddonGroup addonGroup, MplanDetail mplanDetail){
