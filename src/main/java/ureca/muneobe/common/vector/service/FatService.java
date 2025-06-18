@@ -4,14 +4,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ureca.muneobe.common.vector.dto.response.EmbeddingGenerateResponse;
+import ureca.muneobe.common.vector.dto.response.VectorSearchResponse;
 import ureca.muneobe.common.vector.embedding.EmbeddingSentence;
 import ureca.muneobe.common.vector.entity.Fat;
 import ureca.muneobe.common.vector.entity.FatEmbedding;
 import ureca.muneobe.common.vector.repository.FatEmbeddingRepository;
 import ureca.muneobe.common.vector.repository.FatJdbcRepository;
 import ureca.muneobe.common.vector.repository.FatRepository;
-
+import ureca.muneobe.global.exception.GlobalException;
+import ureca.muneobe.global.response.ErrorCode;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +30,7 @@ public class FatService {
     private final FatEmbeddingRepository fatEmbeddingRepository;
 
     @Transactional
-    public void generateAndSaveAllNullEmbeddings() throws IOException, InterruptedException {
+    public EmbeddingGenerateResponse generateAndSaveAllNullEmbeddings() {
         List<Fat> fats = fatRepository.findByEmbeddingFalse();
 
         for (Fat fat : fats) {
@@ -41,23 +45,24 @@ public class FatService {
                 fat.setEmbedding(true);
                 fatRepository.save(fat);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw  new GlobalException(ErrorCode.EMBEDDING_FAILED);
             }
         }
+
+        return EmbeddingGenerateResponse.from("embedding 생성 완료");
     }
 
     @Transactional
-    public void generateAndSaveAllUpdateEmbeddings(Long fat_id) throws IOException, InterruptedException {
+    public EmbeddingGenerateResponse generateAndSaveAllUpdateEmbeddings(Long fat_id) {
         Optional<Fat> optionalFat = fatRepository.findById(fat_id);
 
         if (optionalFat.isEmpty()) {
-            System.out.println("id "+fat_id+"는 발견되지 않음.");
-            return;
+            throw new GlobalException(ErrorCode.PLAN_NOT_FOUND);
         }
 
         Fat fat = optionalFat.get();
 
-        for(FatEmbedding l : fatEmbeddingRepository.findByFatId(fat_id)) fatEmbeddingRepository.deleteById(l.getId());
+        for(FatEmbedding embedding : fatEmbeddingRepository.findByFatId(fat_id)) fatEmbeddingRepository.deleteById(embedding.getId());
 
         List<String> texts = fat.makeDisriptionForEmbedding();
 
@@ -71,20 +76,28 @@ public class FatService {
             fatRepository.save(fat);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new GlobalException(ErrorCode.EMBEDDING_FAILED);
         }
+
+        return EmbeddingGenerateResponse.from("embedding 생성 완료");
     }
 
 
-    public List<Fat> search(String userQuery) {
+    public VectorSearchResponse search(String userQuery) {
         try {
-            // 1. 쿼리를 임베딩 벡터로 변환
             float[] queryVector = embeddingSentence.requestEmbeddingFromOpenAI(userQuery);
 
-            // 2. pgvector 유사도 기반 검색 수행
-            return fatJdbcRepository.findSimilarPlans(queryVector, 3); // 상위 3개 결과 반환
+            List<Fat> fatlist = fatJdbcRepository.findSimilarPlans(queryVector, 3);
+
+            List<String> answer = new ArrayList<>();
+            for(Fat f : fatlist){
+                answer.add(f.makeDiscriptionForResponse());
+            }
+
+            return VectorSearchResponse.from(answer);
+
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException("요금제 검색 중 오류 발생", e);
+            throw new GlobalException(ErrorCode.VECTOR_SEARCH_FAILED);
         }
     }
 }
