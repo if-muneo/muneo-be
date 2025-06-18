@@ -158,4 +158,36 @@ public class Fat {
         sentence.append(dataType).append("데이터 타입을 제공합니다.");
         return sentence.toString();
     }
+
+
+    /**
+     * 2차 llm으로 전달하기 위한 메서드
+     */
+    public String makeDiscriptionForResponse() {
+        StringBuilder summary = new StringBuilder();
+
+        summary.append("요금제명: ").append(name).append(", "); //요금제명
+
+        summary.append("월 요금: ").append(price).append("원, "); //한달 요금
+
+        if (basicDataAmount == null) {
+            summary.append("일일 데이터: ").append(dailyData).append("MB, "); //없으면 일일데이터량
+        } else {
+            String state = (basicDataAmount == 10_000_000) ? "무제한" : basicDataAmount + "MB, ";
+            summary.append("월 데이터: ").append(state);
+        }
+
+        if (mplanType != null && !mplanType.isEmpty()) {
+            summary.append("타입: ").append(mplanType).append(", "); //데이터 타입
+        }
+
+        if (addon != null && !addon.isEmpty()) {
+            summary.append("부가서비스: ").append(addon).append(", "); //부가서비스 제공된 것
+        }
+
+        //마지막 구분자 제거
+        summary.setLength(summary.length() - 2);
+
+        return summary.toString();
+    }
 }
