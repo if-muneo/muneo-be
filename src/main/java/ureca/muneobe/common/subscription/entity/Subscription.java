@@ -35,10 +35,6 @@ public class Subscription extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "combined_group_id")
-    private CombinedGroup combinedGroup;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mplan_id")
     private Mplan mplan;
 }
