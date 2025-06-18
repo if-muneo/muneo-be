@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ureca.muneobe.common.chat.entity.Slang;
 import ureca.muneobe.common.slang.SlangRepository;
@@ -12,6 +13,7 @@ import ureca.muneobe.common.slang.service.SlangHolder;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
 public class SlangHolderTest {
 
     @Autowired
