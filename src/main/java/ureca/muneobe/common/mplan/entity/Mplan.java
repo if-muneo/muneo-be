@@ -43,10 +43,10 @@ public class Mplan {
     private MplanDetail mplanDetail;
 
     @OneToMany(mappedBy = "mplan")
-    List<Review> reviews = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "mplan")
-    List<Subscription> subscriptions = new ArrayList<>();
+    private List<Subscription> subscriptions = new ArrayList<>();
 
     public static Mplan of(MplanCreateRequest mplanCreateRequest, AddonGroup addonGroup, MplanDetail mplanDetail){
         return Mplan.builder()
