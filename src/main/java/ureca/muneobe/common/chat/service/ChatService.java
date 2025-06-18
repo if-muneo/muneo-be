@@ -19,6 +19,13 @@ import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
 import ureca.muneobe.common.chat.service.strategy.RoutingStrategy;
 import ureca.muneobe.common.chat.service.strategy.RoutingStrategyFactory;
 import ureca.muneobe.common.openai.OpenAiClient;
+import ureca.muneobe.common.slang.service.SlangFilterService;
+import ureca.muneobe.common.openai.dto.router.DailyResponse;
+import ureca.muneobe.common.openai.dto.router.RdbResponse;
+import ureca.muneobe.common.openai.dto.router.VectorResponse;
+import ureca.muneobe.common.vector.entity.Fat;
+import ureca.muneobe.common.vector.service.FatService;
+import ureca.muneobe.global.exception.GlobalException;
 
 import java.time.Duration;
 import java.util.List;
@@ -32,6 +39,7 @@ public class ChatService {
     private final ChatRedisRepository chatRedisRepository;
     private final RoutingStrategyFactory routingStrategyFactory;
     private final MemberRepository memberRepository;
+    private final SlangFilterService slangFilterService;
     private final ChatRepository chatRepository;
     private final ChatMessagePreProcessor chatMessagePreProcessor;
 
