@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import ureca.muneobe.common.auth.respository.MemberRepository;
@@ -41,11 +42,11 @@ public class ChatService {
     /**
      * 채팅 응답 생성
      */
-    public Mono<String> createChatResponse(ChatResult chatResult) {
+    public Flux<String> createChatResponse(ChatResult chatResult) {
         return Mono.fromCallable(()->chatMessagePreProcessor.preProcess(chatResult))
                 .subscribeOn(Schedulers.boundedElastic())
                 .flatMap(preProcessResult -> openAiClient.callFirstPrompt(preProcessResult))
-                .flatMap(firstPromptResult -> searchAndCallSecondPrompt(firstPromptResult))
+                .flatMapMany(firstPromptResult -> searchAndCallSecondPrompt(firstPromptResult))
                 .onErrorResume(Mono::error);
     }
 
@@ -62,7 +63,7 @@ public class ChatService {
         chatRedisRepository.clearChat(username);
     }
 
-    private Mono<String> searchAndCallSecondPrompt(FirstPromptResult firstPromptResult) {
+    private Flux<String> searchAndCallSecondPrompt(FirstPromptResult firstPromptResult) {
         RoutingStrategy routingStrategy = routingStrategyFactory.select(firstPromptResult);
         return routingStrategy.process(firstPromptResult);
     }
