@@ -12,9 +12,7 @@ import ureca.muneobe.common.review.dto.response.ReviewDeleteResponse;
 import ureca.muneobe.common.review.dto.response.ReviewsResponse;
 import ureca.muneobe.common.review.service.ReviewService;
 import ureca.muneobe.common.slang.service.SlangFilterService;
-import ureca.muneobe.common.subscription.entity.Subscription;
 import ureca.muneobe.common.subscription.repository.SubScriptionRepository;
-import ureca.muneobe.global.response.ErrorCode;
 import ureca.muneobe.global.response.ResponseBody;
 
 import java.util.List;
@@ -25,8 +23,6 @@ import static org.springframework.data.redis.connection.ReactiveStreamCommands.A
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
-    private final SlangFilterService slangFilterService;
-    private final SubScriptionRepository subScriptionRepository;
 
     @GetMapping("/v1/{mplanId}/review")
     public ResponseEntity<ResponseBody<ReviewsResponse>> readReview(
@@ -47,29 +43,8 @@ public class ReviewController {
             @RequestBody ReviewCreateRequest reviewCreateRequest,
             HttpSession httpSession
     ) {
-
-        Long memberId = SessionUtil.getLoginMember(httpSession).getId();
-        // 1. 사용자 가입된 요금제인지 체크
-        if (!isPossibleWriteReview(memberId, mplanId)) {
-            ErrorCode ec = ErrorCode.NOT_ELIGIBLE_REVIEW_USER;
-            return ResponseEntity.status(ec.getStatus()).body(ResponseBody.error(ec));
-        }
-
-        // 2. 10글자 이상 체크
-        if (reviewCreateRequest.getContent().length() < 10) {
-            ErrorCode ec = ErrorCode.REVIEW_CONTENT_TOO_SHORT;
-            return ResponseEntity.status(ec.getStatus()).body(ResponseBody.error(ec));
-        }
-
-        // 3. 금칙어 체크
-        if (isContainsSlang(reviewCreateRequest.getContent())) {
-            ErrorCode ec = ErrorCode.SLANG_WORDS_DETECTED;
-            return ResponseEntity.status(ec.getStatus()).body(ResponseBody.error(ec));
-        }
-
-
         return ResponseEntity.ok().body(
-                ResponseBody.success(reviewService.create(mplanId, reviewCreateRequest, memberId)));
+                ResponseBody.success(reviewService.create(mplanId, reviewCreateRequest, SessionUtil.getLoginMember(httpSession).getId())));
     }
 
     @DeleteMapping("/v1/{mplanId}/review")
@@ -79,20 +54,5 @@ public class ReviewController {
     ) {
         return ResponseEntity.ok().body(
                 ResponseBody.success(reviewService.delete(reviewDeleteRequest, SessionUtil.getLoginMember(httpSession).getId())));
-    }
-
-    private boolean isPossibleWriteReview(Long memberId, Long mplanId) {
-        List<Subscription> subscriptionList = subScriptionRepository.findAllByMember_Id(memberId);
-
-        for (Subscription subscription : subscriptionList) {
-            if (subscription.getMplan().getId().equals(mplanId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isContainsSlang(String userMessage) {
-        return slangFilterService.filteringSlang(userMessage);
     }
 }
