@@ -10,6 +10,7 @@ import ureca.muneobe.common.chat.dto.chat.StreamChatResponse;
 import ureca.muneobe.common.chat.dto.result.ChatResult;
 import ureca.muneobe.common.chat.entity.ChatType;
 import ureca.muneobe.common.chat.service.ChatService;
+import ureca.muneobe.common.slang.service.SlangFilterService;
 
 import java.security.Principal;
 
@@ -22,12 +23,28 @@ public class ChatController {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatService chatService;
+    private final SlangFilterService slangFilterService;
 
     @MessageMapping("/chat/message")
     public void sendMessage(ChatRequest message, Principal principal){
         String memberName = principal.getName();
         String userMessage = message.getContent();
         String streamId = message.getStreamId();
+
+
+        if (containsSlang(userMessage)) {
+            log.info("금칙어 감지");
+            simpMessagingTemplate.convertAndSendToUser(
+                    memberName,
+                    "/queue/public",
+                    StreamChatResponse.builder()
+                            .streamId(streamId)
+                            .content("부적절한 요청입니다.")
+                            .done(true)
+                            .build()
+            );
+            return;
+        }
 
         chatService.createChatResponse(ChatResult.of(memberName, userMessage, ChatType.REQUEST))
                 .subscribe(chatBotMessage -> {
@@ -64,5 +81,9 @@ public class ChatController {
                     }
 
                 );
+    }
+
+    private boolean containsSlang(String userMessage) {
+        return slangFilterService.filteringSlang(userMessage);
     }
 }
