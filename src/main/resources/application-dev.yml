@@ -1,10 +1,11 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: update  # 개발서버에서는 create 사용 (데이터 초기화 가능)
-    show-sql: true      # 개발서버에서는 SQL 로그 보기
+      ddl-auto: update
+    show-sql: true
 
   datasource:
+    driver-class-name: org.postgresql.Driver
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
@@ -19,11 +20,16 @@ server:
       cookie:
         secure: false  # 개발서버에서는 HTTP 허용
 
+app:
+  cors:
+    allowed-origins:
+      - "http://localhost:5173"
+      - "http://localhost:8080"
+      - "https://web-muneo-fe-m3d8djgv98deef95.sel4.cloudtype.app"
+
 logging:
   level:
     org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql: trace
-    org.springframework.transaction: debug
     ureca: DEBUG
-    org.springframework.test: DEBUG
     org.springframework.web.socket: DEBUG
+    org.springframework.transaction: debug
