@@ -65,6 +65,7 @@ public class MplanDetail extends BaseEntity {
     private DataType dataType;
 
     @OneToMany(mappedBy = "mplanDetail")
+    @Builder.Default
     private List<Mplan> mplan = new ArrayList<>();
 
     public static MplanDetail from(MplanDetailCreateRequest mplanDetailCreateRequest){
