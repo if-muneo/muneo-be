@@ -87,6 +87,7 @@ public class OpenAiClient {
         String addonGroupStr   = optionalSubscription
                 .map(sub -> sub.getMplan().getAddonGroup().toString())
                 .orElse("");
+        int useAmount = member.getUseAmount();
 
         List<Message> messages = List.of(
                 Message.from("system", new StringBuilder().append(secondPrompt.getPrompt()).append("\n")
@@ -96,6 +97,7 @@ public class OpenAiClient {
                                 .append("\t").append("가입 요금제 이름: ").append(mplanName).append("\n")
                                 .append("\t").append("가입 요금제 정보: ").append(mplanDetailStr).append("\n")
                                 .append("\t").append("부가서비스 정보: ").append(addonGroupStr).append("\n")
+                                .append("\t").append("이번달 데이터 사용량: ").append(useAmount).append("\n")
                                 .toString()),
                 Message.from("user", "사용자 질문: " + userMessage)
         );
