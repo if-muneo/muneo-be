@@ -127,7 +127,7 @@ jobs:
             - TargetService:
                 Type: AWS::ECS::Service
                 Properties:
-                  TaskDefinition: "sample-fargate"
+                  TaskDefinition: "sample-fargate:3"
                   LoadBalancerInfo:
                     ContainerName: "sample-app"
                     ContainerPort: 80
