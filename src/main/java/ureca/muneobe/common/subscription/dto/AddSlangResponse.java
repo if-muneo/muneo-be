@@ -1,4 +1,4 @@
-package ureca.muneobe.common.slang.dto;
+package ureca.muneobe.common.subscription.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 @Getter
 @AllArgsConstructor
-public class DeleteSlangResponse {
+public class AddSlangResponse {
 
     private List<String> failedList;
 }

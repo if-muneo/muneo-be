@@ -1,16 +1,23 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    database-platform: org.hibernate.dialect.H2Dialect
+      ddl-auto: create-drop # 로컬에서는 create 사용
+    show-sql: true      # 로컬에서는 SQL 로그 보기
 
-  # 이 부분이 빠져있어서 에러가 발생합니다!
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/test
+    username: ssafy
+    password: 1q2w3e4rQ!!
+
   ai:
     openai:
-      api-key: test-api-key
+      api-key:
+        url:
+      models:
+        first_request:
+          model: gpt-4.1-nano
+        second_request:
+          model: gpt-4.1-mini
+        embedding:
+          model: text-embedding-3-small
