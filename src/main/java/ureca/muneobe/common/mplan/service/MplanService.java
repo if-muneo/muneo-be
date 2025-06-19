@@ -42,9 +42,9 @@ public class MplanService {
     }
 
     private Mplan getMplan(MplanCreateRequest mplanCreateRequest) {
-        MplanDetail mplanDetailProxy = mplanDetailRepository.getReferenceById(mplanCreateRequest.getMplanDetailId());
-        AddonGroup addonGroupProxy = addonGroupRepository.getReferenceById(mplanCreateRequest.getAddonGroupId());
-        return Mplan.of(mplanCreateRequest, addonGroupProxy, mplanDetailProxy);
+        MplanDetail mplanDetail = mplanDetailRepository.save(MplanDetail.from(mplanCreateRequest));
+        AddonGroup addonGroup = addonGroupRepository.getReferenceById(mplanCreateRequest.getAddonGroupRequest().getId());
+        return Mplan.of(mplanCreateRequest, addonGroup, mplanDetail);
     }
 
     private MplanCreateResponse getMplanCreateResponse(Mplan mplan) {

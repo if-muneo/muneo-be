@@ -15,17 +15,11 @@ import ureca.muneobe.common.addon.entity.AddonType;
 public class AddonGroupAddonResponse {
     private Long id;
     private String name;
-    private String description;
-    private Integer price;
-    private AddonType addonType;
 
     public static AddonGroupAddonResponse from(Addon addon){
         return AddonGroupAddonResponse.builder()
                 .id(addon.getId())
                 .name(addon.getName())
-                .description(addon.getDescription())
-                .price(addon.getPrice())
-                .addonType(addon.getAddonType())
                 .build();
     }
 }
