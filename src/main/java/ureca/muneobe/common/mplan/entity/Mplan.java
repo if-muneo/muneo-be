@@ -50,11 +50,20 @@ public class Mplan {
     @Builder.Default
     private List<Subscription> subscriptions = new ArrayList<>();
 
+    @Deprecated //스케쥴러 처리로 deprecated
     public static Mplan of(MplanCreateRequest mplanCreateRequest, AddonGroup addonGroup, MplanDetail mplanDetail){
         return Mplan.builder()
                 .name(mplanCreateRequest.getName())
                 .addonGroup(addonGroup)
                 .mplanDetail(mplanDetail)
+                .build();
+    }
+
+    public static Mplan from(UnapplyMplan unapplyMplan){
+        return Mplan.builder()
+                .name(unapplyMplan.getName())
+                .addonGroup(unapplyMplan.getAddonGroup())
+                .mplanDetail(unapplyMplan.getMplanDetail())
                 .build();
     }
 }

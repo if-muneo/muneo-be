@@ -1,18 +1,25 @@
 package ureca.muneobe.common.vector.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
+import ureca.muneobe.common.mplan.scheduler.FatPreVO;
 
 @Entity
 @Table(name = "fat")
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Fat {
 
     @Id
@@ -65,6 +72,26 @@ public class Fat {
     // 현재 이 요금제가 임베딩 값 테이블에 들어가있는지 안들어가있는지 확인하는 변수
     @Column(name = "is_embedding", nullable = false)
     private Boolean embedding = false;
+
+    public static Fat of(FatPreVO fatPreVOs, boolean b) {
+        return Fat.builder()
+                .textMessages(fatPreVOs.getTextMessages())
+                .basicDataAmount(fatPreVOs.getBasicDataAmount())
+                .dailyData(fatPreVOs.getDailyData())
+                .monthlyPrice(fatPreVOs.getMonthlyPrice())
+                .price(fatPreVOs.getPrice())
+                .sharingData(fatPreVOs.getSharingData())
+                .subDataSpeed(fatPreVOs.getSubDataSpeed())
+                .voiceCallVolume(fatPreVOs.getVoiceCallVolume())
+                .addon(fatPreVOs.getAddon())
+                .dataType(fatPreVOs.getDataType())
+                .description(fatPreVOs.getDescription())
+                .mplanType(fatPreVOs.getMplanType())
+                .name(fatPreVOs.getName())
+                .qualification(fatPreVOs.getQualification())
+                .embedding(fatPreVOs.getEmbedding())
+                .build();
+    }
 
     public List<String> makeDisriptionForEmbedding() {
         List<String> sentences = new ArrayList<>();

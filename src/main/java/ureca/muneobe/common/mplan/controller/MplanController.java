@@ -13,6 +13,7 @@ import ureca.muneobe.common.auth.utils.SessionUtil;
 import ureca.muneobe.common.mplan.dto.request.MplanCreateRequest;
 import ureca.muneobe.common.mplan.dto.response.MplanCreateResponse;
 import ureca.muneobe.common.mplan.dto.response.MplansResponse;
+import ureca.muneobe.common.mplan.dto.response.UnapplyMplanCreateResponse;
 import ureca.muneobe.common.mplan.service.MplanService;
 import ureca.muneobe.global.response.ResponseBody;
 
@@ -29,7 +30,7 @@ public class MplanController {
     }
 
     @PostMapping("/v1/mplan")
-    public ResponseEntity<ResponseBody<MplanCreateResponse>> createMplan(
+    public ResponseEntity<ResponseBody<UnapplyMplanCreateResponse>> createMplan(
             @RequestBody MplanCreateRequest mplanCreateRequest,
             HttpSession httpSession
     ){

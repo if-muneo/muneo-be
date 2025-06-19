@@ -12,6 +12,8 @@ import ureca.muneobe.common.mplan.dto.response.MplanDetailCreateResponse;
 import ureca.muneobe.common.mplan.dto.response.MplanDetailResponse;
 import ureca.muneobe.common.mplan.dto.response.MplanDetailsResponse;
 import ureca.muneobe.common.mplan.repository.MplanDetailRepository;
+import ureca.muneobe.global.exception.GlobalException;
+import ureca.muneobe.global.response.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class MplanDetailService {
 
     @Transactional
     public MplanDetailCreateResponse save(MplanDetailCreateRequest mplanDetailCreateRequest, Role role) {
+        if(role == Role.USER) throw new GlobalException(ErrorCode.FORBIDDEN);
         MplanDetail mplanDetail = mplanDetailRepository.save(getMplanDetail(mplanDetailCreateRequest));
         return getMplanDetailCreateResponse(mplanDetail);
     }
