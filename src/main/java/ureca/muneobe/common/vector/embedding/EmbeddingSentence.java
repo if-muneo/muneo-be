@@ -30,6 +30,7 @@ public class EmbeddingSentence {
         ObjectNode root = mapper.createObjectNode();
         root.withArray("input").add(text);
         root.put("model", embeddingModel);
+        root.put("dimensions", 1536);
 
         String json = mapper.writeValueAsString(root);
 

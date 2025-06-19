@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ureca.muneobe.common.auth.entity.Member;
@@ -36,4 +37,11 @@ public class Subscription extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mplan_id")
     private Mplan mplan;
+
+    @Builder
+    public Subscription(Member member, Mplan mplan, Integer fee) {
+        this.member = member;
+        this.mplan = mplan;
+        this.fee = fee;
+    }
 }

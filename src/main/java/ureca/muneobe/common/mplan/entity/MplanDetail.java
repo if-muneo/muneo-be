@@ -13,6 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import ureca.muneobe.common.mplan.dto.request.MplanCreateRequest;
 import ureca.muneobe.common.mplan.dto.request.MplanDetailCreateRequest;
 import ureca.muneobe.global.common.BaseEntity;
 
@@ -63,9 +69,25 @@ public class MplanDetail extends BaseEntity {
     private DataType dataType;
 
     @OneToMany(mappedBy = "mplanDetail")
+    @Builder.Default
     private List<Mplan> mplan = new ArrayList<>();
 
     public static MplanDetail from(MplanDetailCreateRequest mplanDetailCreateRequest){
+        return MplanDetail.builder()
+                .basicDataAmount(mplanDetailCreateRequest.getBasicDataAmount())
+                .dailyData(mplanDetailCreateRequest.getDailyData())
+                .sharingData(mplanDetailCreateRequest.getSharingData())
+                .monthlyPrice(mplanDetailCreateRequest.getMonthlyPrice())
+                .voiceCallVolume(mplanDetailCreateRequest.getVoiceCallVolume())
+                .textMessage(mplanDetailCreateRequest.getTextMessage())
+                .subDataSpeed(mplanDetailCreateRequest.getSubDataSpeed())
+                .qualification(mplanDetailCreateRequest.getQualification())
+                .mplanType(mplanDetailCreateRequest.getMplanType())
+                .dataType(mplanDetailCreateRequest.getDataType())
+                .build();
+    }
+
+    public static MplanDetail from(MplanCreateRequest mplanDetailCreateRequest){
         return MplanDetail.builder()
                 .basicDataAmount(mplanDetailCreateRequest.getBasicDataAmount())
                 .dailyData(mplanDetailCreateRequest.getDailyData())
