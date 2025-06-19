@@ -41,9 +41,12 @@ public enum ErrorCode {
     //CRUD 에러 6000번 때
     NO_MPLAN(HttpStatus.BAD_REQUEST, 6000, "해당 id에 해당하는 mplan이 없습니다."),
     NOT_YOUR_REVIEW(HttpStatus.BAD_REQUEST, 6001, "당신의 리뷰가 아닙니다."),
+    REVIEW_CONTENT_TOO_SHORT(HttpStatus.BAD_REQUEST, 6002, "글자 수는 10자 이상 작성해야 합니다."),
+    NOT_ELIGIBLE_REVIEW_USER(HttpStatus.FORBIDDEN, 6002, "가입된 요금제가 아닙니다."),
 
     // 금칙어 에러 7000번대
-    SLANG_WORDS_REQUIRED(HttpStatus.BAD_REQUEST, 6001, "단어를 입력해야 합니다."),
+    SLANG_WORDS_REQUIRED(HttpStatus.BAD_REQUEST, 7000, "단어를 입력해야 합니다."),
+    SLANG_WORDS_DETECTED(HttpStatus.BAD_REQUEST, 7001, "금칙어가 포함되어 있습니다."),
     ;
 
     private final HttpStatus status;

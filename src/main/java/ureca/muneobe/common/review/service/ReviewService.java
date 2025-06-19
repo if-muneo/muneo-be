@@ -1,10 +1,12 @@
 package ureca.muneobe.common.review.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ureca.muneobe.common.auth.entity.Member;
 import ureca.muneobe.common.auth.respository.MemberRepository;
+import ureca.muneobe.common.auth.utils.SessionUtil;
 import ureca.muneobe.common.mplan.entity.Mplan;
 import ureca.muneobe.common.mplan.repository.MplanRepository;
 import ureca.muneobe.common.review.dto.response.ReviewCreateResponse;
@@ -14,8 +16,12 @@ import ureca.muneobe.common.review.dto.response.ReviewDeleteResponse;
 import ureca.muneobe.common.review.dto.response.ReviewsResponse;
 import ureca.muneobe.common.review.entity.Review;
 import ureca.muneobe.common.review.repository.ReviewRepository;
+import ureca.muneobe.common.slang.service.SlangFilterService;
+import ureca.muneobe.common.subscription.entity.Subscription;
+import ureca.muneobe.common.subscription.repository.SubScriptionRepository;
 import ureca.muneobe.global.exception.GlobalException;
 import ureca.muneobe.global.response.ErrorCode;
+import ureca.muneobe.global.response.ResponseBody;
 
 import java.util.List;
 
@@ -25,6 +31,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MplanRepository mplanRepository;
     private final MemberRepository memberRepository;
+    private final SubScriptionRepository subScriptionRepository;
+    private final SlangFilterService slangFilterService;
 
     public ReviewsResponse findAll(Long mplanId) {
         return getReviewsResponse(mplanId);
@@ -32,6 +40,18 @@ public class ReviewService {
 
     @Transactional
     public ReviewCreateResponse create(Long mplanId, ReviewCreateRequest reviewCreateRequest, Long memberId) {
+        // 1. 사용자 가입된 요금제인지 체크
+        if (!isPossibleWriteReview(memberId, mplanId)) {
+            throw new GlobalException(ErrorCode.NOT_ELIGIBLE_REVIEW_USER);
+        }
+        // 2. 10글자 이하이거나
+        if (reviewCreateRequest.getContent() == null || reviewCreateRequest.getContent().length() < 10) {
+            throw new GlobalException(ErrorCode.REVIEW_CONTENT_TOO_SHORT);
+        }
+        // 3. 금칙어 체크
+        if (isContainsSlang(reviewCreateRequest.getContent())) {
+            throw new GlobalException(ErrorCode.SLANG_WORDS_DETECTED);
+        }
         Review review = reviewRepository.save(getReview(reviewCreateRequest, mplanId, memberId));
         return ReviewCreateResponse.from(review);
     }
@@ -58,6 +78,14 @@ public class ReviewService {
 
     private boolean isYourReview(Long reviewId, Long memberId) {
         return reviewRepository.findByIdAndMember(reviewId, memberRepository.getReferenceById(memberId)).isPresent();
+    }
+
+    private boolean isPossibleWriteReview(Long memberId, Long mplanId) {
+        return subScriptionRepository.existsByMemberIdAndMplanId(memberId,mplanId);
+    }
+
+    private boolean isContainsSlang(String userMessage) {
+        return slangFilterService.filteringSlang(userMessage);
     }
 }
 
