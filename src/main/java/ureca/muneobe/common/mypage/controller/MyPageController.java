@@ -15,7 +15,7 @@ import ureca.muneobe.global.response.ResponseBody;
 public class MyPageController {
     private final MyPageService myPageService;
 
-    @GetMapping("/mypage")
+    @GetMapping("/v1/mypage")
     public ResponseEntity<ResponseBody<MyPageResponse>> readMyPage(
             HttpSession httpSession
     ){
