@@ -19,7 +19,7 @@ public class VectorStrategy implements RoutingStrategy {
     private final OpenAiClient openAiClient;
 
     @Override
-    public Flux<String> process(FirstPromptResult firstPromptResult) {
+    public Flux<String> process(FirstPromptResult firstPromptResult, String memberName) {
         VectorResponse response = (VectorResponse) firstPromptResult.getFirstPromptResponse();
         String userMessage = firstPromptResult.getMessage();
         List<String> chatLog = firstPromptResult.getChatLog();
@@ -28,7 +28,7 @@ public class VectorStrategy implements RoutingStrategy {
                 .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행
                 .flatMapMany(plans -> {
                     if (plans == null || plans.getDescriptions() == null) return Mono.just("조건에 맞는 요금제가 없습니다.");
-                    return openAiClient.callSecondPrompt(userMessage, plans.getDescriptions(), chatLog);
+                    return openAiClient.callSecondPrompt(userMessage, plans.getDescriptions(), chatLog, memberName);
                 })
                 .onErrorResume(e -> Mono.just("요금제 검색 또는 2차 프롬프트 호출 중 오류가 발생했습니다."));
     }

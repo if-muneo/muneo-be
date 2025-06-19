@@ -11,11 +11,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import ureca.muneobe.common.mplan.dto.request.MplanDetailCreateRequest;
 import ureca.muneobe.global.common.BaseEntity;
 
@@ -23,6 +20,7 @@ import ureca.muneobe.global.common.BaseEntity;
 @Table(name = "mplan_detail")
 @Getter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MplanDetail extends BaseEntity {
