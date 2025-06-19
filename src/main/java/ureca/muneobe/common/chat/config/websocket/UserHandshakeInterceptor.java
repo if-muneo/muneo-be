@@ -19,30 +19,24 @@ public class UserHandshakeInterceptor implements HandshakeInterceptor {
                                    ServerHttpResponse response,
                                    WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) {
-        String uri = request.getURI().toString();
-//
-//        if (request instanceof ServletServerHttpRequest) {
-//            ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
-//            HttpSession session = servletRequest.getServletRequest().getSession(false);
-//
-//            // SessionUtil로 로그인 확인
-//            if (SessionUtil.isLoggedIn(session)) {
-//                Member member = SessionUtil.getLoginMember(session);
-//
-//                // 웹소켓 세션에 사용자 정보 저장
-//                attributes.put("member", member);
-//                attributes.put("memberName", member.getName());
-//                attributes.put("memberId", member.getId());
-//
-//                return true; // 연결 허용
-//            }
-//        }
-//
-//        return false; // 로그인하지 않은 사용자는 연결 거부
+        if (request instanceof ServletServerHttpRequest) {
+            ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
+            HttpSession session = servletRequest.getServletRequest().getSession(false);
 
-        // 프론트 연동 전까지 테스트
-        attributes.put("username", "박상윤");
-        return true;
+            // SessionUtil로 로그인 확인
+            if (SessionUtil.isLoggedIn(session)) {
+                Member member = SessionUtil.getLoginMember(session);
+
+                // 웹소켓 세션에 사용자 정보 저장
+                attributes.put("member", member);
+                attributes.put("memberName", member.getName());
+                attributes.put("memberId", member.getId());
+
+                return true; // 연결 허용
+            }
+        }
+
+        return false; // 로그인하지 않은 사용자는 연결 거부
     }
 
     @Override
