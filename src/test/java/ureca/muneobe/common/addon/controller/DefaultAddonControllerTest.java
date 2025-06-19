@@ -15,6 +15,8 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import ureca.muneobe.common.addon.dto.request.DefaultAddonCreateRequest;
 import ureca.muneobe.common.addon.entity.Addon;
 import ureca.muneobe.common.addon.entity.AddonType;
+import ureca.muneobe.common.addon.entity.DefaultAddon;
+import ureca.muneobe.common.addon.repository.DefaultAddonRepository;
 import ureca.muneobe.common.auth.entity.Member;
 import ureca.muneobe.common.auth.respository.MemberRepository;
 import ureca.muneobe.common.auth.utils.SessionUtil;
@@ -38,7 +40,7 @@ public class DefaultAddonControllerTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private AddonRepository addonRepository;
+    private DefaultAddonRepository defaultAddonRepository;
 
     private int addonId;
     private DefaultAddonCreateRequest addonCreateRequest;
@@ -54,7 +56,7 @@ public class DefaultAddonControllerTest {
                 .addonType(AddonType.MEDIA)
                 .build();
 
-        addonRepository.save(Addon.builder()
+        defaultAddonRepository.save(DefaultAddon.builder()
                 .name("Sample Addon")
                 .description("sample addon data")
                 .price(10000)
