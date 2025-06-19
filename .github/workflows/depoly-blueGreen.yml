@@ -110,9 +110,9 @@ jobs:
                   }
                 ],
                 "essential": true,
-                "entryPoint": [ "sh", "-c" ],
+                "entryPoint": ["sh", "-c"],
                 "command": [
-                  "/bin/sh -c \\"echo '<html><body style=\\\\\\"background-color: #097969\\\\\\">Deployed via GitHub Actions</body></html>' > /usr/local/apache2/htdocs/index.html && httpd-foreground\\""
+                  "echo '<html><body style=\"background-color: #097969\">Deployed via GitHub Actions</body></html>' > /usr/local/apache2/htdocs/index.html && httpd-foreground"
                 ]
               }
             ],
