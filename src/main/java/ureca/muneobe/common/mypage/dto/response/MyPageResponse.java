@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 public class MyPageResponse {
     private Long id;
     private String email;
-    private String password;
     private String phoneNumber;
     private Integer old;
     private Gender gender;
@@ -34,7 +33,6 @@ public class MyPageResponse {
         return MyPageResponse.builder()
                 .id(member.getId())
                 .email(member.getEmail())
-                .password(member.getPassword())
                 .phoneNumber(member.getPhoneNumber())
                 .old(member.getOld())
                 .gender(member.getGender())
