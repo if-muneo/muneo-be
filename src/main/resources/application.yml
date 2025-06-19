@@ -21,7 +21,7 @@ spring:
         embedding:
           model: text-embedding-3-small
       first:
-        model: gpt-4o
+        model: gpt-4o-mini
         temperature: 0.3
         maxTokens: 500
         prompt: |
@@ -243,7 +243,7 @@ spring:
             "message": "유도 응답"
           }
       second:
-        model: gpt-4o
+        model: gpt-4o-mini
         temperature: 0.3
         maxTokens: 500
         prompt: |

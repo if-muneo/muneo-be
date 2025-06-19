@@ -125,13 +125,13 @@
             appendSystemMessage("연결 중이 아닙니다.");
             return;
         }
-        const chatMessage = {
+        const chatResult = {
             sender: username,
             content: content,
             timestamp: Date.now()
         };
-        showUserMessage(chatMessage);
-        stompClient.send("/pub/chat/message", {}, JSON.stringify(chatMessage));
+        showUserMessage(chatResult);
+        stompClient.send("/pub/chat/message", {}, JSON.stringify(chatResult));
         msgInput.value = '';
     }
 

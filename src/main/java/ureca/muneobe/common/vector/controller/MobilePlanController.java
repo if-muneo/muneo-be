@@ -2,28 +2,23 @@ package ureca.muneobe.common.vector.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ureca.muneobe.common.vector.dto.RecommendationRequest;
-import ureca.muneobe.common.vector.entity.Fat;
+import org.springframework.web.bind.annotation.*;
+import ureca.muneobe.common.vector.dto.request.RecommendationRequest;
+import ureca.muneobe.common.vector.dto.response.EmbeddingGenerateResponse;
+import ureca.muneobe.common.vector.dto.response.VectorSearchResponse;
 import ureca.muneobe.common.vector.service.FatService;
-
-import java.util.List;
+import ureca.muneobe.global.response.ResponseBody;
 
 @RestController
-@RequestMapping("/plans")
 @RequiredArgsConstructor
 public class MobilePlanController {
 
     private final FatService fatService;
 
-    @PostMapping("/search")
-    public ResponseEntity<List<Fat>> searchByText(@RequestBody RecommendationRequest request) {
-        String userQuery = request.getQuery();
-        List<Fat> similarPlans = fatService.search(userQuery);
-        return ResponseEntity.ok(similarPlans);
+    @GetMapping("/v1/vector")
+    public ResponseEntity<ResponseBody<VectorSearchResponse>> searchByText(@RequestBody RecommendationRequest request) {
+        return ResponseEntity.ok().body(
+                ResponseBody.success(fatService.search(request.getQuery())));
     }
 
     /**
@@ -31,16 +26,21 @@ public class MobilePlanController {
      *
      * embedding 컬럼이 null인 요금제에 대해 OpenAI API로 임베딩 생성 후 저장합니다.
      */
-    @PostMapping("/generate")
-    public ResponseEntity<String> generateEmbeddings() {
-        try {
-            fatService.generateAndSaveAllNullEmbeddings();
-            return ResponseEntity.ok("embedding 생성 완료");
-        } catch (Exception e) {
-            return ResponseEntity
-                    .internalServerError()
-                    .body("임베딩 생성 실패: " + e.getMessage());
-        }
+    @PostMapping("/v1/embedding/generate")
+    public ResponseEntity<ResponseBody<EmbeddingGenerateResponse>> generateEmbeddings() {
+        return ResponseEntity.ok().body(
+                    ResponseBody.success(fatService.generateAndSaveAllNullEmbeddings()));
+    }
+
+    /**
+     * POST plans/update/{id}
+     *
+     * update 요청이 들어온 요금제 id에 대해 OpenAI API로 임베딩 생성 후 저장합니다.
+     */
+    @PatchMapping("/v1/embedding/generate/{id}")
+    public ResponseEntity<ResponseBody<EmbeddingGenerateResponse>> generateUpdateEmbeddings(@PathVariable Long id) {
+        return ResponseEntity.ok().body(
+                ResponseBody.success(fatService.generateAndSaveAllUpdateEmbeddings(id)));
     }
 }
 

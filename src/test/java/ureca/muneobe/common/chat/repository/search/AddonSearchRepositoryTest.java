@@ -10,7 +10,7 @@
 //import org.testcontainers.containers.PostgreSQLContainer;
 //import org.testcontainers.junit.jupiter.Container;
 //import org.testcontainers.junit.jupiter.Testcontainers;
-//import ureca.muneobe.common.chat.entity.AddonType;
+//import ureca.muneobe.common.addon.entity.AddonType;
 //import ureca.muneobe.common.chat.service.rdb.input.AddonCondition;
 //import ureca.muneobe.common.chat.service.rdb.input.Condition;
 //import ureca.muneobe.common.chat.service.rdb.input.Range;

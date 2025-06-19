@@ -1,14 +1,17 @@
 package ureca.muneobe.common.openai;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ureca.muneobe.common.chat.config.openai.OpenAiFirstPrompt;
 import ureca.muneobe.common.chat.config.openai.OpenAiSecondPrompt;
-import ureca.muneobe.common.chat.service.rdb.output.FindingMplan;
+import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
+import ureca.muneobe.common.chat.dto.result.PreProcessResult;
 import ureca.muneobe.common.openai.dto.Message;
 import ureca.muneobe.common.openai.dto.OpenAiRequest;
 import ureca.muneobe.common.openai.dto.OpenAiResponse;
@@ -25,6 +28,8 @@ import static ureca.muneobe.global.response.ErrorCode.JSON_PARSING_ERROR;
 @RequiredArgsConstructor
 public class OpenAiClient {
 
+    private final String DONE = "[DONE]";
+
     private final WebClient openAiWebClient;
     private final OpenAiFirstPrompt firstPrompt;
     private final OpenAiSecondPrompt secondPrompt;
@@ -33,13 +38,13 @@ public class OpenAiClient {
     /**
      * 1차 프롬프트 호출
      */
-    public Mono<FirstPromptResponse> callFirstPrompt(String userMassage, List<String> chatLog) {
+    public Mono<FirstPromptResult> callFirstPrompt(PreProcessResult preProcessResult) {
         List<Message> messages = List.of(
-                Message.from("system", firstPrompt.getPrompt() + " 이전 대화기록 " + chatLog ),
-                Message.from("user", userMassage)
+                Message.from("system", firstPrompt.getPrompt() + " 이전 대화기록 " + preProcessResult.getChatLog()),
+                Message.from("user", preProcessResult.getMessage())
         );
 
-        OpenAiRequest request = OpenAiRequest.of(firstPrompt.getModel(), messages, firstPrompt.getTemperature(), firstPrompt.getMaxTokens());
+        OpenAiRequest request = OpenAiRequest.of(firstPrompt.getModel(), messages, firstPrompt.getTemperature(), firstPrompt.getMaxTokens(),false);
 
         return openAiWebClient.post()
                 .bodyValue(request)
@@ -47,6 +52,7 @@ public class OpenAiClient {
                 .bodyToMono(OpenAiResponse.class)
                 .map(OpenAiResponse::getIntentJson)
                 .map(this::parseIntentJson)
+                .map(firstPromptResponse -> FirstPromptResult.of(firstPromptResponse, preProcessResult.getMessage(), preProcessResult.getChatLog()))
                 .doOnNext(resp -> log.info("1차 응답 IntentJson: {}", resp))
                 .onErrorResume(this::handlePromptError);
     }
@@ -54,24 +60,37 @@ public class OpenAiClient {
     /**
      * 2차 프롬프트 호출
      */
-    public <T> Mono<String> callSecondPrompt(String userMessage, List<T> dbData, List<String> chatLog) {
+    public <T> Flux<String> callSecondPrompt(String userMessage, List<T> dbData, List<String> chatLog) {
         List<Message> messages = List.of(
                 Message.from("system", secondPrompt.getPrompt() + " 활용 데이터 " + dbData + " 이전 대화 기록 " + chatLog),
                 Message.from("user", "사용자 질문: " + userMessage)
         );
 
-        OpenAiRequest request = OpenAiRequest.of(secondPrompt.getModel(), messages, secondPrompt.getTemperature(), secondPrompt.getMaxTokens());
+        OpenAiRequest request = OpenAiRequest.of(secondPrompt.getModel(), messages, secondPrompt.getTemperature(), secondPrompt.getMaxTokens(),true);
 
         return openAiWebClient.post()
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(OpenAiResponse.class)
-                .map(OpenAiResponse::getIntentJson)
-                .doOnNext(resp -> log.info("2차 응답: {}", resp))
-                .onErrorResume(e -> {
-                    log.error("2차 프롬프트 에러", e);
-                    return Mono.error(e);
-                });
+                .bodyToFlux(String.class)
+                .map(this::extractDeltaContent)
+                .takeUntil((DONE)::equals)
+                .filter(line -> !line.isBlank() && !line.equals("[DONE]"));
+    }
+
+    private String extractDeltaContent(String line) {
+        if (line == null || line.isBlank()) return "";
+
+        if (DONE.equals(line.trim())) {
+            return DONE;
+        }
+
+        try {
+            JsonNode json = objectMapper.readTree(line); // 바로 JSON 파싱 시도
+            return json.path("choices").get(0).path("delta").path("content").asText("");
+        } catch (Exception e) {
+            log.error("JSON 파싱 실패: {}", line);
+            return "";
+        }
     }
 
     /**
@@ -88,7 +107,7 @@ public class OpenAiClient {
     /**
      * Error 핸들러
      */
-    private Mono<FirstPromptResponse> handlePromptError(Throwable e) {
+    private Mono<FirstPromptResult> handlePromptError(Throwable e) {
         // json 에러일 경우
         if (e instanceof GlobalException) {
             return Mono.error(e);

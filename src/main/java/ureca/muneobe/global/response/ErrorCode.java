@@ -20,6 +20,9 @@ public enum ErrorCode {
     //인증 에러 2000번 때
 
     //벡터 팀 에러 3000번 때
+    VECTOR_SEARCH_FAILED(HttpStatus.NOT_FOUND, 3001, "유사한 데이터 조회에 실패했습니다."),
+    PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, 3002, "해당하는 id의 요금제가 발견되지 않았습니다."),
+    EMBEDDING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, 3003, "임베딩 생성에 실패했습니다."),
 
     //RDB 팀 에러 4000번 때
 
@@ -33,9 +36,17 @@ public enum ErrorCode {
     REDIS_CHAT_STORE_ERROR(HttpStatus.NOT_FOUND, 6001, "대화 내용 redis 저장 중 요류가 발생했습니다."),
     REDIS_CHAT_PARSE_ERROR(HttpStatus.NOT_FOUND, 6001, "대화 내용 DB 저장 중 요류가 발생했습니다."),
 
-
     //demo 에러
-    DEMO_ERROR(HttpStatus.BAD_REQUEST, 9999, "데모 에러입니다.");
+    DEMO_ERROR(HttpStatus.BAD_REQUEST, 9999, "데모 에러입니다."),
+    //CRUD 에러 6000번 때
+    NO_MPLAN(HttpStatus.BAD_REQUEST, 6000, "해당 id에 해당하는 mplan이 없습니다."),
+    NOT_YOUR_REVIEW(HttpStatus.BAD_REQUEST, 6001, "당신의 리뷰가 아닙니다."),
+    REVIEW_CONTENT_TOO_SHORT(HttpStatus.BAD_REQUEST, 6002, "글자 수는 10자 이상 작성해야 합니다."),
+    NOT_ELIGIBLE_REVIEW_USER(HttpStatus.FORBIDDEN, 6002, "가입된 요금제가 아닙니다."),
+
+    // 금칙어 에러 7000번대
+    SLANG_WORDS_REQUIRED(HttpStatus.BAD_REQUEST, 7000, "단어를 입력해야 합니다."),
+    SLANG_WORDS_DETECTED(HttpStatus.BAD_REQUEST, 7001, "금칙어가 포함되어 있습니다."),
     ;
 
     private final HttpStatus status;
