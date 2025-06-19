@@ -69,7 +69,7 @@ public class MplanDetailControllerTest {
                 .dataType(DataType._5G)
                 .build();
 
-        loginMember = memberRepository.findByName("최정민").orElseThrow(() -> new NoSuchElementException("Admin 계정을 찾지 못했습니다."));
+        //loginMember = memberRepository.findByName("최정민").orElseThrow(() -> new NoSuchElementException("Admin 계정을 찾지 못했습니다."));
     }
 
     private static String asJsonString(final Object obj) {
