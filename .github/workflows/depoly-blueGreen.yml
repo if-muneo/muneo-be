@@ -89,9 +89,11 @@ jobs:
 
       - name: 📝 task-def.json & appspec.yaml 생성
         run: |
+          # JAR 복사 (현재는 사용하지 않지만 유지)
           JAR_FILE=$(ls build/libs/*.jar | head -1)
           cp "$JAR_FILE" app-latest.jar
-
+      
+          # task-def.json 생성
           cat > task-def.json <<EOF
           {
             "family": "sample-fargate",
@@ -121,13 +123,22 @@ jobs:
           }
           EOF
 
+          # 🔁 task definition 등록하고 정확한 ARN 추출
+          TASK_DEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://task-def.json \
+            --query "taskDefinition.taskDefinitionArn" \
+            --output text)
+      
+          echo "✅ TASK DEF ARN: $TASK_DEF_ARN"
+
+          # appspec.yaml 생성 (정확한 ARN 사용!)
           cat > appspec.yaml <<EOF
           version: 0.0
           Resources:
             - TargetService:
                 Type: AWS::ECS::Service
                 Properties:
-                  TaskDefinition: "sample-fargate:3"
+                  TaskDefinition: "$TASK_DEF_ARN"
                   LoadBalancerInfo:
                     ContainerName: "sample-app"
                     ContainerPort: 80
@@ -137,8 +148,7 @@ jobs:
       - name: ☁️ S3에 배포파일 업로드
         run: |
           aws s3 cp appspec.yaml s3://muneo-s3/appspec.yaml
-          aws ecs register-task-definition --cli-input-json file://task-def.json
-
+      
       - name: 🚀 CodeDeploy로 ECS 배포 실행
         run: |
           aws deploy create-deployment \
