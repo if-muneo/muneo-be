@@ -8,7 +8,11 @@ import lombok.NoArgsConstructor;
 import ureca.muneobe.common.auth.entity.enums.Category;
 import ureca.muneobe.common.auth.entity.enums.Gender;
 import ureca.muneobe.common.auth.entity.enums.Role;
+import ureca.muneobe.common.subscription.entity.Subscription;
 import ureca.muneobe.global.common.BaseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -52,6 +56,9 @@ public class Member extends BaseEntity {
 
     @Column(name = "use_amount")
     private Integer useAmount;
+
+    @OneToMany(mappedBy = "member")
+    private List<Subscription> subscriptions = new ArrayList<>();
 
     @Builder
     private Member(String name, String password, String phoneNumber,
