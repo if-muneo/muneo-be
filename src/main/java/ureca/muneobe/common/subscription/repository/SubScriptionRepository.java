@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface SubScriptionRepository extends JpaRepository<Subscription, Long> {
     List<Subscription> findAllByMember_Id(Long memberId);
+    boolean existsByMemberIdAndMplanId(Long memberId, Long mplanId);
 }

@@ -81,14 +81,7 @@ public class ReviewService {
     }
 
     private boolean isPossibleWriteReview(Long memberId, Long mplanId) {
-        List<Subscription> subscriptionList = subScriptionRepository.findAllByMember_Id(memberId);
-
-        for (Subscription subscription : subscriptionList) {
-            if (subscription.getMplan().getId().equals(mplanId)) {
-                return true;
-            }
-        }
-        return false;
+        return subScriptionRepository.existsByMemberIdAndMplanId(memberId,mplanId);
     }
 
     private boolean isContainsSlang(String userMessage) {
