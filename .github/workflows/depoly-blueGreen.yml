@@ -82,8 +82,11 @@ jobs:
       - name: 🔧 실행 권한 부여
         run: chmod +x ./gradlew
 
-      - name: 🏗️ JAR 빌드
-        run: ./gradlew bootJar
+      - name: 📦 JAR 아티팩트 다운로드
+        uses: actions/download-artifact@v4
+        with:
+          name: jar-artifact
+          path: build/libs
 
       - name: 🐳 Docker 빌드
         run: |
@@ -121,7 +124,7 @@ jobs:
                 "portMappings": [
                   {
                     "containerPort": 8080,
-                    "hostPort": 80,
+                    "hostPort": 8080,
                     "protocol": "tcp"
                   }
                 ],
