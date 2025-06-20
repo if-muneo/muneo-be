@@ -2,9 +2,10 @@ name: Spring Boot CI/CD (ECS Blue/Green)
 
 on:
   push:
-    branches: [ main, develop ]
+    branches:
+      - MUN-62-Blue-Green-배포-환경-분리
   pull_request:
-    branches: [ main, develop ]
+      - MUN-62-Blue-Green-배포-환경-분리
   workflow_dispatch:
 jobs:
   test:
@@ -74,11 +75,21 @@ jobs:
       - name: 📂 코드 체크아웃
         uses: actions/checkout@v4
 
-      - name: 📦 JAR 다운로드
-        uses: actions/download-artifact@v4
+      - name: ☕ Java 17 설정
+        uses: actions/setup-java@v4
         with:
-          name: jar-artifact
-          path: build/libs/
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 🔧 실행 권한 부여
+        run: chmod +x ./gradlew
+
+      - name: 🏗️ JAR 빌드
+        run: ./gradlew bootJar
+
+      - name: 🐳 Docker 빌드
+        run: |
+          docker build -t my-spring-app .
 
       - name: 🔑 AWS 자격증명 설정
         uses: aws-actions/configure-aws-credentials@v2
@@ -89,59 +100,41 @@ jobs:
 
       - name: 📝 task-def.json & appspec.yaml 생성
         run: |
-          # JAR 복사 (현재는 사용하지 않지만 유지)
-          JAR_FILE=$(ls build/libs/*.jar | head -1)
-          cp "$JAR_FILE" app-latest.jar
-      
-          # task-def.json 생성
           cat > task-def.json <<EOF
           {
-            "family": "sample-fargate",
+            "family": "springboot-fargate",
             "networkMode": "awsvpc",
             "containerDefinitions": [
               {
-                "name": "sample-app",
-                "image": "public.ecr.aws/docker/library/httpd:latest",
+                "name": "spring-app",
+                "image": "904233103291.dkr.ecr.ap-northeast-2.amazonaws.com/my-spring-app:latest",
                 "portMappings": [
                   {
-                    "containerPort": 80,
-                    "hostPort": 80,
+                    "containerPort": 8080,
+                    "hostPort": 8080,
                     "protocol": "tcp"
                   }
                 ],
-                "essential": true,
-                "entryPoint": ["sh", "-c"],
-                "command": [
-                  "echo '<html><body style=\"background-color: #097969\">Deployed via GitHub Actions</body></html>' > /usr/local/apache2/htdocs/index.html && httpd-foreground"
-                ]
+                "essential": true
               }
             ],
             "requiresCompatibilities": ["FARGATE"],
-            "cpu": "256",
-            "memory": "512",
+            "cpu": "512",
+            "memory": "1024",
             "executionRoleArn": "arn:aws:iam::904233103291:role/ecsTaskExecutionRole"
           }
           EOF
-
-          # 🔁 task definition 등록하고 정확한 ARN 추출
-          TASK_DEF_ARN=$(aws ecs register-task-definition \
-            --cli-input-json file://task-def.json \
-            --query "taskDefinition.taskDefinitionArn" \
-            --output text)
-      
-          echo "✅ TASK DEF ARN: $TASK_DEF_ARN"
-
-          # appspec.yaml 생성 (정확한 ARN 사용!)
+          
           cat > appspec.yaml <<EOF
           version: 0.0
           Resources:
             - TargetService:
                 Type: AWS::ECS::Service
                 Properties:
-                  TaskDefinition: "$TASK_DEF_ARN"
+                  TaskDefinition: "springboot-fargate"
                   LoadBalancerInfo:
-                    ContainerName: "sample-app"
-                    ContainerPort: 80
+                    ContainerName: "spring-app"
+                    ContainerPort: 8080
                   PlatformVersion: "LATEST"
           EOF
 
