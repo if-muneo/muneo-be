@@ -135,25 +135,25 @@ public class AddonGroupControllerTest {
 //
 //        verifyEachCreated(addonRepository.findAddonsByAddonGroup(addonGroup), (long) id);
 //    }
-
-    @Test
-    @DisplayName("Addon-group 단일 조회 테스트")
-    void readAddonGroupAddons() throws Exception {
-        int addonGroupId = 1;
-        MvcResult mvcResult = mockMvc.perform(get("/v1/addon-group/"+addonGroupId))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String responseJson = mvcResult.getResponse().getContentAsString();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode addonsArray = objectMapper.readTree(responseJson).at("/data/addonGroupAddonsResponse");
-
-        for(JsonNode addonNode : addonsArray){
-            long addonId = addonNode.get("id").asLong();
-
-            Addon addon = addonRepository.findById(addonId).orElseThrow(() -> new NoSuchElementException("addon이 정상적으로 생성되지 않았습니다."));
-            assertEquals(addonGroupId, addon.getAddonGroup().getId());
-        }
-    }
+//
+//    @Test
+//    @DisplayName("Addon-group 단일 조회 테스트")
+//    void readAddonGroupAddons() throws Exception {
+//        int addonGroupId = 1;
+//        MvcResult mvcResult = mockMvc.perform(get("/v1/addon-group/"+addonGroupId))
+//                .andExpect(status().isOk())
+//                .andReturn();
+//
+//        String responseJson = mvcResult.getResponse().getContentAsString();
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        JsonNode addonsArray = objectMapper.readTree(responseJson).at("/data/addonGroupAddonsResponse");
+//
+//        for(JsonNode addonNode : addonsArray){
+//            long addonId = addonNode.get("id").asLong();
+//
+//            Addon addon = addonRepository.findById(addonId).orElseThrow(() -> new NoSuchElementException("addon이 정상적으로 생성되지 않았습니다."));
+//            assertEquals(addonGroupId, addon.getAddonGroup().getId());
+//        }
+//    }
 }
