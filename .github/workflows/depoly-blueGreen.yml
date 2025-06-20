@@ -134,6 +134,18 @@ jobs:
                   {
                     "name": "SPRING_PROFILES_ACTIVE",
                     "value": "dev"
+                  },
+                  {
+                    "name": "DB_URL",
+                    "value": "${{ secrets.DB_URL }}"
+                  },
+                  {
+                    "name": "DB_USERNAME",
+                    "value": "${{ secrets.DB_USERNAME }}"
+                  },
+                  {
+                    "name": "DB_PASSWORD",
+                    "value": "${{ secrets.DB_PASSWORD }}"
                   }
                 ],
                 "logConfiguration": {
