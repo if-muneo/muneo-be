@@ -134,7 +134,7 @@ jobs:
                 "logConfiguration": {
                   "logDriver": "awslogs",
                   "options": {
-                    "awslogs-group": "/ecs/springboot-fargate",
+                    "awslogs-group": "/ecs/spring-fargate",
                     "awslogs-region": "ap-northeast-2",
                     "awslogs-stream-prefix": "ecs"
                   }
