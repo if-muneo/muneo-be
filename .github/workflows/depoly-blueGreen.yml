@@ -175,8 +175,8 @@ jobs:
       - name: 🚫 기존 배포 중복 확인
         run: |
           ACTIVE_DEPLOYMENT=$(aws deploy list-deployments \
-            --application-name tutorial-bluegreen-app \
-            --deployment-group-name tutorial-bluegreen-dg \
+            --application-name spring-bluegreen-app \
+            --deployment-group-name bluegreen-dg \
             --include-only-statuses Created InProgress \
             --query "deployments[0]" --output text)
 
@@ -188,15 +188,15 @@ jobs:
       - name: 🚀 CodeDeploy로 ECS 배포 실행
         run: |
           aws deploy create-deployment \
-          --application-name tutorial-bluegreen-app \
-          --deployment-group-name tutorial-bluegreen-dg \
+          --application-name spring-bluegreen-app \
+          --deployment-group-name bluegreen-dg \
           --revision '{"revisionType":"S3","s3Location":{"bucket":"muneo-s3","key":"appspec.yaml","bundleType":"YAML"}}'
 
       - name: ⏱️ 배포 완료될 때까지 대기
         run: |
           DEPLOYMENT_ID=$(aws deploy list-deployments \
-            --application-name tutorial-bluegreen-app \
-            --deployment-group-name tutorial-bluegreen-dg \
+            --application-name spring-bluegreen-app \
+            --deployment-group-name bluegreen-dg \
             --query "deployments[0]" --output text)
 
           echo "Waiting for deployment $DEPLOYMENT_ID..."
