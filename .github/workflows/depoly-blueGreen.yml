@@ -134,7 +134,7 @@ jobs:
           }
           EOF
           
-          cat > appspec.yaml <<'EOF'
+          cat > appspec.yaml << EOF
           version: 0.0
           Resources:
             - TargetService:
@@ -142,9 +142,9 @@ jobs:
                 Properties:
                   TaskDefinition: springboot-fargate
                   LoadBalancerInfo:
-                    ContainerName: spring-app
-                    ContainerPort: 8080
-                  PlatformVersion: LATEST
+                      ContainerName: spring-app
+                      ContainerPort: 8080
+                  PlatformVersion: "LATEST"
           EOF
 
       - name: ☁️ S3에 배포파일 업로드
