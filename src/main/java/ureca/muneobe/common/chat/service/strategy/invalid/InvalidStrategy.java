@@ -9,7 +9,7 @@ import ureca.muneobe.common.chat.service.strategy.RoutingStrategy;
 @Component("invalidStrategy")
 public class InvalidStrategy implements RoutingStrategy {
     @Override
-    public Flux<String> process(FirstPromptResult firstPromptResult) {
+    public Flux<String> process(FirstPromptResult firstPromptResult, String memberName) {
         return Mono.just("죄송합니다. 다시 질문해주세요.").flux();
     }
 }
