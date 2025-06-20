@@ -170,6 +170,7 @@ jobs:
                     ContainerName: sample-app
                     ContainerPort: 8080
                   PlatformVersion: LATEST
+          EOF
 
       - name: ☁️ S3에 배포파일 업로드
         run: |
