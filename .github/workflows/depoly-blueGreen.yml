@@ -135,17 +135,17 @@ jobs:
           EOF
           
           cat > appspec.yaml <<'EOF'
-    version: 0.0
-    Resources:
-      - TargetService:
-          Type: AWS::ECS::Service
-          Properties:
-            TaskDefinition: springboot-fargate
-            LoadBalancerInfo:
-              ContainerName: spring-app
-              ContainerPort: 8080
-            PlatformVersion: LATEST
-      EOF
+          version: 0.0
+          Resources:
+            - TargetService:
+                Type: AWS::ECS::Service
+                Properties:
+                  TaskDefinition: springboot-fargate
+                  LoadBalancerInfo:
+                    ContainerName: spring-app
+                    ContainerPort: 8080
+                  PlatformVersion: LATEST
+          EOF
 
       - name: ☁️ S3에 배포파일 업로드
         run: |
