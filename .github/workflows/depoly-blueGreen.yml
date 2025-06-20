@@ -82,9 +82,6 @@ jobs:
       - name: 🔧 실행 권한 부여
         run: chmod +x ./gradlew
 
-      - name: 🏗️ JAR 빌드
-        run: ./gradlew bootJar
-
       - name: 🐳 Docker 빌드
         run: |
           docker build -t my-spring-app .
