@@ -165,12 +165,12 @@ jobs:
             - TargetService:
                 Type: AWS::ECS::Service
                 Properties:
-                  TaskDefinition: springboot-fargate
+                  TaskDefinition: "$TASK_DEF_ARN"
                   LoadBalancerInfo:
-                    ContainerName: sample-app
+                    ContainerName: "sample-app"
                     ContainerPort: 8080
-                  PlatformVersion: LATEST
-          EOF
+                  PlatformVersion: "LATEST"
+            EOF
 
       - name: ☁️ S3에 배포파일 업로드
         run: |
