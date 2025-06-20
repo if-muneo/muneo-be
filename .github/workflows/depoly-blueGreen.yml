@@ -130,7 +130,12 @@ jobs:
                 "entryPoint": ["java", "-jar", "/app/app.jar"],
                 "command": [],
                 "mountPoints": [],
-                "environment": [],
+                "environment": [
+                  {
+                    "name": "SPRING_PROFILES_ACTIVE",
+                    "value": "dev"
+                  }
+                ],
                 "logConfiguration": {
                   "logDriver": "awslogs",
                   "options": {
