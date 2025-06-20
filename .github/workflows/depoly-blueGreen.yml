@@ -119,7 +119,7 @@ jobs:
             "networkMode": "awsvpc",
             "containerDefinitions": [
               {
-                "name": "spring-app",
+                "name": "sample-app",
                 "image": "904233103291.dkr.ecr.ap-northeast-2.amazonaws.com/muneo:latest",
                 "portMappings": [
                   {
@@ -157,17 +157,16 @@ jobs:
           echo "✅ TASK DEF ARN: $TASK_DEF_ARN"
           
           # ✅ appspec.yaml 생성 (정확한 ARN 삽입 + 들여쓰기 유지!)
-          cat > appspec.yaml <<EOF
           version: 0.0
           Resources:
             - TargetService:
                 Type: AWS::ECS::Service
                 Properties:
-                  TaskDefinition: "$TASK_DEF_ARN"
+                  TaskDefinition: springboot-fargate
                   LoadBalancerInfo:
-                    ContainerName: "sample-app"
+                    ContainerName: sample-app
                     ContainerPort: 8080
-                  PlatformVersion: "LATEST"
+                  PlatformVersion: LATEST
 
       - name: ☁️ S3에 배포파일 업로드
         run: |
