@@ -159,6 +159,7 @@ jobs:
           echo "✅ TASK DEF ARN: $TASK_DEF_ARN"
           
           # ✅ appspec.yaml 생성 (정확한 ARN 삽입 + 들여쓰기 유지!)
+          cat > appspec.yaml <<EOF
           version: 0.0
           Resources:
             - TargetService:
