@@ -28,7 +28,7 @@ public class RoutingStrategyFactory {
                 return applicationContext.getBean("inappropriateStrategy", InappropriateStrategy.class);
             }
             case "DAILY" -> {
-                return applicationContext.getBean("daily", DailyStrategy.class);
+                return applicationContext.getBean("dailyStrategy", DailyStrategy.class);
             }
             default -> {
                 return applicationContext.getBean("invalidStrategy", InvalidStrategy.class);
