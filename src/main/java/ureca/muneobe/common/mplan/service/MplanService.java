@@ -29,16 +29,16 @@ public class MplanService {
         return getMplanResponse(pageRequest);
     }
 
-    private MplansResponse getMplanResponse(PageRequest pageRequest) {
-        Page<Mplan> mplans = mplanRepository.findAll(pageRequest);
-        return MplansResponse.from(mplans);
-    }
-
     @Transactional
     public MplanCreateResponse save(MplanCreateRequest mplanCreateRequest, Role role) {
         if(role == Role.USER) throw new GlobalException(ErrorCode.FORBIDDEN);
         Mplan mplan = mplanRepository.save(getMplan(mplanCreateRequest));
         return getMplanCreateResponse(mplan);
+    }
+
+    private MplansResponse getMplanResponse(PageRequest pageRequest) {
+        Page<Mplan> mplans = mplanRepository.findAll(pageRequest);
+        return MplansResponse.from(mplans);
     }
 
     private Mplan getMplan(MplanCreateRequest mplanCreateRequest) {

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
+import ureca.muneobe.common.chat.service.strategy.daily.DailyStrategy;
 import ureca.muneobe.common.chat.service.strategy.inappropriate.InappropriateStrategy;
 import ureca.muneobe.common.chat.service.strategy.invalid.InvalidStrategy;
 import ureca.muneobe.common.chat.service.strategy.rdb.RdbStrategy;
@@ -23,8 +24,11 @@ public class RoutingStrategyFactory {
             case "VECTOR" -> {
                 return applicationContext.getBean("vectorStrategy", VectorStrategy.class);
             }
-            case "INAPPROPRIATESTRATEGY" -> {
+            case "INAPPROPRIATE" -> {
                 return applicationContext.getBean("inappropriateStrategy", InappropriateStrategy.class);
+            }
+            case "DAILY" -> {
+                return applicationContext.getBean("daily", DailyStrategy.class);
             }
             default -> {
                 return applicationContext.getBean("invalidStrategy", InvalidStrategy.class);
