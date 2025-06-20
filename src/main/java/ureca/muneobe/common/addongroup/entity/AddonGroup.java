@@ -16,6 +16,7 @@ import ureca.muneobe.common.addon.entity.Addon;
 @Table(name = "addon_group")
 @Getter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddonGroup {
