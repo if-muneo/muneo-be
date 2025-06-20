@@ -2,6 +2,7 @@ package ureca.muneobe.common.auth.controller;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import ureca.muneobe.common.auth.utils.SessionUtil;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -26,7 +28,7 @@ public class AuthController {
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest,
                                                      HttpSession session) {
         Map<String, Object> response = new HashMap<>();
-
+        log.info(session.getId());
         try {
             Member member = memberService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
 

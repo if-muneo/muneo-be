@@ -2,23 +2,34 @@ package ureca.muneobe.common.openai;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ureca.muneobe.common.addongroup.entity.AddonGroup;
+import ureca.muneobe.common.auth.entity.Member;
+import ureca.muneobe.common.auth.respository.MemberRepository;
+import ureca.muneobe.common.auth.utils.SessionUtil;
 import ureca.muneobe.common.chat.config.openai.OpenAiFirstPrompt;
 import ureca.muneobe.common.chat.config.openai.OpenAiSecondPrompt;
 import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
 import ureca.muneobe.common.chat.dto.result.PreProcessResult;
+import ureca.muneobe.common.mplan.entity.Mplan;
+import ureca.muneobe.common.mplan.entity.MplanDetail;
 import ureca.muneobe.common.openai.dto.Message;
 import ureca.muneobe.common.openai.dto.OpenAiRequest;
 import ureca.muneobe.common.openai.dto.OpenAiResponse;
 import ureca.muneobe.common.openai.dto.router.FirstPromptResponse;
+import ureca.muneobe.common.subscription.entity.Subscription;
+import ureca.muneobe.common.subscription.entity.SubscriptionRepository;
 import ureca.muneobe.global.exception.GlobalException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static ureca.muneobe.global.response.ErrorCode.FIRST_PROMPT_ERROR;
 import static ureca.muneobe.global.response.ErrorCode.JSON_PARSING_ERROR;
@@ -34,6 +45,9 @@ public class OpenAiClient {
     private final OpenAiFirstPrompt firstPrompt;
     private final OpenAiSecondPrompt secondPrompt;
     private final ObjectMapper objectMapper;
+    private final SubscriptionRepository subscriptionRepository;
+    private final MemberRepository memberRepository;
+    private final HttpSession httpSession;
 
     /**
      * 1차 프롬프트 호출
@@ -60,9 +74,31 @@ public class OpenAiClient {
     /**
      * 2차 프롬프트 호출
      */
-    public <T> Flux<String> callSecondPrompt(String userMessage, List<T> dbData, List<String> chatLog) {
+    @Transactional(readOnly = true)
+    public <T> Flux<String> callSecondPrompt(String userMessage, List<T> dbData, List<String> chatLog, String memberName) {
+        Member member = memberRepository.findByName(memberName).get();
+        Optional<Subscription> optionalSubscription = subscriptionRepository.findByMember(member);
+        String mplanName       = optionalSubscription
+                .map(sub -> sub.getMplan().getName())
+                .orElse("");
+        String mplanDetailStr  = optionalSubscription
+                .map(sub -> sub.getMplan().getMplanDetail().toString())
+                .orElse("");
+        String addonGroupStr   = optionalSubscription
+                .map(sub -> sub.getMplan().getAddonGroup().toString())
+                .orElse("");
+        int useAmount = member.getUseAmount();
+
         List<Message> messages = List.of(
-                Message.from("system", secondPrompt.getPrompt() + " 활용 데이터 " + dbData + " 이전 대화 기록 " + chatLog),
+                Message.from("system", new StringBuilder().append(secondPrompt.getPrompt()).append("\n")
+                        .append("활용 데이터: ").append(dbData).append("\n")
+                        .append("이전 대화 기록: ").append(chatLog).append("\n")
+                        .append("유저 정보: ")
+                                .append("\t").append("가입 요금제 이름: ").append(mplanName).append("\n")
+                                .append("\t").append("가입 요금제 정보: ").append(mplanDetailStr).append("\n")
+                                .append("\t").append("부가서비스 정보: ").append(addonGroupStr).append("\n")
+                                .append("\t").append("이번달 데이터 사용량: ").append(useAmount).append("\n")
+                                .toString()),
                 Message.from("user", "사용자 질문: " + userMessage)
         );
 

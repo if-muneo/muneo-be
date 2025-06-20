@@ -14,6 +14,13 @@ spring:
     openai:
       api-key: ${OPENAI_API_KEY}
 
+server:
+  servlet:
+    session:
+      cookie:
+        secure: true  # 개발서버에서는 HTTP 허용
+        same-site: none
+
 logging:
   level:
     org.hibernate.SQL: debug
