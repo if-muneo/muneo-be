@@ -2,9 +2,9 @@ name: Spring Boot CI/CD (ECS Blue/Green)
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: []
   pull_request:
-    branches: [ main, develop ]
+    branches: []
   workflow_dispatch:
 jobs:
   test:
