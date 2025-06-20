@@ -116,7 +116,7 @@ jobs:
             "networkMode": "awsvpc",
             "containerDefinitions": [
               {
-                "name": "spring-app",
+                "name": "sample-app",
                 "image": "904233103291.dkr.ecr.ap-northeast-2.amazonaws.com/muneo:latest",
                 "portMappings": [
                   {
@@ -152,7 +152,7 @@ jobs:
                 Properties:
                   TaskDefinition: "$TASK_DEF_ARN"
                   LoadBalancerInfo:
-                    ContainerName: "spring-app"
+                    ContainerName: "sample-app"
                     ContainerPort: 8080
                   PlatformVersion: "LATEST"
 
