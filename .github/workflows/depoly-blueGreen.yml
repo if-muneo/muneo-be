@@ -142,8 +142,8 @@ jobs:
                 Properties:
                   TaskDefinition: "springboot-fargate"
                   LoadBalancerInfo:
-                    ContainerName: "spring-app"
-                    ContainerPort: 8080
+                  ContainerName: "spring-app"
+                  ContainerPort: 8080
                   PlatformVersion: "LATEST"
           EOF
 
