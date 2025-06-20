@@ -1,7 +1,7 @@
 package ureca.muneobe.common.mplan.scheduler;
 
 import java.util.Optional;
-import javax.swing.text.html.Option;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,7 +35,7 @@ public class FatPreVO {
     //fatEmbedding
     private Boolean embedding;
 
-    public static FatPreVO from(Mplan mplan, MplanDetail mplanDetail, String addonGroupName, boolean isEmbedding) {
+    public static FatPreVO of(Mplan mplan, MplanDetail mplanDetail, String addonGroupName, String description, boolean isEmbedding) {
         return FatPreVO.builder()
                 .name(mplan.getName())
                 .basicDataAmount(Optional.ofNullable(mplanDetail.getBasicDataAmount()).map(Integer::longValue).orElse(null))
@@ -46,7 +46,7 @@ public class FatPreVO {
                 .subDataSpeed(Optional.ofNullable(mplanDetail.getSubDataSpeed()).map(Integer::longValue).orElse(null))
                 .voiceCallVolume(Optional.ofNullable(mplanDetail.getVoiceCallVolume()).map(Integer::longValue).orElse(null))
                 .dataType(mplanDetail.getDataType().toString())
-                .description(mplanDetail)
+                .description(description)
                 .mplanType(mplanDetail.getMplanType().toString())
                 .qualification(mplanDetail.getQualification().toString())
                 .addon(addonGroupName)

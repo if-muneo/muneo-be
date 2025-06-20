@@ -1,7 +1,5 @@
 package ureca.muneobe.common.mplan.scheduler;
 
-import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
-
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +23,7 @@ public class MplanApplyScheduler {
     private final UnapplyMplanRepository unapplyMplanRepository;
     private final FatRepository fatRepository;
     private final FatService fatService;
+    private final DescriptionGenerator descriptionGenerator;
 
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
@@ -36,11 +35,9 @@ public class MplanApplyScheduler {
     }
 
     private List<Fat> saveFats(List<Mplan> mplans) {
-        //mplans를 Fat에 넣기 전 전처리
-        List<FatPreVO> fatPreVOs =
-                mplans.stream().map(mplan -> FatPreVO.from(mplan, mplan.getMplanDetail(), mplan.getAddonGroup().getAddonGroupName(), false)).toList();
-        //fat에 모든 mplan 저장(fat으로 바뀐)
-        return fatRepository.saveAll(fatPreVOs.stream().map(fatPreVO -> Fat.of(fatPreVO, false)).toList());
+        List<FatPreVO> fatPreVOs =  //mplans를 Fat에 넣기 전 전처리
+                mplans.stream().map(mplan -> FatPreVO.of(mplan, mplan.getMplanDetail(), mplan.getAddonGroup().getAddonGroupName(), descriptionGenerator.generate(mplan), false)).toList();
+        return fatRepository.saveAll(fatPreVOs.stream().map(fatPreVO -> Fat.of(fatPreVO, false)).toList()); //fat에 모든 mplan 저장(fat으로 바뀐)
     }
 
     private List<Mplan> saveMplan() {
