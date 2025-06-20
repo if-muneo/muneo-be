@@ -9,6 +9,7 @@ import reactor.core.scheduler.Schedulers;
 import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
 import ureca.muneobe.common.chat.service.strategy.RoutingStrategy;
 import ureca.muneobe.common.openai.OpenAiClient;
+import ureca.muneobe.common.openai.dto.router.DailyResponse;
 import ureca.muneobe.common.openai.dto.router.VectorResponse;
 import ureca.muneobe.common.vector.service.FatService;
 
