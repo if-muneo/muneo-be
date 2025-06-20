@@ -188,4 +188,4 @@ jobs:
             --query "deployments[0]" --output text)
 
           echo "Waiting for deployment $DEPLOYMENT_ID..."
-          aws deploy wait deployment-successful --deployment-id "$DEPLOYMENT_ID"
+          aws deploy wait deployment-successful --deployment-id "$DEPLOYMENT_ID" 
