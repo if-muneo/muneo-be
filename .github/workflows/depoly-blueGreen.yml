@@ -119,24 +119,34 @@ jobs:
             "networkMode": "awsvpc",
             "containerDefinitions": [
               {
-                "name": "sample-app",
+                "name": "spring-app",
                 "image": "904233103291.dkr.ecr.ap-northeast-2.amazonaws.com/muneo:latest",
                 "portMappings": [
                   {
                     "containerPort": 8080,
-                    "hostPort": 8080,
                     "protocol": "tcp"
                   }
                 ],
-                "essential": true
+                "essential": true,
+                "entryPoint": ["java", "-jar", "/app/app.jar"],
+                "command": [],
+                "mountPoints": [],
+                "environment": [],
+                "logConfiguration": {
+                  "logDriver": "awslogs",
+                  "options": {
+                    "awslogs-group": "/ecs/springboot-fargate",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "ecs"
+                  }
+                }
               }
             ],
-            "requiresCompatibilities": ["FARGATE"],
             "cpu": "512",
             "memory": "1024",
+            "requiresCompatibilities": ["FARGATE"],
             "executionRoleArn": "arn:aws:iam::904233103291:role/ecsTaskExecutionRole"
           }
-          EOF
           
           # ✅ 태스크 정의 등록하고 ARN 추출
           TASK_DEF_ARN=$(aws ecs register-task-definition \
