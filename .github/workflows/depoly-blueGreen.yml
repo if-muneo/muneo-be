@@ -148,6 +148,8 @@ jobs:
             "executionRoleArn": "arn:aws:iam::904233103291:role/ecsTaskExecutionRole"
           }
           
+          EOF
+          
           # ✅ 태스크 정의 등록하고 ARN 추출
           TASK_DEF_ARN=$(aws ecs register-task-definition \
             --cli-input-json file://task-def.json \
