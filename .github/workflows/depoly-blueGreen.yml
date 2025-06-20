@@ -109,6 +109,7 @@ jobs:
 
       - name: 📝 task-def.json & appspec.yaml 생성
         run: |
+          # ✅ task-def.json 생성
           cat > task-def.json <<EOF
           {
             "family": "springboot-fargate",
@@ -134,18 +135,27 @@ jobs:
           }
           EOF
           
-          cat > appspec.yaml << EOF
+          # ✅ 태스크 정의 등록하고 ARN 추출
+          TASK_DEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://task-def.json \
+            --query "taskDefinition.taskDefinitionArn" \
+            --output text)
+          
+          echo "✅ TASK DEF ARN: $TASK_DEF_ARN"
+          
+          # ✅ appspec.yaml 생성 (정확한 ARN 삽입 + 들여쓰기 유지!)
+          cat > appspec.yaml <<EOF
           version: 0.0
           Resources:
             - TargetService:
                 Type: AWS::ECS::Service
                 Properties:
-                  TaskDefinition: springboot-fargate
+                  TaskDefinition: "$TASK_DEF_ARN"
                   LoadBalancerInfo:
-                      ContainerName: spring-app
-                      ContainerPort: 8080
-                  PlatformVersion: "LATEST"
-          EOF
+                    ContainerName: spring-app
+                    ContainerPort: 8080
+                  PlatformVersion: LATEST
+            EOF
 
       - name: ☁️ S3에 배포파일 업로드
         run: |
