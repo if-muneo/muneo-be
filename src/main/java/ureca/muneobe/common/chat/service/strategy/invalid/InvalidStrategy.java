@@ -5,6 +5,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
 import ureca.muneobe.common.chat.service.strategy.RoutingStrategy;
+import ureca.muneobe.common.openai.dto.router.DailyResponse;
 
 @Component("invalidStrategy")
 public class InvalidStrategy implements RoutingStrategy {
