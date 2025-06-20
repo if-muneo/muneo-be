@@ -152,9 +152,9 @@ jobs:
                 Properties:
                   TaskDefinition: "$TASK_DEF_ARN"
                   LoadBalancerInfo:
-                    ContainerName: spring-app
+                    ContainerName: "spring-app"
                     ContainerPort: 8080
-                  PlatformVersion: LATEST
+                  PlatformVersion: "LATEST"
             EOF
 
       - name: ☁️ S3에 배포파일 업로드
