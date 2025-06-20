@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     name: 🚀 ECS Blue/Green 배포
-    if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.ref == 'refs/heads/MUN-62-Blue-Green-배포-환경-분리' || github.event_name == 'workflow_dispatch' }}
 
     steps:
       - name: 📂 코드 체크아웃
@@ -91,6 +91,17 @@ jobs:
         run: |
           docker build -t my-spring-app .
 
+      - name: 🔐 ECR 로그인
+        run: |
+          aws ecr get-login-password --region ap-northeast-2 | \
+          docker login --username AWS \
+          --password-stdin 904233103291.dkr.ecr.ap-northeast-2.amazonaws.com
+
+      - name: 📤 ECR에 이미지 푸시
+        run: |
+          docker tag my-spring-app:latest 904233103291.dkr.ecr.ap-northeast-2.amazonaws.com/muneo:latest
+          docker push 904233103291.dkr.ecr.ap-northeast-2.amazonaws.com/muneo:latest
+
       - name: 🔑 AWS 자격증명 설정
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -107,7 +118,7 @@ jobs:
             "containerDefinitions": [
               {
                 "name": "spring-app",
-                "image": "904233103291.dkr.ecr.ap-northeast-2.amazonaws.com/my-spring-app:latest",
+                "image": "904233103291.dkr.ecr.ap-northeast-2.amazonaws.com/muneo:latest",
                 "portMappings": [
                   {
                     "containerPort": 8080,
