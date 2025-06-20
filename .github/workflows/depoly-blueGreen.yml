@@ -160,6 +160,19 @@ jobs:
         run: |
           aws s3 cp appspec.yaml s3://muneo-s3/appspec.yaml
 
+      - name: 🚫 기존 배포 중복 확인
+        run: |
+          ACTIVE_DEPLOYMENT=$(aws deploy list-deployments \
+            --application-name tutorial-bluegreen-app \
+            --deployment-group-name tutorial-bluegreen-dg \
+            --include-only-statuses Created InProgress \
+            --query "deployments[0]" --output text)
+
+          if [ "$ACTIVE_DEPLOYMENT" != "None" ]; then
+            echo "🚫 현재 활성화된 배포가 존재합니다: $ACTIVE_DEPLOYMENT"
+            exit 1
+          fi
+
       - name: 🚀 CodeDeploy로 ECS 배포 실행
         run: |
           aws deploy create-deployment \
