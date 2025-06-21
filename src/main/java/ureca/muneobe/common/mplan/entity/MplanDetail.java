@@ -69,18 +69,18 @@ public class MplanDetail extends BaseEntity {
     @Builder.Default
     private List<Mplan> mplan = new ArrayList<>();
 
-    public static MplanDetail from(MplanDetailCreateRequest mplanDetailCreateRequest){
+    public static MplanDetail from(MplanDetailCreateRequest request){
         return MplanDetail.builder()
-                .basicDataAmount(mplanDetailCreateRequest.getBasicDataAmount())
-                .dailyData(mplanDetailCreateRequest.getDailyData())
-                .sharingData(mplanDetailCreateRequest.getSharingData())
-                .monthlyPrice(mplanDetailCreateRequest.getMonthlyPrice())
-                .voiceCallVolume(mplanDetailCreateRequest.getVoiceCallVolume())
-                .textMessage(mplanDetailCreateRequest.getTextMessage())
-                .subDataSpeed(mplanDetailCreateRequest.getSubDataSpeed())
-                .qualification(mplanDetailCreateRequest.getQualification())
-                .mplanType(mplanDetailCreateRequest.getMplanType())
-                .dataType(mplanDetailCreateRequest.getDataType())
+                .basicDataAmount(request.getBasicDataAmount())
+                .dailyData(request.getDailyData())
+                .sharingData(request.getSharingData())
+                .monthlyPrice(request.getMonthlyPrice())
+                .voiceCallVolume(request.getVoiceCallVolume())
+                .textMessage(request.getTextMessage())
+                .subDataSpeed(request.getSubDataSpeed())
+                .qualification(request.getQualification())
+                .mplanType(request.getMplanType())
+                .dataType(request.getDataType())
                 .build();
     }
 
