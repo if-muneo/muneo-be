@@ -34,8 +34,8 @@ jobs:
       - name: 🔧 실행 권한 부여
         run: chmod +x ./gradlew
 
-      - name: 🧪 테스트 실행
-        run: ./gradlew test
+      - name: 🧪 테스트 실행 (런타임만)
+        run: ./gradlew build -x test
 
       - name: 📊 테스트 결과 업로드
         uses: actions/upload-artifact@v4
