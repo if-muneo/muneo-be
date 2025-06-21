@@ -114,7 +114,7 @@ jobs:
         run: |
           cat > task-def.json <<EOF
           {
-            "family": "spring-fargate-service-2",
+            "family": "spring-fargate-service-v2",
             "networkMode": "awsvpc",
             "containerDefinitions": [
               {
@@ -148,8 +148,8 @@ jobs:
                     "value": "${{ secrets.DB_PASSWORD }}"
                   },
                   {
-                    "name": "OPENAI_API_KEY",
-                    "value": "${{ secrets.OPENAI_API_KEY }}"
+                     "name": "OPENAI_API_KEY",
+                     "value": "${{ secrets.OPENAI_API_KEY }}"
                   }
                 ],
                 "logConfiguration": {
