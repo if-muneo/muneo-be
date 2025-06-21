@@ -114,7 +114,7 @@ jobs:
         run: |
           cat > task-def.json <<EOF
           {
-            "family": "spring-fargate-service-v2",
+            "family": "spring-fargate-service-33jo3jpn",
             "networkMode": "awsvpc",
             "containerDefinitions": [
               {
@@ -150,6 +150,14 @@ jobs:
                   {
                      "name": "OPENAI_API_KEY",
                      "value": "${{ secrets.OPENAI_API_KEY }}"
+                  },
+                  {
+                    "name": "REDIS_HOST",
+                    "value": "${{ secrets.REDIS_HOST}}"
+                  },
+                  {
+                    "name": "REDIS_PORT",
+                    "value": "${{ secrets.REDIS_PORT}}"
                   }
                 ],
                 "logConfiguration": {
@@ -197,7 +205,7 @@ jobs:
         run: |
           ACTIVE_DEPLOYMENT=$(aws deploy list-deployments \
             --application-name spring-bluegreen-app \
-            --deployment-group-name bluegreen-dg \
+            --deployment-group-name bluegreen-bg \
             --include-only-statuses Created InProgress \
             --query "deployments[0]" --output text)
 
@@ -210,14 +218,14 @@ jobs:
         run: |
           aws deploy create-deployment \
           --application-name spring-bluegreen-app \
-          --deployment-group-name bluegreen-dg \
+          --deployment-group-name bluegreen-bg \
           --revision '{"revisionType":"S3","s3Location":{"bucket":"muneo-s3","key":"appspec.yaml","bundleType":"YAML"}}'
 
       - name: ⏱️ 배포 완료될 때까지 대기
         run: |
           DEPLOYMENT_ID=$(aws deploy list-deployments \
             --application-name spring-bluegreen-app \
-            --deployment-group-name bluegreen-dg \
+            --deployment-group-name bluegreen-bg \
             --query "deployments[0]" --output text)
 
           echo "Waiting for deployment $DEPLOYMENT_ID..."
