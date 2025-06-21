@@ -146,6 +146,10 @@ jobs:
                   {
                     "name": "DB_PASSWORD",
                     "value": "${{ secrets.DB_PASSWORD }}"
+                  },
+                  {
+                    "name": "OPENAI_API_KEY",
+                    "value": "${{ secrets.OPENAI_API_KEY }}"
                   }
                 ],
                 "logConfiguration": {
