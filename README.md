@@ -82,6 +82,10 @@
 ![image](https://github.com/user-attachments/assets/c4377fa8-2b38-4ee5-a863-6bfdcd91d156)
 
 
+## 서비스 아키텍처
+<img width="996" alt="image" src="https://github.com/user-attachments/assets/877d9fb9-fb1d-4fd7-9bd1-f5e087ec3f39" />
+
+
 
 ## 기능 소개
 
