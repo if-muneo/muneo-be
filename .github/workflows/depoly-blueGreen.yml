@@ -114,7 +114,7 @@ jobs:
         run: |
           cat > task-def.json <<EOF
           {
-            "family": "spring-fargate",
+            "family": "spring-fargate-service-2",
             "networkMode": "awsvpc",
             "containerDefinitions": [
               {
