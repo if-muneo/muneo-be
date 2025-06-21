@@ -87,15 +87,14 @@ public class FatJdbcRepository {
 
             String sql = """
                         SELECT f.*
-                            FROM fat_embedding fe
-                            JOIN fat f ON fe.fat_id = f.id
-                            WHERE f.id IN (
-                                SELECT DISTINCT ON (fe.fat_id) fe.fat_id
-                                FROM fat_embedding fe
-                                ORDER BY fe.fat_id, fe.embedding <=> ?
-                            )
-                            ORDER BY fe.embedding <=> ?
-                            LIMIT ?;
+                                            FROM (
+                                                SELECT DISTINCT ON (fe.fat_id) fe.fat_id, fe.embedding
+                                                FROM fat_embedding fe
+                                                ORDER BY fe.fat_id, fe.embedding <=> ?
+                                            ) distinct_fe
+                                            JOIN fat f ON f.id = distinct_fe.fat_id
+                                            ORDER BY distinct_fe.embedding <=> ?
+                                            LIMIT ?;
                     """;
 
             return jdbcTemplate.query(
