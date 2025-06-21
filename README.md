@@ -81,6 +81,8 @@
 
 ![image](https://github.com/user-attachments/assets/c4377fa8-2b38-4ee5-a863-6bfdcd91d156)
 
+## 서비스 아키텍처
+<img width="1496" alt="스크린샷 2025-06-22 오전 12 44 34" src="https://github.com/user-attachments/assets/dd1e4224-2423-4170-8b60-e2f5e19fa2f8" />
 
 
 ## 기능 소개
