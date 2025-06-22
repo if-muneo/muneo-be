@@ -14,18 +14,14 @@ import ureca.muneobe.common.chat.entity.Chat;
 import ureca.muneobe.common.chat.entity.ChatType;
 import ureca.muneobe.common.chat.repository.ChatRedisRepository;
 import ureca.muneobe.common.chat.repository.ChatRepository;
-import ureca.muneobe.common.chat.dto.result.ChatResult;
-import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
-import ureca.muneobe.common.chat.service.strategy.RoutingStrategy;
-import ureca.muneobe.common.chat.service.strategy.RoutingStrategyFactory;
+import ureca.muneobe.common.chat.service.strategy.daily.DailyStrategy;
+import ureca.muneobe.common.chat.service.strategy.inappropriate.InappropriateStrategy;
+import ureca.muneobe.common.chat.service.strategy.invalid.InvalidStrategy;
+import ureca.muneobe.common.chat.service.strategy.RoutingResult;
+import ureca.muneobe.common.chat.service.strategy.rdb.RdbStrategy;
+import ureca.muneobe.common.chat.service.strategy.vector.VectorStrategy;
 import ureca.muneobe.common.openai.OpenAiClient;
-import ureca.muneobe.common.slang.service.SlangFilterService;
-import ureca.muneobe.common.openai.dto.router.DailyResponse;
-import ureca.muneobe.common.openai.dto.router.RdbResponse;
-import ureca.muneobe.common.openai.dto.router.VectorResponse;
-import ureca.muneobe.common.vector.entity.Fat;
-import ureca.muneobe.common.vector.service.FatService;
-import ureca.muneobe.global.exception.GlobalException;
+import ureca.muneobe.common.openai.dto.router.FirstPromptResponse;
 
 import java.time.Duration;
 import java.util.List;
@@ -34,49 +30,70 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ChatService {
-
     private final OpenAiClient openAiClient;
     private final ChatRedisRepository chatRedisRepository;
-    private final RoutingStrategyFactory routingStrategyFactory;
     private final MemberRepository memberRepository;
-    private final SlangFilterService slangFilterService;
     private final ChatRepository chatRepository;
-    private final ChatMessagePreProcessor chatMessagePreProcessor;
+    private final RdbStrategy rdbStrategy;
+    private final VectorStrategy vectorStrategy;
+    private final DailyStrategy dailyStrategy;
+    private final InappropriateStrategy inappropriateStrategy;
+    private final InvalidStrategy invalidStrategy;
 
     /**
      * 채팅 응답 생성
      */
-    public Flux<String> createChatResponse(final ChatResult chatResult) {
-        return Mono.fromCallable(() -> chatMessagePreProcessor.preProcess(chatResult))
-                .subscribeOn(Schedulers.boundedElastic())
-                .flatMap(preProcessResult -> openAiClient.callFirstPrompt(preProcessResult))
-                .flatMapMany(firstPromptResult -> saveResponse(chatResult, firstPromptResult))
+    public Flux<String> createChatResponse(final MetaData metaData) {
+        return Mono.defer(() -> openAiClient.callFirstPrompt(metaData))                                                 //첫 번째 프롬프트를 호출한다. 결과 return
+                .flatMap(firstPromptResponse -> routeStrategy(firstPromptResponse, metaData))                           //각 router 경로별 전략을 호출해, 결과를 return
+                .flatMapMany(routingResult -> routingResult.callSecondPromptOrNot(openAiClient, metaData)               //만약 RDB나, VectorDB 라면 두번째 AI를 호출한다. 둘다 아니면, 기본 메시지를 return한다.
+                        .publishOn(
+                                Schedulers.boundedElastic())               //만약 RDB나, VectorDB 라면 두번째 AI를 호출한다. 둘다 아니면, 기본 메시지를 return한다.
+                        .publish(line -> {                                                                              //새로운 생산자가 생산(중간에 분기 흐름을 위해)
+                            Flux<String> allLines = line.cache();                                                       //캐시하여 여러 구독자에게 동일한 데이터 제공(VS 저장, 전송 병렬 시 예외시 정합성 문제)
+                            allLines                                                                  //분기(1번케이스):하나씩 흘러오는 스트림들을 모은다.
+                                    .reduce("", String::concat)                                                   //합친다.
+                                    .flatMap(allLine -> saveResponse(allLine, metaData))                               //모든 라인이 모였을 때, 저장
+                                    .subscribe();
+                            return allLines;                                                             //분기(2번케이스):그냥 흘려보낸다.
+                        })
+                )                                                                                                       //응답 결과를 저장 후, return 한다.
                 .onErrorResume(error -> {
-                    log.error("에러 발생 : {}", error.getMessage(), error);
-                    return Flux.empty();
+                    return Flux.just("채팅 봇 에러 발생");
                 });
     }
 
-    private Flux<String> saveResponse(final ChatResult chatResult, final FirstPromptResult firstPromptResult) {
+    /**
+     * 첫 프롬프트에 담긴 router 변수로 라우팅
+     * 각 process는 RoutingResult 객체를 반환
+     *
+     */
+    private Mono<RoutingResult> routeStrategy(FirstPromptResponse firstPromptResponse, MetaData metaData) {
+        return switch (firstPromptResponse.getRouter().toUpperCase()) {
+            case "VECTOR"           -> vectorStrategy.process(firstPromptResponse, metaData);
+            case "RDB"              -> rdbStrategy.process(firstPromptResponse, metaData);
+            case "DAILY"            -> dailyStrategy.process(firstPromptResponse, metaData);
+            case "INAPPROPRIATE"    -> inappropriateStrategy.process(firstPromptResponse, metaData);
+            default                 -> invalidStrategy.process(firstPromptResponse, metaData);
+        };
+    }
 
-        final StringBuilder buffer = new StringBuilder();
-
-        return searchAndCallSecondPrompt(firstPromptResult, chatResult)
-                .concatMap(line -> Mono.fromSupplier(() -> {
-                    buffer.append(line);
-                    return line;
-                }))
-                .doOnComplete(() -> {
-                    final String memberName = chatResult.getMemberName();
-                    final String text = buffer.toString();
-                    Mono.fromRunnable(() ->
-                                    chatRedisRepository.saveChat(memberName, text, ChatType.RESPONSE)
-                            )
-                            .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)))
-                            .doOnError(e -> log.error("Redis 저장 실패: {}", e.getMessage(), e))
-                            .subscribeOn(Schedulers.boundedElastic())
-                            .subscribe();
-                });
+    /**
+     * 멀티턴을 위한 응답 저장
+     * 스트리밍 방식 -> 청크들을 하나로 모아 저장(비동기)
+     * 해당 메서드 체인만, boundedElastic 쓰레드 처리
+     */
+    private Mono<Void> saveResponse(String allResponse, MetaData metaData) {
+        return Mono.fromRunnable(() ->
+                        chatRedisRepository.saveChat(
+                                "정지호", //metaData.getMemberInfoMeta().getName(),
+                                allResponse,
+                                ChatType.RESPONSE
+                        )
+                )
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)))
+                .doOnError(e -> log.error("Redis 저장 실패 : {}", e.getMessage(), e))
+                .subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -90,10 +107,5 @@ public class ChatService {
         if (chatLogs.isEmpty()) return;
         chatRepository.saveAll(chatLogs);
         chatRedisRepository.clearChat(username);
-    }
-
-    private Flux<String> searchAndCallSecondPrompt(FirstPromptResult firstPromptResult, ChatResult chatResult) {
-        RoutingStrategy routingStrategy = routingStrategyFactory.select(firstPromptResult);
-        return routingStrategy.process(firstPromptResult, chatResult.getMemberName());
     }
 }
