@@ -84,7 +84,7 @@ public class FatService {
         try {
             float[] queryVector = embeddingSentence.requestEmbeddingFromOpenAI(userQuery);
 
-            List<Fat> fatlist = fatJdbcRepository.findSimilarPlans(queryVector, 20);
+            List<Fat> fatlist = fatJdbcRepository.findSimilarPlans(queryVector, 10);
 
             List<String> answer = new ArrayList<>();
             for(Fat f : fatlist){
