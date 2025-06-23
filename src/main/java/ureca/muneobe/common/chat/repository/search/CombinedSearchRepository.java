@@ -143,10 +143,6 @@ public class CombinedSearchRepository implements SearchRepository {
             predicate.and(likeBuilder);
         }
 
-        if (cond.getAddonTypes() != null && !cond.getAddonTypes().isEmpty()) {
-            predicate.and(addon.addonType.in(cond.getAddonTypes()));
-        }
-
         if (cond.getPrice() != null) {
             applyRange(predicate, addon.price, cond.getPrice());
         }
@@ -160,7 +156,7 @@ public class CombinedSearchRepository implements SearchRepository {
                         .join(addonGroup.addons, addon)
                         .where(predicate)
                         .groupBy(addonGroup.id)
-                        .having(addon.count().goe(COUNT_VALUE))
+                        .having(addon.count().goe(cond.getNames().size()))
                         .fetchFirst()
         );
     }

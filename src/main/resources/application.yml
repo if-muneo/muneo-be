@@ -21,7 +21,7 @@ spring:
         embedding:
           model: text-embedding-3-small
       first:
-        model: gpt-4o-mini
+        model: gpt-4o
         temperature: 0.3
         maxTokens: 500
         prompt: |
