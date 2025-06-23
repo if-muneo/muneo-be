@@ -14,6 +14,7 @@ import ureca.muneobe.common.vector.repository.FatJdbcRepository;
 import ureca.muneobe.common.vector.repository.FatRepository;
 import ureca.muneobe.global.exception.GlobalException;
 import ureca.muneobe.global.response.ErrorCode;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class FatService {
     private final FatEmbeddingRepository fatEmbeddingRepository;
 
     @Transactional
-    public EmbeddingGenerateResponse generateAndSaveAllNullEmbeddings(){
+    public EmbeddingGenerateResponse generateAndSaveAllNullEmbeddings() {
         List<Fat> fats = fatRepository.findByEmbeddingFalse();
 
         for (Fat fat : fats) {
@@ -39,19 +40,17 @@ public class FatService {
         return EmbeddingGenerateResponse.from("embedding 생성 완료");
     }
 
-    private void requestAndInsertEmbedding(Fat fat){
+    private void requestAndInsertEmbedding(Fat fat) {
         List<String> texts = fat.makeDisriptionForEmbedding();
 
         try {
-            for(String text : texts) {
-                float[] embeddingVector = embeddingSentence.requestEmbeddingFromOpenAI(text);
-                fatJdbcRepository.insertEmbedding(fat.getId(), embeddingVector);
-            }
+            List<float[]> embeddingVector = embeddingSentence.requestEmbeddingFromOpenAI(texts);
+            fatJdbcRepository.insertEmbedding(fat.getId(), embeddingVector);
 
             fat.setEmbedding(true);
             fatRepository.save(fat);
         } catch (Exception e) {
-            throw  new GlobalException(ErrorCode.EMBEDDING_FAILED);
+            throw new GlobalException(ErrorCode.EMBEDDING_FAILED);
         }
     }
 
@@ -60,15 +59,14 @@ public class FatService {
 
         Fat fat = fatRepository.findById(fat_id).orElseThrow(() -> new GlobalException(ErrorCode.EMBEDDING_FAILED));
 
-        for(FatEmbedding embedding : fatEmbeddingRepository.findByFatId(fat_id)) fatEmbeddingRepository.deleteById(embedding.getId());
+        for (FatEmbedding embedding : fatEmbeddingRepository.findByFatId(fat_id))
+            fatEmbeddingRepository.deleteById(embedding.getId());
 
         List<String> texts = fat.makeDisriptionForEmbedding();
 
         try {
-            for(String text : texts) {
-                float[] embeddingVector = embeddingSentence.requestEmbeddingFromOpenAI(text);
-                fatJdbcRepository.insertEmbedding(fat.getId(), embeddingVector);
-            }
+            List<float[]> embeddingVector = embeddingSentence.requestEmbeddingFromOpenAI(texts);
+            fatJdbcRepository.insertEmbedding(fat.getId(), embeddingVector);
 
             fat.setEmbedding(true);
             fatRepository.save(fat);
@@ -80,14 +78,14 @@ public class FatService {
         return EmbeddingGenerateResponse.from("embedding 생성 완료");
     }
 
-    public VectorSearchResponse search(String userQuery) {
+    public VectorSearchResponse search(List<String> userQuery) {
         try {
-            float[] queryVector = embeddingSentence.requestEmbeddingFromOpenAI(userQuery);
+            List<float[]> queryVector = embeddingSentence.requestEmbeddingFromOpenAI(userQuery);
 
             List<Fat> fatlist = fatJdbcRepository.findSimilarPlans(queryVector, 10);
 
             List<String> answer = new ArrayList<>();
-            for(Fat f : fatlist){
+            for (Fat f : fatlist) {
                 answer.add(f.makeDiscriptionForResponse());
             }
 

@@ -20,4 +20,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             "LEFT JOIN FETCH mp.addonGroup " +
             "WHERE s.member.id = :memberId")
     Optional<Subscription> findByMemberIdWithMplan(@Param("memberId") Long memberId);
+    List<Subscription> findAllByMember_Id(Long memberId);
+    boolean existsByMemberIdAndMplanId(Long memberId, Long mplanId);
 }
