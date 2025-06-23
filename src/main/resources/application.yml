@@ -243,7 +243,7 @@ spring:
             "reformInput": "통신 상품 질문으로 유도하는 응답 재구성"
           }
       second:
-        model: gpt-4o-mini
+        model: gpt-4o
         temperature: 0.3
         maxTokens: 500
         prompt: |

@@ -7,9 +7,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import ureca.muneobe.common.chat.dto.chat.ChatRequest;
 import ureca.muneobe.common.chat.dto.chat.StreamChatResponse;
-import ureca.muneobe.common.chat.dto.result.ChatResult;
-import ureca.muneobe.common.chat.entity.ChatType;
+import ureca.muneobe.common.chat.service.ChatMessagePreProcessor;
 import ureca.muneobe.common.chat.service.ChatService;
+import ureca.muneobe.common.chat.service.MetaData;
 import ureca.muneobe.common.slang.service.SlangFilterService;
 
 import java.security.Principal;
@@ -24,6 +24,7 @@ public class ChatController {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatService chatService;
     private final SlangFilterService slangFilterService;
+    private final ChatMessagePreProcessor chatMessagePreProcessor;
 
     @MessageMapping("/chat/message")
     public void sendMessage(ChatRequest message, Principal principal){
@@ -32,55 +33,32 @@ public class ChatController {
         String streamId = message.getStreamId();
 
 
+        //금칙어 처리
         if (containsSlang(userMessage)) {
-            log.info("금칙어 감지");
-            simpMessagingTemplate.convertAndSendToUser(
-                    memberName,
-                    "/queue/public",
-                    StreamChatResponse.builder()
-                            .streamId(streamId)
-                            .content("부적절한 요청입니다.")
-                            .done(true)
-                            .build()
-            );
+            sendMessage(memberName, streamId, "부적절한 메시지 입니다.", true);
             return;
         }
 
-        chatService.createChatResponse(ChatResult.of(memberName, userMessage, ChatType.REQUEST))
-                .subscribe(chatBotMessage -> {
-                    simpMessagingTemplate.convertAndSendToUser(
-                            memberName,
-                            URL,
-                            StreamChatResponse.builder()
-                                    .streamId(streamId)
-                                    .content(chatBotMessage)
-                                    .done(false)
-                                    .build()
-                    );
-                }, error -> {
-                    log.error("챗봇 응답 생성 실패", error);
-                    simpMessagingTemplate.convertAndSendToUser(
-                            memberName,
-                            URL,
-                            StreamChatResponse.builder()
-                                    .streamId(streamId)
-                                    .content("챗봇 응답 중 문제가 발생했어요!")
-                                    .done(true)
-                                    .build()
-                    );
-                }, () -> {
-                        simpMessagingTemplate.convertAndSendToUser(
-                                memberName,
-                                URL,
-                                StreamChatResponse.builder()
-                                        .streamId(streamId)
-                                        .content("")
-                                        .done(true)
-                                        .build()
-                        );
-                    }
+        MetaData metaData = chatMessagePreProcessor.preProcess(message, memberName);
 
+        chatService.createChatResponse(metaData)
+                .subscribe(
+                        chatBotMessage -> sendMessage(memberName, streamId, chatBotMessage, false),
+                        error -> sendMessage(memberName, streamId, "챗봇 응답 중 문제가 발생했어요.", true),
+                        () -> sendMessage(memberName, streamId, "", true)
                 );
+    }
+
+    private void sendMessage(String memberName, String streamId, String content, boolean isDone){
+        simpMessagingTemplate.convertAndSendToUser(
+                memberName,
+                URL,
+                StreamChatResponse.builder()
+                        .streamId(streamId)
+                        .content(content)
+                        .done(isDone)
+                        .build()
+        );
     }
 
     private boolean containsSlang(String userMessage) {

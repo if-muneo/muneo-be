@@ -18,6 +18,7 @@ import ureca.muneobe.common.chat.config.openai.OpenAiFirstPrompt;
 import ureca.muneobe.common.chat.config.openai.OpenAiSecondPrompt;
 import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
 import ureca.muneobe.common.chat.dto.result.PreProcessResult;
+import ureca.muneobe.common.chat.service.MetaData;
 import ureca.muneobe.common.mplan.entity.Mplan;
 import ureca.muneobe.common.mplan.entity.MplanDetail;
 import ureca.muneobe.common.openai.dto.Message;
@@ -45,17 +46,14 @@ public class OpenAiClient {
     private final OpenAiFirstPrompt firstPrompt;
     private final OpenAiSecondPrompt secondPrompt;
     private final ObjectMapper objectMapper;
-    private final SubscriptionRepository subscriptionRepository;
-    private final MemberRepository memberRepository;
-    private final HttpSession httpSession;
 
     /**
      * 1차 프롬프트 호출
      */
-    public Mono<FirstPromptResult> callFirstPrompt(PreProcessResult preProcessResult) {
+    public Mono<FirstPromptResponse> callFirstPrompt(MetaData metaData) {
         List<Message> messages = List.of(
-                Message.from("system", firstPrompt.getPrompt() + " 이전 대화기록 " + preProcessResult.getChatLog()),
-                Message.from("user", preProcessResult.getMessage())
+                Message.from("system", firstPrompt.getPrompt() + " 이전 대화기록 " + metaData.getChatLog()),
+                Message.from("user", metaData.getChatRequest().getContent())
         );
 
         OpenAiRequest request = OpenAiRequest.of(firstPrompt.getModel(), messages, firstPrompt.getTemperature(), firstPrompt.getMaxTokens(),false);
@@ -66,7 +64,6 @@ public class OpenAiClient {
                 .bodyToMono(OpenAiResponse.class)
                 .map(OpenAiResponse::getIntentJson)
                 .map(this::parseIntentJson)
-                .map(firstPromptResponse -> FirstPromptResult.of(firstPromptResponse, preProcessResult.getMessage(), preProcessResult.getChatLog()))
                 .doOnNext(resp -> log.info("1차 응답 IntentJson: {}", resp))
                 .onErrorResume(this::handlePromptError);
     }
@@ -75,31 +72,18 @@ public class OpenAiClient {
      * 2차 프롬프트 호출
      */
     @Transactional(readOnly = true)
-    public <T> Flux<String> callSecondPrompt(String userMessage, List<T> dbData, List<String> chatLog, String memberName) {
-        Member member = memberRepository.findByName(memberName).get();
-        Optional<Subscription> optionalSubscription = subscriptionRepository.findByMember(member);
-        String mplanName       = optionalSubscription
-                .map(sub -> sub.getMplan().getName())
-                .orElse("");
-        String mplanDetailStr  = optionalSubscription
-                .map(sub -> sub.getMplan().getMplanDetail().toString())
-                .orElse("");
-        String addonGroupStr   = optionalSubscription
-                .map(sub -> sub.getMplan().getAddonGroup().toString())
-                .orElse("");
-        int useAmount = member.getUseAmount();
-
+    public <T> Flux<String> callSecondPrompt(List<T> dbData, MetaData metaData) {
         List<Message> messages = List.of(
                 Message.from("system", new StringBuilder().append(secondPrompt.getPrompt()).append("\n")
                         .append("활용 데이터: ").append(dbData).append("\n")
-                        .append("이전 대화 기록: ").append(chatLog).append("\n")
+                        .append("이전 대화 기록: ").append(metaData.getChatLog()).append("\n")
                         .append("유저 정보: ")
-                                .append("\t").append("가입 요금제 이름: ").append(mplanName).append("\n")
-                                .append("\t").append("가입 요금제 정보: ").append(mplanDetailStr).append("\n")
-                                .append("\t").append("부가서비스 정보: ").append(addonGroupStr).append("\n")
-                                .append("\t").append("이번달 데이터 사용량: ").append(useAmount).append("\n")
+                                .append("\t").append("가입 요금제 이름: ").append(metaData.getMemberInfoMeta().getMplanName()).append("\n")
+                                .append("\t").append("가입 요금제 정보: ").append(metaData.getMemberInfoMeta().getMplanDetailStr()).append("\n")
+                                .append("\t").append("부가서비스 정보: ").append(metaData.getMemberInfoMeta().getAddonGroupStr()).append("\n")
+                                .append("\t").append("이번달 데이터 사용량: ").append(metaData.getMemberInfoMeta().getUseAmount()).append("\n")
                                 .toString()),
-                Message.from("user", "사용자 질문: " + userMessage)
+                Message.from("user", "사용자 질문: " + metaData.getChatRequest().getContent())
         );
 
         OpenAiRequest request = OpenAiRequest.of(secondPrompt.getModel(), messages, secondPrompt.getTemperature(), secondPrompt.getMaxTokens(),true);
@@ -143,7 +127,7 @@ public class OpenAiClient {
     /**
      * Error 핸들러
      */
-    private Mono<FirstPromptResult> handlePromptError(Throwable e) {
+    private Mono<FirstPromptResponse> handlePromptError(Throwable e) {
         // json 에러일 경우
         if (e instanceof GlobalException) {
             return Mono.error(e);
