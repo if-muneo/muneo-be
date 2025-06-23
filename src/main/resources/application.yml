@@ -240,7 +240,7 @@ spring:
           
           {
             "router": "DAILY",
-            "message": "통신 상품 질문으로 유도하는 응답 재구성"
+            "reformInput": "통신 상품 질문으로 유도하는 응답 재구성"
           }
       second:
         model: gpt-4o-mini
