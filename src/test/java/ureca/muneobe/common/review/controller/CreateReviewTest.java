@@ -23,7 +23,6 @@ import ureca.muneobe.common.auth.entity.enums.Category;
 import ureca.muneobe.common.auth.entity.enums.Gender;
 import ureca.muneobe.common.auth.respository.MemberRepository;
 import ureca.muneobe.common.auth.utils.SessionUtil;
-import ureca.muneobe.common.chat.config.openai.OpenAIWebClientConfig;
 import ureca.muneobe.common.chat.entity.Slang;
 import ureca.muneobe.common.mplan.entity.Mplan;
 import ureca.muneobe.common.mplan.repository.MplanRepository;
@@ -31,7 +30,7 @@ import ureca.muneobe.common.review.dto.request.ReviewCreateRequest;
 import ureca.muneobe.common.slang.SlangRepository;
 import ureca.muneobe.common.slang.service.SlangService;
 import ureca.muneobe.common.subscription.entity.Subscription;
-import ureca.muneobe.common.subscription.repository.SubScriptionRepository;
+import ureca.muneobe.common.subscription.repository.SubscriptionRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,7 +48,7 @@ class CreateReviewTest {
     @Autowired private ObjectMapper objectMapper;
     @Autowired private MemberRepository memberRepository;
     @Autowired private MplanRepository mplanRepository;
-    @Autowired private SubScriptionRepository subscriptionRepository;
+    @Autowired private SubscriptionRepository subscriptionRepository;
 
     private Member saveMember;
     private Mplan saveMplan;
