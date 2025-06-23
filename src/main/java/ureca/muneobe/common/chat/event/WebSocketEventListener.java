@@ -18,7 +18,7 @@ public class WebSocketEventListener {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
 
         // 웹소켓 세션에 저장된 사용자 정보 가져오기
-        String username = (String) accessor.getSessionAttributes().get("username");
+        String username = (String) accessor.getSessionAttributes().get("memberName");
 
         if (username != null) {
             chatService.saveChatLogToDB(username);

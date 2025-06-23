@@ -1,6 +1,8 @@
 package ureca.muneobe.common.chat.service.strategy.rdb;
 
 import java.util.List;
+
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -11,16 +13,20 @@ import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
 import ureca.muneobe.common.chat.service.strategy.RoutingStrategy;
 import ureca.muneobe.common.chat.service.strategy.rdb.input.Condition;
 import ureca.muneobe.common.openai.OpenAiClient;
+import ureca.muneobe.common.openai.dto.router.DailyResponse;
 import ureca.muneobe.common.openai.dto.router.RdbResponse;
+import ureca.muneobe.common.subscription.entity.SubscriptionRepository;
 
 @Component("rdbStrategy")
 @RequiredArgsConstructor
 public class RdbStrategy implements RoutingStrategy {
     private final CombinedSearchRepository combinedSearchRepository;
     private final OpenAiClient openAiClient;
+    private final HttpSession httpSession;
+    private SubscriptionRepository subscriptionRepository;
 
     @Override
-    public Flux<String> process(FirstPromptResult firstPromptResult) {
+    public Flux<String> process(FirstPromptResult firstPromptResult, String memberName) {
         RdbResponse response = (RdbResponse) firstPromptResult.getFirstPromptResponse();
         String userMessage = firstPromptResult.getMessage();
         List<String> chatLog = firstPromptResult.getChatLog();
@@ -30,7 +36,7 @@ public class RdbStrategy implements RoutingStrategy {
                 .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행
                 .flatMapMany(plans -> {
                     if (plans == null || plans.isEmpty())return Mono.just("조건에 맞는 요금제가 없습니다.");
-                    return openAiClient.callSecondPrompt(userMessage, plans, chatLog);
+                    return openAiClient.callSecondPrompt(userMessage, plans, chatLog, memberName);
                 })
                 .onErrorResume(e -> Mono.just("요금제 검색 또는 2차 프롬프트 호출 중 오류가 발생했습니다."));
     }

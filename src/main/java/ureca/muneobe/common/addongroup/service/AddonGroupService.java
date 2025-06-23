@@ -52,8 +52,9 @@ public class AddonGroupService {
     }
 
     private AddonGroupAddonsResponse getAddonGroupAddonsResponse(Long addonGroupId) {
+        AddonGroup addonGroup = addonGroupRepository.findById(addonGroupId).orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_FILE));
         List<Addon> addons = addonRepository.findAddonsByAddonGroup(addonGroupRepository.getReferenceById(addonGroupId));
-        return AddonGroupAddonsResponse.from(addons);
+        return AddonGroupAddonsResponse.of(addonGroup,addons);
     }
 
     private AddonGroup getAddonGroup(AddonGroupCreateRequest addonGroupCreateRequest) {

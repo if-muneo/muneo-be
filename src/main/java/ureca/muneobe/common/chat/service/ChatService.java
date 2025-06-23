@@ -61,7 +61,7 @@ public class ChatService {
 
         final StringBuilder buffer = new StringBuilder();
 
-        return searchAndCallSecondPrompt(firstPromptResult)
+        return searchAndCallSecondPrompt(firstPromptResult, chatResult)
                 .concatMap(line -> Mono.fromSupplier(() -> {
                     buffer.append(line);
                     return line;
@@ -92,8 +92,8 @@ public class ChatService {
         chatRedisRepository.clearChat(username);
     }
 
-    private Flux<String> searchAndCallSecondPrompt(FirstPromptResult firstPromptResult) {
+    private Flux<String> searchAndCallSecondPrompt(FirstPromptResult firstPromptResult, ChatResult chatResult) {
         RoutingStrategy routingStrategy = routingStrategyFactory.select(firstPromptResult);
-        return routingStrategy.process(firstPromptResult);
+        return routingStrategy.process(firstPromptResult, chatResult.getMemberName());
     }
 }
