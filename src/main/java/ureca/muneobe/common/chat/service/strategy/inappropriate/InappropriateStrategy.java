@@ -1,16 +1,14 @@
 package ureca.muneobe.common.chat.service.strategy.inappropriate;
 
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
-import ureca.muneobe.common.chat.service.strategy.RoutingStrategy;
-import ureca.muneobe.common.openai.dto.router.DailyResponse;
+import ureca.muneobe.common.chat.service.MetaData;
+import ureca.muneobe.common.chat.service.strategy.RoutingResult;
+import ureca.muneobe.common.openai.dto.router.FirstPromptResponse;
 
-@Component("inappropriateStrategy")
-public class InappropriateStrategy implements RoutingStrategy {
-    @Override
-    public Flux<String> process(FirstPromptResult firstPromptResult, String memberName) {
-        return Mono.just("부적절한 단어가 감지되었습니다. 다시 질문해주세요.").flux();
+@Component
+public class InappropriateStrategy {
+    public Mono<RoutingResult> process(FirstPromptResponse firstPromptResponse, MetaData metaData) {
+        return Mono.just(new InappropriateResult("부적절한 메세지입니다! 요금제에 관련된 질문을 해주세요~"));                    //부적절한 응답
     }
 }

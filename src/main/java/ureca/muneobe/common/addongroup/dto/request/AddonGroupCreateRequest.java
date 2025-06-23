@@ -1,11 +1,8 @@
 package ureca.muneobe.common.addongroup.dto.request;
 
+import lombok.*;
+
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @Builder

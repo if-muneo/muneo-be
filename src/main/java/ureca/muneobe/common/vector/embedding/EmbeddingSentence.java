@@ -12,6 +12,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -26,9 +28,11 @@ public class EmbeddingSentence {
 
     private final ObjectMapper mapper;
 
-    public float[] requestEmbeddingFromOpenAI(String text) throws IOException, InterruptedException {
+    public List<float[]> requestEmbeddingFromOpenAI(List<String> input) throws IOException, InterruptedException {
         ObjectNode root = mapper.createObjectNode();
-        root.withArray("input").add(text);
+        for(String v : input) {
+            root.withArray("input").add(v);
+        }
         root.put("model", embeddingModel);
         root.put("dimensions", 1536);
 
@@ -44,21 +48,16 @@ public class EmbeddingSentence {
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        JsonNode dataNode = mapper.readTree(response.body()).get("data");
-        if (dataNode == null || !dataNode.elements().hasNext()) {
-            throw new RuntimeException("Could not get embedding model" + response.body());
+        List<float[]> results = new ArrayList<>();
+        for(JsonNode n : mapper.readTree(response.body()).get("data")) {
+            float[] embedding = new float[n.get("embedding").size()];
+            int i = 0;
+            for(JsonNode v : n.get("embedding")) {
+                embedding[i++] = (float)v.asDouble();
+            }
+            results.add(embedding);
         }
 
-        JsonNode embeddingNode = dataNode.elements().next().get("embedding");
-        if (embeddingNode == null || !embeddingNode.isArray()) {
-            throw new RuntimeException("Could not get embedding model" + response.body());
-        }
-
-        float[] result = new float[embeddingNode.size()];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = (float) embeddingNode.get(i).asDouble();
-        }
-
-        return result;
+        return results;
     }
 }

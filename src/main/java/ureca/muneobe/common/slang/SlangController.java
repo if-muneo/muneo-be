@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ureca.muneobe.global.response.ErrorCode;
-import ureca.muneobe.global.response.ResponseBody;
+import ureca.muneobe.common.slang.service.SlangService;
 import ureca.muneobe.common.subscription.dto.AddSlangRequest;
 import ureca.muneobe.common.subscription.dto.AddSlangResponse;
 import ureca.muneobe.common.subscription.dto.DeleteSlangRequest;
 import ureca.muneobe.common.subscription.dto.DeleteSlangResponse;
-import ureca.muneobe.common.slang.service.SlangService;
+import ureca.muneobe.global.response.ErrorCode;
+import ureca.muneobe.global.response.ResponseBody;
 
 import java.util.List;
 

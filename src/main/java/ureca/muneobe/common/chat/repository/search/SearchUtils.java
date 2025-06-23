@@ -8,16 +8,11 @@ import lombok.RequiredArgsConstructor;
 import ureca.muneobe.common.addon.entity.AddonType;
 import ureca.muneobe.common.addon.entity.QAddon;
 import ureca.muneobe.common.addongroup.entity.QAddonGroup;
-import ureca.muneobe.common.mplan.entity.DataType;
-import ureca.muneobe.common.mplan.entity.MplanType;
-import ureca.muneobe.common.mplan.entity.QMplan;
-import ureca.muneobe.common.mplan.entity.QMplanDetail;
-import ureca.muneobe.common.mplan.entity.Qualification;
-import ureca.muneobe.common.chat.entity.*;
 import ureca.muneobe.common.chat.service.strategy.rdb.input.MplanCondition;
 import ureca.muneobe.common.chat.service.strategy.rdb.input.Range;
 import ureca.muneobe.common.chat.service.strategy.rdb.output.FindingAddon;
 import ureca.muneobe.common.chat.service.strategy.rdb.output.FindingMplan;
+import ureca.muneobe.common.mplan.entity.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

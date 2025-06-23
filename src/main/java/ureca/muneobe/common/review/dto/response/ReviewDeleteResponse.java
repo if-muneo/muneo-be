@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ureca.muneobe.common.review.dto.request.ReviewDeleteRequest;
-import ureca.muneobe.common.review.entity.Review;
 
 @Getter
 @Builder

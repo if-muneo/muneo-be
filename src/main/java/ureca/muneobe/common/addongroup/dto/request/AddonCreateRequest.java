@@ -1,11 +1,6 @@
 package ureca.muneobe.common.addongroup.dto.request;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import ureca.muneobe.common.addon.entity.AddonType;
+import lombok.*;
 
 @Getter
 @Builder

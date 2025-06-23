@@ -1,12 +1,7 @@
 package ureca.muneobe.common.mplan.dto.request;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ureca.muneobe.common.addon.entity.AddonType;
-import ureca.muneobe.common.addongroup.dto.response.AddonGroupAddonResponse;
 import ureca.muneobe.common.mplan.entity.DataType;
 import ureca.muneobe.common.mplan.entity.MplanType;
 import ureca.muneobe.common.mplan.entity.Qualification;
