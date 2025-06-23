@@ -11,14 +11,8 @@ import ureca.muneobe.common.openai.OpenAiClient;
 @AllArgsConstructor
 public class InappropriateResult implements RoutingResult {
     private String message;
-
-    @Override
-    public boolean skipSecondPrompt() {
-        return true;
-    }
-
     @Override
     public Flux<String> callSecondPromptOrNot(OpenAiClient openAiClient, MetaData metaData) {
-        return Flux.just("부적절한 메시지가 들어왔음.");
+        return Flux.just(message);
     }
 }

@@ -46,9 +46,6 @@ public class OpenAiClient {
     private final OpenAiFirstPrompt firstPrompt;
     private final OpenAiSecondPrompt secondPrompt;
     private final ObjectMapper objectMapper;
-    private final SubscriptionRepository subscriptionRepository;
-    private final MemberRepository memberRepository;
-    private final HttpSession httpSession;
 
     /**
      * 1차 프롬프트 호출
@@ -56,7 +53,7 @@ public class OpenAiClient {
     public Mono<FirstPromptResponse> callFirstPrompt(MetaData metaData) {
         List<Message> messages = List.of(
                 Message.from("system", firstPrompt.getPrompt() + " 이전 대화기록 " + metaData.getChatLog()),
-                Message.from("user", metaData.getChatResult().getMessage())
+                Message.from("user", metaData.getChatRequest().getContent())
         );
 
         OpenAiRequest request = OpenAiRequest.of(firstPrompt.getModel(), messages, firstPrompt.getTemperature(), firstPrompt.getMaxTokens(),false);
@@ -76,32 +73,17 @@ public class OpenAiClient {
      */
     @Transactional(readOnly = true)
     public <T> Flux<String> callSecondPrompt(List<T> dbData, MetaData metaData) {
-//        Member member = memberRepository.findByName(memberName).get();
-//        Optional<Subscription> optionalSubscription = subscriptionRepository.findByMember(member);
-//        String mplanName       = optionalSubscription
-//                .map(sub -> sub.getMplan().getName())
-//                .orElse("");
-//        String mplanDetailStr  = optionalSubscription
-//               .map(sub -> sub.getMplan().getMplanDetail().toString())
-//                .orElse("");
-//        String addonGroupStr   = optionalSubscription
-//                .map(sub -> sub.getMplan().getAddonGroup().toString())
-//                .orElse("");
-//        int useAmount = member.getUseAmount();
-//
-//        List<String> chatLog = metaData.getChatLog();
-//
         List<Message> messages = List.of(
                 Message.from("system", new StringBuilder().append(secondPrompt.getPrompt()).append("\n")
                         .append("활용 데이터: ").append(dbData).append("\n")
-                        .append("이전 대화 기록: ").append(metaData.getChatLog()).append("\n").toString()),
-//                        .append("유저 정보: ")
-//                                .append("\t").append("가입 요금제 이름: ").append(chatLog).append("\n")
-//                                .append("\t").append("가입 요금제 정보: ").append(mplanDetailStr).append("\n")
-//                                .append("\t").append("부가서비스 정보: ").append(addonGroupStr).append("\n")
-//                                .append("\t").append("이번달 데이터 사용량: ").append(useAmount).append("\n")
-//                                .toString()),
-                Message.from("user", "사용자 질문: " + metaData.getChatResult().getMessage())
+                        .append("이전 대화 기록: ").append(metaData.getChatLog()).append("\n")
+                        .append("유저 정보: ")
+                                .append("\t").append("가입 요금제 이름: ").append(metaData.getMemberInfoMeta().getMplanName()).append("\n")
+                                .append("\t").append("가입 요금제 정보: ").append(metaData.getMemberInfoMeta().getMplanDetailStr()).append("\n")
+                                .append("\t").append("부가서비스 정보: ").append(metaData.getMemberInfoMeta().getAddonGroupStr()).append("\n")
+                                .append("\t").append("이번달 데이터 사용량: ").append(metaData.getMemberInfoMeta().getUseAmount()).append("\n")
+                                .toString()),
+                Message.from("user", "사용자 질문: " + metaData.getChatRequest().getContent())
         );
 
         OpenAiRequest request = OpenAiRequest.of(secondPrompt.getModel(), messages, secondPrompt.getTemperature(), secondPrompt.getMaxTokens(),true);

@@ -12,12 +12,6 @@ import ureca.muneobe.common.openai.dto.router.DailyResponse;
 @AllArgsConstructor
 public class DailyResult implements RoutingResult {
     private DailyResponse dailyResponse;
-
-    @Override
-    public boolean skipSecondPrompt() {
-        return false;
-    }
-
     @Override
     public Flux<String> callSecondPromptOrNot(OpenAiClient openAiClient, MetaData metaData) {
         return Flux.just(dailyResponse.getReformInput());

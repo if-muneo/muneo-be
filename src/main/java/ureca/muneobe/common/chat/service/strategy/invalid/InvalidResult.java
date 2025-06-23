@@ -11,12 +11,6 @@ import ureca.muneobe.common.openai.OpenAiClient;
 @AllArgsConstructor
 public class InvalidResult implements RoutingResult {
     private String message;
-
-    @Override
-    public boolean skipSecondPrompt() {
-        return true;
-    }
-
     @Override
     public Flux<String> callSecondPromptOrNot(OpenAiClient openAiClient, MetaData metaData) {
         return Flux.just(message);

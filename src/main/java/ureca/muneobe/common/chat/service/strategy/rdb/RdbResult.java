@@ -13,12 +13,6 @@ import ureca.muneobe.common.openai.OpenAiClient;
 @AllArgsConstructor
 public class RdbResult implements RoutingResult {
     private List<FindingMplan> findingMplans;
-
-    @Override
-    public boolean skipSecondPrompt() {
-        return false;
-    }
-
     @Override
     public Flux<String> callSecondPromptOrNot(OpenAiClient openAiClient, MetaData metaData) {
         return openAiClient.callSecondPrompt(findingMplans, metaData);

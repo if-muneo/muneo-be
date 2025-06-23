@@ -14,12 +14,6 @@ import ureca.muneobe.common.vector.dto.response.VectorSearchResponse;
 @AllArgsConstructor
 public class VectorResult implements RoutingResult {
     private VectorSearchResponse vectorSearchResponse;
-
-    @Override
-    public boolean skipSecondPrompt() {
-        return false;
-    }
-
     @Override
     public Flux<String> callSecondPromptOrNot(OpenAiClient openAiClient, MetaData metaData) {
         return openAiClient.callSecondPrompt(vectorSearchResponse.getDescriptions(), metaData);

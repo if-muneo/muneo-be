@@ -20,9 +20,9 @@ public class RdbStrategy {
         RdbResponse response = (RdbResponse) firstPromptResponse;
         Condition condition = getCondition(response);
 
-        return Mono.fromCallable(() -> combinedSearchRepository.search(condition))
-                .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행
-                .map(RdbResult::from);
+        return Mono.fromCallable(() -> combinedSearchRepository.search(condition))                                      //RDB 검색
+                .subscribeOn(Schedulers.boundedElastic())                                                               //Blocking I/O를 boundedElastic 쓰레드에서 수행
+                .map(RdbResult::from);                                                                                  //RdbResult impl RoutingResult로 매핑
     }
 
     private Condition getCondition(RdbResponse response) {

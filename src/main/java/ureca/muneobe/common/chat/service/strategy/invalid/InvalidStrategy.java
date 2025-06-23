@@ -10,6 +10,6 @@ import ureca.muneobe.common.openai.dto.router.FirstPromptResponse;
 @Component
 public class InvalidStrategy {
     public Mono<RoutingResult> process(FirstPromptResponse firstPromptResponse, MetaData metaData) {
-        return Mono.just(new InvalidResult("부적절한 메시지입니다!"));
+        return Mono.just(new InvalidResult("부적절한 메시지입니다!"));                                                      //부적절한 메시지 반환
     }
 }

@@ -19,8 +19,8 @@ public class VectorStrategy{
     public Mono<RoutingResult> process(FirstPromptResponse firstPromptResponse, MetaData metaData) {
         VectorResponse response = (VectorResponse) firstPromptResponse;
 
-        return Mono.fromCallable(() -> fatService.search(response.getReformInput()))
-                .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행
-                .map(VectorResult::from);
+        return Mono.fromCallable(() -> fatService.search(response.getReformInput()))                                    //fatService에서 검색
+                .subscribeOn(Schedulers.boundedElastic())    // JPA 블로킹 호출을 별도 스레드풀에서 수행                      //검색은 block I/O로 boundedElastic 쓰레드에서 실행
+                .map(VectorResult::from);                                                                               //VectorResult impl RoutingResult 매핑
     }
 }
