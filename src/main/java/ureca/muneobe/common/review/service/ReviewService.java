@@ -1,12 +1,10 @@
 package ureca.muneobe.common.review.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ureca.muneobe.common.auth.entity.Member;
 import ureca.muneobe.common.auth.respository.MemberRepository;
-import ureca.muneobe.common.auth.utils.SessionUtil;
 import ureca.muneobe.common.mplan.entity.Mplan;
 import ureca.muneobe.common.mplan.repository.MplanRepository;
 import ureca.muneobe.common.review.dto.response.ReviewCreateResponse;
@@ -17,11 +15,9 @@ import ureca.muneobe.common.review.dto.response.ReviewsResponse;
 import ureca.muneobe.common.review.entity.Review;
 import ureca.muneobe.common.review.repository.ReviewRepository;
 import ureca.muneobe.common.slang.service.SlangFilterService;
-import ureca.muneobe.common.subscription.entity.Subscription;
-import ureca.muneobe.common.subscription.repository.SubScriptionRepository;
+import ureca.muneobe.common.subscription.repository.SubscriptionRepository;
 import ureca.muneobe.global.exception.GlobalException;
 import ureca.muneobe.global.response.ErrorCode;
-import ureca.muneobe.global.response.ResponseBody;
 
 import java.util.List;
 
@@ -31,7 +27,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MplanRepository mplanRepository;
     private final MemberRepository memberRepository;
-    private final SubScriptionRepository subScriptionRepository;
+    private final SubscriptionRepository subscriptionRepository;
     private final SlangFilterService slangFilterService;
 
     public ReviewsResponse findAll(Long mplanId) {
@@ -81,7 +77,7 @@ public class ReviewService {
     }
 
     private boolean isPossibleWriteReview(Long memberId, Long mplanId) {
-        return subScriptionRepository.existsByMemberIdAndMplanId(memberId,mplanId);
+        return subscriptionRepository.existsByMemberIdAndMplanId(memberId,mplanId);
     }
 
     private boolean isContainsSlang(String userMessage) {

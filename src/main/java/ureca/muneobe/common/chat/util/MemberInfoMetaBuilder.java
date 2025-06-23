@@ -9,7 +9,7 @@ import ureca.muneobe.common.chat.repository.AddonRepository;
 import ureca.muneobe.common.mplan.entity.Mplan;
 import ureca.muneobe.common.mplan.entity.MplanDetail;
 import ureca.muneobe.common.subscription.entity.Subscription;
-import ureca.muneobe.common.subscription.entity.SubscriptionRepository;
+import ureca.muneobe.common.subscription.repository.SubscriptionRepository;
 
 import java.security.Principal;
 import java.util.List;

@@ -9,6 +9,9 @@ import ureca.muneobe.common.vector.dto.response.VectorSearchResponse;
 import ureca.muneobe.common.vector.service.FatService;
 import ureca.muneobe.global.response.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class MobilePlanController {
@@ -17,8 +20,10 @@ public class MobilePlanController {
 
     @PostMapping("/v1/vector")
     public ResponseEntity<ResponseBody<VectorSearchResponse>> searchByText(@RequestBody RecommendationRequest request) {
+        List<String> query = new ArrayList<>();
+        query.add(request.getQuery());
         return ResponseEntity.ok().body(
-                ResponseBody.success(fatService.search(request.getQuery())));
+                ResponseBody.success(fatService.search(query)));
     }
 
     /**
