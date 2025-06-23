@@ -69,7 +69,7 @@ public class MemberInfoMetaBuilder {
                 member.getUseAmount(),              // useAmount
                 subscription.getFee(),               // fee
                 mplan.getName(),                     // name
-                mplanDetail.getBasicDataAmount(),   // basicDataAmount
+                mplanDetail.getBasicDataAmount() == 10_000_000 ? "무제한" : mplanDetail.getBasicDataAmount() + "MB",   // basicDataAmount
                 mplanDetail.getDataType(),          // dataType
                 addonNamesStr,                       // addonNamesStr
                 mplan.getName(),                     // mplanName
@@ -87,7 +87,7 @@ public class MemberInfoMetaBuilder {
                 member.getUseAmount(),
                 0,                    // fee
                 "",                   // name
-                0,                    // basicDataAmount
+                "",                    // basicDataAmount
                 "UNKNOWN",           // dataType
                 "",                   // addonNamesStr
                 "",                   // mplanName
