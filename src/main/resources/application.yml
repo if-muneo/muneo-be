@@ -148,7 +148,7 @@ spring:
           
           ### DAILY 
           
-          - reformInput: "부적절한 질문입니다. 다시 입력해주세요" (고정 문구)
+          - reformInput: // 통신 상품을 유도할 수 있는 응답으로 재구성
           
           ---
           
@@ -240,7 +240,7 @@ spring:
           
           {
             "router": "DAILY",
-            "message": "통신 상품 질문으로 유도하는 응답 재구성"
+            "reformInput": // 통신 상품 질문으로 유도하는 응답 재구성
           }
       second:
         model: gpt-4o-mini
