@@ -15,7 +15,7 @@ public class MobilePlanController {
 
     private final FatService fatService;
 
-    @GetMapping("/v1/vector")
+    @PostMapping("/v1/vector")
     public ResponseEntity<ResponseBody<VectorSearchResponse>> searchByText(@RequestBody RecommendationRequest request) {
         return ResponseEntity.ok().body(
                 ResponseBody.success(fatService.search(request.getQuery())));
