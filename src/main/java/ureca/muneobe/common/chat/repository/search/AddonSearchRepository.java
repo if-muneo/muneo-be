@@ -12,11 +12,11 @@ import ureca.muneobe.common.chat.service.strategy.rdb.input.AddonCondition;
 import ureca.muneobe.common.chat.service.strategy.rdb.input.Condition;
 import ureca.muneobe.common.chat.service.strategy.rdb.input.Range;
 import ureca.muneobe.common.chat.service.strategy.rdb.output.FindingMplan;
+import ureca.muneobe.common.mplan.entity.QMplan;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import ureca.muneobe.common.mplan.entity.QMplan;
 
 import static ureca.muneobe.common.chat.repository.search.SearchUtils.*;
 

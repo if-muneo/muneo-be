@@ -6,12 +6,12 @@ import ureca.muneobe.common.auth.entity.Member;
 import ureca.muneobe.common.auth.respository.MemberRepository;
 import ureca.muneobe.common.chat.dto.chat.MemberInfoMeta;
 import ureca.muneobe.common.chat.repository.AddonRepository;
+import ureca.muneobe.common.mplan.entity.DataType;
 import ureca.muneobe.common.mplan.entity.Mplan;
 import ureca.muneobe.common.mplan.entity.MplanDetail;
 import ureca.muneobe.common.subscription.entity.Subscription;
-import ureca.muneobe.common.subscription.entity.SubscriptionRepository;
+import ureca.muneobe.common.subscription.repository.SubscriptionRepository;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,13 +46,6 @@ public class MemberInfoMetaBuilder {
         }
     }
 
-    /**
-     * Principal로부터 MemberInfoMeta 생성
-     */
-    public MemberInfoMeta buildFromPrincipal(Principal principal) {
-        String memberName = principal.getName();
-        return buildFromMemberName(memberName);
-    }
 
     /**
      * 구독 정보가 있는 경우 - addonNames를 파라미터로 받음
@@ -69,7 +62,7 @@ public class MemberInfoMetaBuilder {
                 member.getUseAmount(),              // useAmount
                 subscription.getFee(),               // fee
                 mplan.getName(),                     // name
-                mplanDetail.getBasicDataAmount(),   // basicDataAmount
+                mplanDetail.getBasicDataAmount() == 10_000_000 ? "무제한" : mplanDetail.getBasicDataAmount() + "MB",   // basicDataAmount
                 mplanDetail.getDataType(),          // dataType
                 addonNamesStr,                       // addonNamesStr
                 mplan.getName(),                     // mplanName
@@ -87,7 +80,7 @@ public class MemberInfoMetaBuilder {
                 member.getUseAmount(),
                 0,                    // fee
                 "",                   // name
-                0,                    // basicDataAmount
+                "",                    // basicDataAmount
                 "UNKNOWN",           // dataType
                 "",                   // addonNamesStr
                 "",                   // mplanName
@@ -100,11 +93,16 @@ public class MemberInfoMetaBuilder {
      * MplanDetail 문자열 생성
      */
     private String buildMplanDetailString(Subscription subscription, MplanDetail mplanDetail) {
+
+        String dataAmountStr = mplanDetail.getBasicDataAmount() == 10_000_000
+                ? "무제한"
+                : mplanDetail.getBasicDataAmount() + "MB";
+
         return String.format(
-                "fee: %d, basicDataAmount: %d, dataType: %s",
+                "요금제 가격: %d원, 데이터 제공량: %s, dataType: %s",
                 subscription.getFee(),
-                mplanDetail.getBasicDataAmount(),
-                mplanDetail.getDataType()
+                dataAmountStr,
+                mplanDetail.getDataType() == DataType._5G ? "5G" : "LTE"
         );
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
-import org.springframework.web.util.UriComponentsBuilder;
 import ureca.muneobe.common.auth.entity.Member;
 import ureca.muneobe.common.auth.utils.SessionUtil;
 

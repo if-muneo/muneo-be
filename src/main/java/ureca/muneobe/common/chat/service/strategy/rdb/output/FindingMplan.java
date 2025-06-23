@@ -1,13 +1,13 @@
 package ureca.muneobe.common.chat.service.strategy.rdb.output;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import ureca.muneobe.common.mplan.entity.DataType;
 import ureca.muneobe.common.mplan.entity.MplanType;
 import ureca.muneobe.common.mplan.entity.Qualification;
+
+import java.util.List;
 
 @AllArgsConstructor
 @Getter

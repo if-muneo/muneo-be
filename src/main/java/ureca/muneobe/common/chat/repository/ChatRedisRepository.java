@@ -6,24 +6,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import ureca.muneobe.common.auth.entity.Member;
-import ureca.muneobe.common.auth.service.MemberService;
 import ureca.muneobe.common.chat.entity.Chat;
 import ureca.muneobe.common.chat.entity.ChatType;
 import ureca.muneobe.global.exception.GlobalException;
-import ureca.muneobe.global.response.ErrorCode;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static ureca.muneobe.global.response.ErrorCode.*;
+import static ureca.muneobe.global.response.ErrorCode.REDIS_CHAT_PARSE_ERROR;
+import static ureca.muneobe.global.response.ErrorCode.REDIS_CHAT_STORE_ERROR;
 
 @Repository
 @RequiredArgsConstructor
 public class ChatRedisRepository {
 
-    private static final int MULTI_TURN_CHAT_COUNT = 5;
+    private static final int MULTI_TURN_CHAT_COUNT = 3;
 
     private final StringRedisTemplate stringTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -58,7 +57,6 @@ public class ChatRedisRepository {
 
         Set<String> result = stringTemplate.opsForZSet()
                 .reverseRange(key, 0, MULTI_TURN_CHAT_COUNT);
-
         return (result == null || result.isEmpty()) ? List.of() : new ArrayList<>(result);
     }
 

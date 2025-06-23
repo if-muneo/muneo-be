@@ -3,7 +3,6 @@ package ureca.muneobe.common.mypage.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import ureca.muneobe.common.auth.entity.Member;
 import ureca.muneobe.common.auth.entity.enums.Category;
 import ureca.muneobe.common.auth.entity.enums.Gender;

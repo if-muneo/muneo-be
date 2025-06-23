@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -34,21 +35,23 @@ public class FatJdbcRepository {
         }
     }
 
-    public void insertEmbedding(Long id, float[] vector) {
-        String sql = "INSERT INTO fat_embedding (fat_id, embedding) VALUES (?, ?)";
-        try (
-                Connection conn = dataSource.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
-            PGvector.registerTypes(conn);
-            stmt.setLong(1, id);
-            stmt.setObject(2, new PGvector(vector));
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("벡터 업데이트 실패", e);
+    public void insertEmbedding(Long id, List<float[]> vector) {
+
+        for (int i = 0; i < vector.size(); i++) {
+            String sql = "INSERT INTO fat_embedding (fat_id, embedding) VALUES (?, ?)";
+            try (
+                    Connection conn = dataSource.getConnection();
+                    PreparedStatement stmt = conn.prepareStatement(sql)
+            ) {
+                PGvector.registerTypes(conn);
+                stmt.setLong(1, id);
+                stmt.setObject(2, new PGvector(vector.get(i)));
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException("벡터 업데이트 실패", e);
+            }
         }
     }
-
 
 
     /**
@@ -81,33 +84,40 @@ public class FatJdbcRepository {
     };
 
 
-    public List<Fat> findSimilarPlans(float[] queryVector, int limit) {
-        try (Connection conn = dataSource.getConnection()) {
-            PGvector.registerTypes(conn); // 벡터 타입 등록
+    public List<Fat> findSimilarPlans(List<float[]> queryVector, int limit) {
+        List<Fat> results = new ArrayList<>();
 
-            String sql = """
-                        SELECT f.*
-                                            FROM (
-                                                SELECT DISTINCT ON (fe.fat_id) fe.fat_id, fe.embedding
-                                                FROM fat_embedding fe
-                                                ORDER BY fe.fat_id, fe.embedding <=> ?
-                                            ) distinct_fe
-                                            JOIN fat f ON f.id = distinct_fe.fat_id
-                                            ORDER BY distinct_fe.embedding <=> ?
-                                            LIMIT ?;
-                    """;
+        for (float[] vector : queryVector) {
+            try (Connection conn = dataSource.getConnection()) {
+                PGvector.registerTypes(conn); // 벡터 타입 등록
 
-            return jdbcTemplate.query(
-                    sql,
-                    ps -> {
-                        ps.setObject(1, new PGvector(queryVector));
-                        ps.setObject(2, new PGvector(queryVector));
-                        ps.setInt(3, limit);
-                    },
-                    fatRowMapper
-            );
-        } catch (SQLException e) {
-            throw new RuntimeException("유사 요금제 검색 실패", e);
+                String sql = """
+                            SELECT f.*
+                                                FROM (
+                                                    SELECT DISTINCT ON (fe.fat_id) fe.fat_id, fe.embedding
+                                                    FROM fat_embedding fe
+                                                    ORDER BY fe.fat_id, fe.embedding <=> ?
+                                                ) distinct_fe
+                                                JOIN fat f ON f.id = distinct_fe.fat_id
+                                                ORDER BY distinct_fe.embedding <=> ?
+                                                LIMIT ?;
+                        """;
+
+                List<Fat> result = jdbcTemplate.query(
+                        sql,
+                        ps -> {
+                            ps.setObject(1, new PGvector(vector));
+                            ps.setObject(2, new PGvector(vector));
+                            ps.setInt(3, limit);
+                        },
+                        fatRowMapper
+                );
+
+                results.addAll(result);
+            } catch (SQLException e) {
+                throw new RuntimeException("유사 요금제 검색 실패", e);
+            }
         }
+        return results;
     }
 }

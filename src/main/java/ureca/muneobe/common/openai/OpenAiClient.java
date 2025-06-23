@@ -2,7 +2,6 @@ package ureca.muneobe.common.openai;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,27 +9,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ureca.muneobe.common.addongroup.entity.AddonGroup;
-import ureca.muneobe.common.auth.entity.Member;
-import ureca.muneobe.common.auth.respository.MemberRepository;
-import ureca.muneobe.common.auth.utils.SessionUtil;
 import ureca.muneobe.common.chat.config.openai.OpenAiFirstPrompt;
 import ureca.muneobe.common.chat.config.openai.OpenAiSecondPrompt;
-import ureca.muneobe.common.chat.dto.result.FirstPromptResult;
-import ureca.muneobe.common.chat.dto.result.PreProcessResult;
 import ureca.muneobe.common.chat.service.MetaData;
-import ureca.muneobe.common.mplan.entity.Mplan;
-import ureca.muneobe.common.mplan.entity.MplanDetail;
 import ureca.muneobe.common.openai.dto.Message;
 import ureca.muneobe.common.openai.dto.OpenAiRequest;
 import ureca.muneobe.common.openai.dto.OpenAiResponse;
 import ureca.muneobe.common.openai.dto.router.FirstPromptResponse;
-import ureca.muneobe.common.subscription.entity.Subscription;
-import ureca.muneobe.common.subscription.entity.SubscriptionRepository;
 import ureca.muneobe.global.exception.GlobalException;
 
 import java.util.List;
-import java.util.Optional;
 
 import static ureca.muneobe.global.response.ErrorCode.FIRST_PROMPT_ERROR;
 import static ureca.muneobe.global.response.ErrorCode.JSON_PARSING_ERROR;
@@ -81,7 +69,7 @@ public class OpenAiClient {
                                 .append("\t").append("가입 요금제 이름: ").append(metaData.getMemberInfoMeta().getMplanName()).append("\n")
                                 .append("\t").append("가입 요금제 정보: ").append(metaData.getMemberInfoMeta().getMplanDetailStr()).append("\n")
                                 .append("\t").append("부가서비스 정보: ").append(metaData.getMemberInfoMeta().getAddonGroupStr()).append("\n")
-                                .append("\t").append("이번달 데이터 사용량: ").append(metaData.getMemberInfoMeta().getUseAmount()).append("\n")
+                                .append("\t").append("이번달 데이터 사용량: ").append(metaData.getMemberInfoMeta().getUseAmount()).append("MB \n")
                                 .toString()),
                 Message.from("user", "사용자 질문: " + metaData.getChatRequest().getContent())
         );

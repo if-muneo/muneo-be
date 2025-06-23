@@ -1,9 +1,8 @@
 package ureca.muneobe.common.vector.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import ureca.muneobe.common.mplan.scheduler.FatPreVO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +12,9 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Fat {
 
     @Id
@@ -65,6 +67,26 @@ public class Fat {
     // 현재 이 요금제가 임베딩 값 테이블에 들어가있는지 안들어가있는지 확인하는 변수
     @Column(name = "is_embedding", nullable = false)
     private Boolean embedding = false;
+
+    public static Fat of(FatPreVO fatPreVOs, boolean b) {
+        return Fat.builder()
+                .textMessages(fatPreVOs.getTextMessages())
+                .basicDataAmount(fatPreVOs.getBasicDataAmount())
+                .dailyData(fatPreVOs.getDailyData())
+                .monthlyPrice(fatPreVOs.getMonthlyPrice())
+                .price(fatPreVOs.getPrice())
+                .sharingData(fatPreVOs.getSharingData())
+                .subDataSpeed(fatPreVOs.getSubDataSpeed())
+                .voiceCallVolume(fatPreVOs.getVoiceCallVolume())
+                .addon(fatPreVOs.getAddon())
+                .dataType(fatPreVOs.getDataType())
+                .description(fatPreVOs.getDescription())
+                .mplanType(fatPreVOs.getMplanType())
+                .name(fatPreVOs.getName())
+                .qualification(fatPreVOs.getQualification())
+                .embedding(fatPreVOs.getEmbedding())
+                .build();
+    }
 
     public List<String> makeDisriptionForEmbedding() {
         List<String> sentences = new ArrayList<>();
@@ -173,7 +195,7 @@ public class Fat {
         if (basicDataAmount == null) {
             summary.append("일일 데이터: ").append(dailyData).append("MB, "); //없으면 일일데이터량
         } else {
-            String state = (basicDataAmount == 10_000_000) ? "무제한, " : basicDataAmount + "MB, ";
+            String state = Long.valueOf(10_000_000L).equals(basicDataAmount) ? "무제한, " : basicDataAmount + "MB, ";
             summary.append("월 데이터: ").append(state);
         }
 

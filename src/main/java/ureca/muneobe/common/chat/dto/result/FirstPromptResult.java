@@ -1,11 +1,12 @@
 package ureca.muneobe.common.chat.dto.result;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ureca.muneobe.common.openai.dto.router.FirstPromptResponse;
+
+import java.util.List;
 
 @Getter
 @Builder
