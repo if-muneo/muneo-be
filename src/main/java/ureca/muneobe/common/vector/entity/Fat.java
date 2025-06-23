@@ -200,7 +200,7 @@ public class Fat {
         if (basicDataAmount == null) {
             summary.append("일일 데이터: ").append(dailyData).append("MB, "); //없으면 일일데이터량
         } else {
-            String state = (basicDataAmount == 10_000_000) ? "무제한" : basicDataAmount + "MB, ";
+            String state = (basicDataAmount == 10_000_000) ? "무제한, " : basicDataAmount + "MB, ";
             summary.append("월 데이터: ").append(state);
         }
 
