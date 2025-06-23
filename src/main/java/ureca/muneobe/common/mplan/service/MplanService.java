@@ -3,6 +3,7 @@ package ureca.muneobe.common.mplan.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ureca.muneobe.common.addongroup.entity.AddonGroup;
@@ -34,7 +35,7 @@ public class MplanService {
     }
 
     private MplansResponse getMplanResponse(PageRequest pageRequest) {
-        Page<Mplan> mplans = mplanRepository.findAll(pageRequest);
+        Page<Mplan> mplans = mplanRepository.findAll(pageRequest.of(pageRequest.getPageNumber(), 4, Sort.by("id").ascending()));
         return MplansResponse.from(mplans);
     }
 
