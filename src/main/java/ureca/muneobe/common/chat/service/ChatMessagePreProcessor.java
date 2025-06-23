@@ -1,15 +1,14 @@
 package ureca.muneobe.common.chat.service;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ureca.muneobe.common.chat.dto.chat.ChatRequest;
 import ureca.muneobe.common.chat.dto.chat.MemberInfoMeta;
-import ureca.muneobe.common.chat.dto.result.ChatResult;
 import ureca.muneobe.common.chat.entity.ChatType;
 import ureca.muneobe.common.chat.repository.ChatRedisRepository;
-import ureca.muneobe.common.chat.dto.result.PreProcessResult;
 import ureca.muneobe.common.chat.util.MemberInfoMetaBuilder;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor

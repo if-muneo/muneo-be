@@ -19,7 +19,6 @@ import ureca.muneobe.common.openai.dto.router.FirstPromptResponse;
 import ureca.muneobe.global.exception.GlobalException;
 
 import java.util.List;
-import java.util.Optional;
 
 import static ureca.muneobe.global.response.ErrorCode.FIRST_PROMPT_ERROR;
 import static ureca.muneobe.global.response.ErrorCode.JSON_PARSING_ERROR;
@@ -70,7 +69,7 @@ public class OpenAiClient {
                                 .append("\t").append("가입 요금제 이름: ").append(metaData.getMemberInfoMeta().getMplanName()).append("\n")
                                 .append("\t").append("가입 요금제 정보: ").append(metaData.getMemberInfoMeta().getMplanDetailStr()).append("\n")
                                 .append("\t").append("부가서비스 정보: ").append(metaData.getMemberInfoMeta().getAddonGroupStr()).append("\n")
-                                .append("\t").append("이번달 데이터 사용량: ").append(metaData.getMemberInfoMeta().getUseAmount()).append("\n")
+                                .append("\t").append("이번달 데이터 사용량: ").append(metaData.getMemberInfoMeta().getUseAmount()).append("MB \n")
                                 .toString()),
                 Message.from("user", "사용자 질문: " + metaData.getChatRequest().getContent())
         );

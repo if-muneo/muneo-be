@@ -1,13 +1,13 @@
 package ureca.muneobe.common.chat.service;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ureca.muneobe.common.chat.dto.chat.ChatRequest;
 import ureca.muneobe.common.chat.dto.chat.MemberInfoMeta;
-import ureca.muneobe.common.chat.dto.result.ChatResult;
+
+import java.util.List;
 
 @Getter
 @Builder

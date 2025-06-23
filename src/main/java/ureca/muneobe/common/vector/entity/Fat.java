@@ -1,16 +1,11 @@
 package ureca.muneobe.common.vector.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import ureca.muneobe.common.mplan.scheduler.FatPreVO;
 
 import java.util.ArrayList;
 import java.util.List;
-import ureca.muneobe.common.mplan.scheduler.FatPreVO;
 
 @Entity
 @Table(name = "fat")

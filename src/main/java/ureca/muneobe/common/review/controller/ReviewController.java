@@ -13,10 +13,6 @@ import ureca.muneobe.common.review.dto.response.ReviewsResponse;
 import ureca.muneobe.common.review.service.ReviewService;
 import ureca.muneobe.global.response.ResponseBody;
 
-import java.util.List;
-
-import static org.springframework.data.redis.connection.ReactiveStreamCommands.AddStreamRecord.body;
-
 @RestController
 @RequiredArgsConstructor
 public class ReviewController {

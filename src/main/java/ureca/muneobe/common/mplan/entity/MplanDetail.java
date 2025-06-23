@@ -1,26 +1,13 @@
 package ureca.muneobe.common.mplan.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
-
+import jakarta.persistence.*;
 import lombok.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import ureca.muneobe.common.mplan.dto.request.MplanCreateRequest;
 import ureca.muneobe.common.mplan.dto.request.MplanDetailCreateRequest;
 import ureca.muneobe.global.common.BaseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "mplan_detail")

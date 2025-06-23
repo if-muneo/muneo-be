@@ -1,7 +1,6 @@
 package ureca.muneobe.common.mplan.scheduler;
 
 import jakarta.transaction.Transactional;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -15,6 +14,8 @@ import ureca.muneobe.common.vector.entity.Fat;
 import ureca.muneobe.common.vector.repository.FatRepository;
 import ureca.muneobe.common.vector.service.FatService;
 import ureca.muneobe.global.exception.GlobalException;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
