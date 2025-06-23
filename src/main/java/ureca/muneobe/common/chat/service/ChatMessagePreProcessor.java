@@ -3,21 +3,31 @@ package ureca.muneobe.common.chat.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ureca.muneobe.common.chat.dto.chat.ChatRequest;
+import ureca.muneobe.common.chat.dto.chat.MemberInfoMeta;
 import ureca.muneobe.common.chat.dto.result.ChatResult;
 import ureca.muneobe.common.chat.entity.ChatType;
 import ureca.muneobe.common.chat.repository.ChatRedisRepository;
 import ureca.muneobe.common.chat.dto.result.PreProcessResult;
+import ureca.muneobe.common.chat.util.MemberInfoMetaBuilder;
 
 @Component
 @RequiredArgsConstructor
 public class ChatMessagePreProcessor {
     private final ChatRedisRepository chatRedisRepository;
+    private final MemberInfoMetaBuilder memberInfoMetaBuilder;
 
-    public PreProcessResult preProcess(ChatResult chatResult) {
-        System.out.println(Thread.currentThread().getName());
-        saveChatToRedis(chatResult.getMemberName(), chatResult.getMessage(), chatResult.getChatType());
-        List<String> chatLog = getChatForMultiTurn(chatResult.getMemberName());
-        return PreProcessResult.of(chatResult.getMessage(), chatLog);
+    /**
+     * 멤버 정보를 가져옴
+     * 레디스에 저장
+     * chatLog 저장
+     * 이들은 메타 정보가 되어, 모든 reactive streams에 정보를 제공한다.
+     */
+    public MetaData preProcess(ChatRequest chatRequest, String memberName) {
+        List<String> chatLog = getChatForMultiTurn(memberName);
+        saveChatToRedis(memberName, chatRequest.getContent(), ChatType.REQUEST);
+        MemberInfoMeta memberInfoMeta = memberInfoMetaBuilder.buildFromMemberName(memberName);
+        return MetaData.of(chatRequest, memberInfoMeta, chatLog);
     }
 
     /**
