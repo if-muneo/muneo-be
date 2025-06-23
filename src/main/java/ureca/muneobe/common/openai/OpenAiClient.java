@@ -26,7 +26,7 @@ import ureca.muneobe.common.openai.dto.OpenAiRequest;
 import ureca.muneobe.common.openai.dto.OpenAiResponse;
 import ureca.muneobe.common.openai.dto.router.FirstPromptResponse;
 import ureca.muneobe.common.subscription.entity.Subscription;
-import ureca.muneobe.common.subscription.entity.SubscriptionRepository;
+import ureca.muneobe.common.subscription.repository.SubscriptionRepository;
 import ureca.muneobe.global.exception.GlobalException;
 
 import java.util.List;
