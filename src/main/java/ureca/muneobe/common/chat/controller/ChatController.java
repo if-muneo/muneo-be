@@ -43,7 +43,7 @@ public class ChatController {
         MetaData metaData = chatMessagePreProcessor.preProcess(message, memberName);
 
         chatService.createChatResponse(metaData)
-                .delayElements(Duration.ofMillis(1))        //임시 방편으로 순서보장 => 후에, SSE 혹은 인덱스로 순서보장 해줄 것.
+                .delayElements(Duration.ofMillis(10))        //임시 방편으로 순서보장 => 후에, SSE 혹은 인덱스로 순서보장 해줄 것.
                 .subscribe(
                         chatBotMessage -> sendMessage(memberName, streamId, chatBotMessage, false),
                         error -> sendMessage(memberName, streamId, "챗봇 응답 중 문제가 발생했어요.", true),
