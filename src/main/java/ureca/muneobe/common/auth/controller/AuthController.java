@@ -62,7 +62,7 @@ public class AuthController {
         SessionUtil.logout(session);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
+        response.put("successed", true);
         response.put("message", "로그아웃되었습니다");
         return ResponseEntity.ok(response);
     }
